@@ -5,7 +5,7 @@
 - ios sdk version 2.7.2
 
 ```
-cordova plugin add https://github.com/samzilverberg/cordova-.git
+cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 ```
 
 #### currently supports
