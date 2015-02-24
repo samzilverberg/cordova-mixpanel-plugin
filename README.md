@@ -1,8 +1,8 @@
 
-Cordova Plugin that wraps Mixpanel sdk for android and ios
+### Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- android sdk version 4.5.3 (from date....)
-- ios sdk version 2.7.2 (from date....)
+- android sdk version 4.5.3
+- ios sdk version 2.7.2
 
 ```
 cordova plugin add https://github.com/samzilverberg/cordova-.git
