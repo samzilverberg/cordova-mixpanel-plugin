@@ -4,9 +4,9 @@ var exec = require('cordova/exec'),
   mixpanel = {};
 
 
-//mixpanel.alias = mixpanel.createAlias = function(alias, originalId, onSuccess, onFail) {
-//  exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, originalId]);
-//};
+mixpanel.alias = mixpanel.createAlias = function(alias, originalId, onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, originalId]);
+};
 
 mixpanel.flush = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'flush', []);

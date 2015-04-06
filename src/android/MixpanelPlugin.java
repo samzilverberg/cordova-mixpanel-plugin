@@ -21,6 +21,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private enum Action {
 
+        ALIAS("alias"),
         FLUSH("flush"),
         IDENTIFY("identify"),
         INIT("init"),
@@ -65,8 +66,10 @@ public class MixpanelPlugin extends CordovaPlugin {
         }
 
         switch (act) {
+            case ALIAS:
+                return handleAlias(args, cbCtx);
             case FLUSH:
-               return handleFlush(args, cbCtx);
+                return handleFlush(args, cbCtx);
             case IDENTIFY:
                 return handleIdentify(args, cbCtx);
             case INIT:
@@ -90,13 +93,27 @@ public class MixpanelPlugin extends CordovaPlugin {
         super.onDestroy();
     }
 
-    //
+
+    //************************************************
     //  ACTION HANDLERS
     //   - return true:
     //     - to indicate action was executed with correct arguments
     //     - also if the action from sdk has failed.
     //  - return false:
     //     - arguments were wrong
+    //************************************************
+
+    private boolean handleAlias(JSONArray args, final CallbackContext cbCtx) {
+        String aliasId = args.optString(0, "");
+        String originalId = args.optString(1, null);
+        if (TextUtils.isEmpty(aliasId)) {
+            this.error(cbCtx, "missing alias id");
+            return false;
+        }
+        mixpanel.alias(aliasId, originalId);
+        cbCtx.success();
+        return true;
+    }
 
 
     private boolean handleFlush(JSONArray args, final CallbackContext cbCtx) {

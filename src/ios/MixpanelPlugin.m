@@ -3,6 +3,31 @@
 @implementation MixpanelPlugin
 
 
+-(void)alias:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSArray* arguments = command.arguments;
+    NSString* aliasId = [arguments objectAtIndex:0];
+    NSString* originalId = [arguments objectAtIndex:1];
+
+    if (mixpanelInstance == nil)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+    }
+    else if(aliasId == nil || 0 == [aliasId length])
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Alias id missing"];
+    }
+    else
+    {
+        [mixpanelInstance createAlias:aliasId distinctID:originalId];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
 -(void)flush:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;

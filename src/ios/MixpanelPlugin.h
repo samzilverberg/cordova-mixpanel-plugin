@@ -9,6 +9,7 @@
 }
 
 //@see https://mixpanel.com/site_media/doctyl/uploads/iPhone-spec/Classes/Mixpanel/index.html
+-(void)alias:(CDVInvokedUrlCommand*)command;
 -(void)flush:(CDVInvokedUrlCommand*)command;
 -(void)identify:(CDVInvokedUrlCommand*)command;
 -(void)init:(CDVInvokedUrlCommand*)command;
