@@ -12,16 +12,17 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 
 window.mixpanel:
 
-- .flush(onSuccess, onFail)
-- .identify(distinctId, onSuccess, onFail)
-- .init(token, onSuccess, onFail)
-- .reset(onSuccess, onFail)
-- .track(eventName, eventProperties, onSuccess, onFail)
+- alias(aliasId, originalId, onSuccess, onFail)
+  - also available as ```createAlias```
+- flush(onSuccess, onFail)
+- identify(distinctId, onSuccess, onFail)
+- init(token, onSuccess, onFail)
+- reset(onSuccess, onFail)
+- track(eventName, eventProperties, onSuccess, onFail)
 
 ### TODO in near future
 
 - add basic Mixpanel People operations
-- add .alias(alias, originalId) (also 'createAlias')
 
 
 
