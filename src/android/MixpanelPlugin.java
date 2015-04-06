@@ -104,7 +104,6 @@ public class MixpanelPlugin extends CordovaPlugin {
                 }
                 Context ctx = cordova.getActivity();
                 mixpanel = MixpanelAPI.getInstance(ctx, token);
-                people = mixpanel.getPeople();
                 cbCtx.success();
                 break;
 
@@ -130,7 +129,6 @@ public class MixpanelPlugin extends CordovaPlugin {
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
-                break;
         }
 
         //success if got here
