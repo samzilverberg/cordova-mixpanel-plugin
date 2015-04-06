@@ -1,8 +1,8 @@
 
 ### Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- android sdk version 4.5.3
-- ios sdk version 2.7.2
+- [android sdk version 4.5.3](https://github.com/mixpanel/mixpanel-android/tree/v4.5.3)
+- [ios sdk version 2.7.2](https://github.com/mixpanel/mixpanel-iphone/tree/v2.7.2)
 
 ```
 cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
@@ -31,7 +31,7 @@ window.mixpanel:
 
 #### hey i installed the plugin and now build fails, why?
 
-open your xcode proj, goto build phases -> link binary with libraries:
+open your xcode proj, goto **build phases -> link binary with libraries**:
   - drag all files under folder 'frameworks' (on the left) to here
   - add these two:
       - libicucore
@@ -46,4 +46,4 @@ cordova platform remove ios
 cordova platform add ios
 cordova build ios
 ```
-and setting up the build phase correctly again.
+and setting up the build phase correctly again, as described in last question.
