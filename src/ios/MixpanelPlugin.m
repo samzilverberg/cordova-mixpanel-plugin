@@ -21,7 +21,7 @@
     }
     else
     {
-        [mixpanelInstance createAlias:aliasId distinctID:originalId];
+        [mixpanelInstance createAlias:aliasId forDistinctID:originalId];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

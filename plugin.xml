@@ -196,6 +196,7 @@
         <framework src="SystemConfiguration.framework"/>
         <framework src="QuartzCore.framework"/>
         <framework src="UIKit.framework"/>
+        <framework src="libicucore.dylib" />
 
 
     </platform>
