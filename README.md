@@ -12,7 +12,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 
 #### Usage
 
-window.mixpanel:
+**window.mixpanel:**
 
 - alias(aliasId, originalId, onSuccess, onFail)
   - also available as ```createAlias```
@@ -22,12 +22,13 @@ window.mixpanel:
 - reset(onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
 
-window.mixpanel.people:
+**window.mixpanel.people:**
 
 - identify(distinctId, onSuccess, onFail)
 - set(peopleProperties, onSuccess, onFail)
 
-### TODOs
+
+## TODOs
 
 - add more Mixpanel People operations
   - set once, unset, increment, delete (more?)
