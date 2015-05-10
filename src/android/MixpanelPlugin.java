@@ -21,12 +21,23 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private enum Action {
 
+
+        // MIXPANEL API
+
+
         ALIAS("alias"),
         FLUSH("flush"),
         IDENTIFY("identify"),
         INIT("init"),
         RESET("reset"),
-        TRACK("track");
+        TRACK("track"),
+
+
+        // PEOPLE API
+
+
+        PEOPLE_SET("people_set"),
+        PEOPLE_IDENTIFY("people_identify");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -78,6 +89,10 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleReset(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
+            case PEOPLE_SET:
+                return handlePeopleSet(args, cbCtx);
+            case PEOPLE_IDENTIFY:
+                return handlePeopleIdentify(args, cbCtx);
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -178,4 +193,27 @@ public class MixpanelPlugin extends CordovaPlugin {
         return true;
     }
 
+
+    private boolean handlePeopleIdentify(JSONArray args, final CallbackContext cbCtx) {
+        String distinctId = args.optString(0, "");
+        if (TextUtils.isEmpty(distinctId)) {
+            this.error(cbCtx, "missing distinct id");
+            return false;
+        }
+        mixpanel.getPeople().identify(distinctId);
+        cbCtx.success();
+        return true;
+    }
+
+
+    private boolean handlePeopleSet(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject properties = args.optJSONObject(0);
+        if (properties == null) {
+            this.error(cbCtx, "missing people properties object");
+            return false;
+        }
+        mixpanel.getPeople().set(properties);
+        cbCtx.success();
+        return true;
+    }
 }

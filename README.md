@@ -1,8 +1,10 @@
 
-### Cordova Plugin that wraps Mixpanel sdk for android and ios
+## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
 - [android sdk version 4.5.3](https://github.com/mixpanel/mixpanel-android/tree/v4.5.3)
 - [ios sdk version 2.7.2](https://github.com/mixpanel/mixpanel-iphone/tree/v2.7.2)
+
+#### Install
 
 ```
 cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
@@ -20,9 +22,18 @@ window.mixpanel:
 - reset(onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
 
-### TODO in near future
+window.mixpanel.people:
 
-- add basic Mixpanel People operations
+- identify(distinctId, onSuccess, onFail)
+- set(peopleProperties, onSuccess, onFail)
+
+### TODOs
+
+- add more Mixpanel People operations
+  - set once, unset, increment, delete (more?)
+- make sure ios/android use same error messages
+- refactor ios code
+  - remove code duplication of checking that mixpanel was init
 
 
 
@@ -34,7 +45,7 @@ window.mixpanel:
 
 open your xcode proj, goto **build phases -> link binary with libraries**:
   - drag all files under folder 'frameworks' (on the left) to here
-  - add these two:
+  - add the following if missing:
       - libicucore
       - cfnetwork
 

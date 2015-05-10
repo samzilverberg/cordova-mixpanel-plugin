@@ -3,6 +3,9 @@
 @implementation MixpanelPlugin
 
 
+// MIXPANEL API
+
+
 -(void)alias:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;
@@ -126,6 +129,41 @@
     else
     {
         [mixpanelInstance track:eventName properties:eventProperties];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+// PEOPLE API
+
+
+-(void)people_identify:(CDVInvokedUrlCommand*)command;
+{
+    // ios sdk doesnt have separate people identify method
+    // just call the normal identify call
+    [self identify:command];
+}
+
+
+-(void)people_set:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSArray* arguments = command.arguments;
+    NSDictionary* peopleProperties = [command.arguments objectAtIndex:0];
+
+    if (mixpanelInstance == nil)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+    }
+    else if(peopleProperties == nil || 0 == [peopleProperties count])
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"missing people properties object"];
+    }
+    else
+    {
+        [mixpanelInstance.people set:peopleProperties];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
