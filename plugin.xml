@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="com.samz.mixpanel"
-        version="1.1.0">
+        version="1.2.0">
 
     <name>Mixpanel</name>
 
@@ -15,7 +15,7 @@
     <keywords>mixpanel, cordova, phonegap, ionic, plugin, ios, android</keywords>
 
     <engines>
-        <engine name="cordova" version=">=3.0.0"/>
+        <engine name="cordova" version=">=3.5.0"/>
     </engines>
 
     <js-module src="www/mixpanel.js" name="Mixpanel">
@@ -36,9 +36,10 @@
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
         <source-file src="src/libs/mixpanel-android-4.5.3.jar" target-dir="libs/"/>
 
-        <preference name="android-minSdkVersion" value="9" />
 
         <!-- manifest -->
+        <preference name="android-minSdkVersion" value="9" />
+
         <!-- see https://github.com/mixpanel/mixpanel-android/blob/master/src/main/AndroidManifest.xml -->
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET"/>
