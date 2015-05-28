@@ -60,3 +60,8 @@ cordova platform add ios
 cordova build ios
 ```
 and setting up the build phase correctly again, as described in last question.
+
+
+
+##### Keywords
+mixpanel, plugin cordova, phonegap, ionic, android, ios
