@@ -70,11 +70,6 @@ public class MixpanelPlugin extends CordovaPlugin {
             return false;
         }
 
-        if (mixpanel == null && Action.INIT != act) {
-            this.error(cbCtx, "you must initialize mixpanel first using \"init\" action");
-            return false;
-        }
-
         switch (act) {
             case ALIAS:
                 return handleAlias(args, cbCtx);
