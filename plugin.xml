@@ -36,10 +36,7 @@
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
         <source-file src="src/libs/mixpanel-android-4.5.3.jar" target-dir="libs/"/>
 
-
-        <!-- manifest -->
-        <preference name="android-minSdkVersion" value="9" />
-
+        <!-- AndroidManifest.xml -->
         <!-- see https://github.com/mixpanel/mixpanel-android/blob/master/src/main/AndroidManifest.xml -->
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET"/>
