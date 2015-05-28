@@ -1,6 +1,11 @@
 Changelog
 =========
 
+### 1.2.1 2015-05-29
+
+- plugin.xml - dont use use 'android-minSdkVersion' preference
+
+
 ### 1.2.0 2015-05-26
 
 - plugin.xml - use 'android-minSdkVersion' smarter cordova preference instead of 'uses-sdk'
