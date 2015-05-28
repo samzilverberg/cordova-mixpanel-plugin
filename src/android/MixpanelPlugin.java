@@ -63,11 +63,10 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, final CallbackContext cbCtx) {
-        // throws JSONException
         Action act = Action.get(action);
 
         if (act == null){
-            this.error(cbCtx, "unknown action");
+            this.error(cbCtx, "unknown action: " + action);
             return false;
         }
 
@@ -121,10 +120,6 @@ public class MixpanelPlugin extends CordovaPlugin {
     private boolean handleAlias(JSONArray args, final CallbackContext cbCtx) {
         String aliasId = args.optString(0, "");
         String originalId = args.optString(1, null);
-        if (TextUtils.isEmpty(aliasId)) {
-            this.error(cbCtx, "missing alias id");
-            return false;
-        }
         mixpanel.alias(aliasId, originalId);
         cbCtx.success();
         return true;
@@ -147,10 +142,6 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private boolean handleIdentify(JSONArray args, final CallbackContext cbCtx) {
         String uniqueId = args.optString(0, "");
-        if (TextUtils.isEmpty(uniqueId)) {
-            this.error(cbCtx, "missing unique id");
-            return false;
-        }
         mixpanel.identify(uniqueId);
         cbCtx.success();
         return true;
@@ -159,10 +150,6 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private boolean handleInit(JSONArray args, final CallbackContext cbCtx) {
         String token = args.optString(0, "");
-        if (TextUtils.isEmpty(token)) {
-            this.error(cbCtx, "missing token for mixpanel project");
-            return false;
-        }
         Context ctx = cordova.getActivity();
         mixpanel = MixpanelAPI.getInstance(ctx, token);
         cbCtx.success();
@@ -179,11 +166,6 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private boolean handleTrack(JSONArray args, final CallbackContext cbCtx) {
         String event = args.optString(0, "");
-        if (TextUtils.isEmpty(event)) {
-            this.error(cbCtx, "missing event name");
-            return false;
-        }
-
         JSONObject properties = args.optJSONObject(1);
         if (properties == null) {
             properties = new JSONObject();
@@ -196,10 +178,6 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private boolean handlePeopleIdentify(JSONArray args, final CallbackContext cbCtx) {
         String distinctId = args.optString(0, "");
-        if (TextUtils.isEmpty(distinctId)) {
-            this.error(cbCtx, "missing distinct id");
-            return false;
-        }
         mixpanel.getPeople().identify(distinctId);
         cbCtx.success();
         return true;
@@ -208,10 +186,6 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private boolean handlePeopleSet(JSONArray args, final CallbackContext cbCtx) {
         JSONObject properties = args.optJSONObject(0);
-        if (properties == null) {
-            this.error(cbCtx, "missing people properties object");
-            return false;
-        }
         mixpanel.getPeople().set(properties);
         cbCtx.success();
         return true;
