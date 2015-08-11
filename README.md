@@ -30,6 +30,8 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 
 ## TODOs
 
+- check if sdks need to be updated
+- [publish to npm](https://cordova.apache.org/announcements/2015/04/21/plugins-release-and-move-to-npm.html)
 - add more Mixpanel People operations
   - set once, unset, increment, delete (more?)
 - make sure ios/android use same error messages
