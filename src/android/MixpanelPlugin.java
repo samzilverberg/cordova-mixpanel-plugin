@@ -29,6 +29,7 @@ public class MixpanelPlugin extends CordovaPlugin {
         FLUSH("flush"),
         IDENTIFY("identify"),
         INIT("init"),
+        REGISTER("register"),
         RESET("reset"),
         TRACK("track"),
 
@@ -85,6 +86,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleIdentify(args, cbCtx);
             case INIT:
                 return handleInit(args, cbCtx);
+            case REGISTER:
+                return handleRegister(args, cbCtx);
             case RESET:
                 return handleReset(args, cbCtx);
             case TRACK:
@@ -165,6 +168,18 @@ public class MixpanelPlugin extends CordovaPlugin {
         }
         Context ctx = cordova.getActivity();
         mixpanel = MixpanelAPI.getInstance(ctx, token);
+        cbCtx.success();
+        return true;
+    }
+
+
+    private boolean handleRegister(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject superProperties = args.optJSONObject(0);
+
+        if (superProperties == null) {
+            superProperties = new JSONObject();
+        }
+        mixpanel.registerSuperProperties(superProperties);
         cbCtx.success();
         return true;
     }

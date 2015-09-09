@@ -19,6 +19,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 - flush(onSuccess, onFail)
 - identify(distinctId, onSuccess, onFail)
 - init(token, onSuccess, onFail)
+- register(superProperties, onSuccess, onFail)
 - reset(onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
 

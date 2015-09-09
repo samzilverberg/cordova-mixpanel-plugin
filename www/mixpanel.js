@@ -25,6 +25,10 @@ mixpanel.init = function(token, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'init', [token]);
 };
 
+mixpanel.register = function(superProperties, onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'register', [superProperties]);
+};
+
 mixpanel.reset = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'reset', []);
 };
@@ -45,6 +49,9 @@ mixpanel.people.set = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set', [peopleProperties]);
 };
 
+mixpanel.people.registerPushToken = function(pushToken, onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'people_registerPushToken', [pushToken]);
+};
 
 // Exports
 

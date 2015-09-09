@@ -18,6 +18,7 @@
 -(void)flush:(CDVInvokedUrlCommand*)command;
 -(void)identify:(CDVInvokedUrlCommand*)command;
 -(void)init:(CDVInvokedUrlCommand*)command;
+-(void)register:(CDVInvokedUrlCommand*)command;
 -(void)reset:(CDVInvokedUrlCommand*)command;
 -(void)track:(CDVInvokedUrlCommand*)command;
 
