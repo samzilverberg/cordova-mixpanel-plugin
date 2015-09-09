@@ -37,8 +37,9 @@ public class MixpanelPlugin extends CordovaPlugin {
         // PEOPLE API
 
 
-        PEOPLE_SET("people_set"),
-        PEOPLE_IDENTIFY("people_identify");
+        PEOPLE_IDENTIFY("people_identify"),
+        PEOPLE_REGISTER_PUSH_TOKEN("people_registerPushToken"),
+        PEOPLE_SET("people_set");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -92,10 +93,12 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleReset(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
-            case PEOPLE_SET:
-                return handlePeopleSet(args, cbCtx);
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
+            case PEOPLE_REGISTER_PUSH_TOKEN:
+                return handlePeopleRegisterPushToekn(args, cbCtx);
+            case PEOPLE_SET:
+                return handlePeopleSet(args, cbCtx);
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -228,6 +231,17 @@ public class MixpanelPlugin extends CordovaPlugin {
             return false;
         }
         mixpanel.getPeople().set(properties);
+        cbCtx.success();
+        return true;
+    }
+
+    private boolean handlePeopleRegisterPushToekn(JSONArray args, final CallbackContext cbCtx) {
+        String token = args.optString(0);
+        if (token == null) {
+            this.error(cbCtx, "missing device token");
+            return false;
+        }
+        mixpanel.getPeople().initPushHandling(token);
         cbCtx.success();
         return true;
     }

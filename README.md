@@ -27,6 +27,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 
 - identify(distinctId, onSuccess, onFail)
 - set(peopleProperties, onSuccess, onFail)
+- registerPushToken(apnsOrGcmToken, onSuccess, onFail)
 
 
 ## TODOs
