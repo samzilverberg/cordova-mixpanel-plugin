@@ -149,9 +149,8 @@
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSArray* arguments = command.arguments;
-    NSString* eventName = [arguments objectAtIndex:0];
-    NSDictionary* eventProperties = [arguments objectAtIndex:1];
+    NSString* eventName = [command argumentAtIndex:0];
+    NSDictionary* eventProperties = [command argumentAtIndex:1 withDefault:@{}];
 
     if (mixpanelInstance == nil)
     {
