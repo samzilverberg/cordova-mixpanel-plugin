@@ -26,6 +26,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
         ALIAS("alias"),
+        DISTINCT_ID("distinctId"),
         FLUSH("flush"),
         IDENTIFY("identify"),
         INIT("init"),
@@ -81,6 +82,8 @@ public class MixpanelPlugin extends CordovaPlugin {
         switch (act) {
             case ALIAS:
                 return handleAlias(args, cbCtx);
+            case DISTINCT_ID:
+                return handleDistinctId(args, cbCtx);
             case FLUSH:
                 return handleFlush(args, cbCtx);
             case IDENTIFY:
@@ -133,6 +136,13 @@ public class MixpanelPlugin extends CordovaPlugin {
         }
         mixpanel.alias(aliasId, originalId);
         cbCtx.success();
+        return true;
+    }
+
+
+    private boolean handleDistinctId(JSONArray args, final CallbackContext cbCtx) {
+        String distinctId = mixpanel.getDistinctId();
+        cbCtx.success(distinctId);
         return true;
     }
 
