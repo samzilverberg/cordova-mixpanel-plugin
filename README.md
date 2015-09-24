@@ -16,19 +16,22 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 
 - alias(aliasId, originalId, onSuccess, onFail)
   - also available as ```createAlias```
-- distinctId(function onSuccess(distinctId) {}, onFail)
+- distinctId(function onSuccess(distinctId), onFail)
 - flush(onSuccess, onFail)
 - identify(distinctId, onSuccess, onFail)
 - init(token, onSuccess, onFail)
-- register(superProperties, onSuccess, onFail)
+- registerSuperProperties(superProperties, onSuccess, onFail)
 - reset(onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
 
 **window.mixpanel.people:**
 
 - identify(distinctId, onSuccess, onFail)
-- set(peopleProperties, onSuccess, onFail)
 - registerPushToken(apnsOrGcmToken, onSuccess, onFail)
+  - More info about push notifications at:
+    - [android](https://mixpanel.com/site_media/doctyl/uploads/Android-spec/com/mixpanel/android/mpmetrics/MixpanelAPI.People.html#initPushHandling(java.lang.String))
+    - [ios](https://mixpanel.com/help/reference/ios-push-notifications)
+- set(peopleProperties, onSuccess, onFail)
 
 
 ## TODOs
