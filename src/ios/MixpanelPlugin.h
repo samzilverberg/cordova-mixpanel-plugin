@@ -19,7 +19,7 @@
 -(void)flush:(CDVInvokedUrlCommand*)command;
 -(void)identify:(CDVInvokedUrlCommand*)command;
 -(void)init:(CDVInvokedUrlCommand*)command;
--(void)register:(CDVInvokedUrlCommand*)command;
+-(void)registerSuperProperties:(CDVInvokedUrlCommand*)command;
 -(void)reset:(CDVInvokedUrlCommand*)command;
 -(void)track:(CDVInvokedUrlCommand*)command;
 
@@ -27,8 +27,8 @@
 // PEOPLE API
 
 
--(void)people_set:(CDVInvokedUrlCommand*)command;
 -(void)people_identify:(CDVInvokedUrlCommand*)command;
 -(void)people_registerPushToken:(CDVInvokedUrlCommand*)command;
+-(void)people_set:(CDVInvokedUrlCommand*)command;
 
 @end
