@@ -26,6 +26,22 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+-(void)distinctId:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+
+    if (mixpanelInstance == nil)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+    }
+    else
+    {
+        NSString* distinctId = mixpanelInstance.distinctId;
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:distinctId];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
 
 -(void)flush:(CDVInvokedUrlCommand*)command;
 {
@@ -81,6 +97,25 @@
 }
 
 
+-(void)register:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSDictionary* superProperties = [command.arguments objectAtIndex:0];
+
+    if (mixpanelInstance == nil)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+    }
+    else
+    {
+        [mixpanelInstance registerSuperProperties:superProperties];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
 -(void)reset:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;
@@ -103,9 +138,8 @@
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSArray* arguments = command.arguments;
-    NSString* eventName = [arguments objectAtIndex:0];
-    NSDictionary* eventProperties = [command.arguments objectAtIndex:1];
+    NSString* eventName = [command argumentAtIndex:0];
+    NSDictionary* eventProperties = [command argumentAtIndex:1 withDefault:@{}];
 
     if (mixpanelInstance == nil)
     {
@@ -147,6 +181,26 @@
         [mixpanelInstance.people set:peopleProperties];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+-(void)people_registerPushToken:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSData* deviceToken =
+        [[command.arguments objectAtIndex:0] dataUsingEncoding:NSUTF8StringEncoding];
+
+    if (mixpanelInstance == nil)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+    }
+    else
+    {
+        [mixpanelInstance.people addPushDeviceToken:deviceToken];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 

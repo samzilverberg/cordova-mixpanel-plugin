@@ -16,9 +16,11 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 
 - alias(aliasId, originalId, onSuccess, onFail)
   - also available as ```createAlias```
+- distinctId(function onSuccess(distinctId) {}, onFail)
 - flush(onSuccess, onFail)
 - identify(distinctId, onSuccess, onFail)
 - init(token, onSuccess, onFail)
+- register(superProperties, onSuccess, onFail)
 - reset(onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
 
@@ -26,6 +28,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 
 - identify(distinctId, onSuccess, onFail)
 - set(peopleProperties, onSuccess, onFail)
+- registerPushToken(apnsOrGcmToken, onSuccess, onFail)
 
 
 ## TODOs
