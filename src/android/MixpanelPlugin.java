@@ -30,7 +30,7 @@ public class MixpanelPlugin extends CordovaPlugin {
         FLUSH("flush"),
         IDENTIFY("identify"),
         INIT("init"),
-        REGISTER("register"),
+        REGISTER_SUPER_PROPERTIES("registerSuperProperties"),
         RESET("reset"),
         TRACK("track"),
 
@@ -89,8 +89,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleIdentify(args, cbCtx);
             case INIT:
                 return handleInit(args, cbCtx);
-            case REGISTER:
-                return handleRegister(args, cbCtx);
+            case REGISTER_SUPER_PROPERTIES:
+                return handleRegisterSuperProperties(args, cbCtx);
             case RESET:
                 return handleReset(args, cbCtx);
             case TRACK:
@@ -98,7 +98,7 @@ public class MixpanelPlugin extends CordovaPlugin {
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
             case PEOPLE_REGISTER_PUSH_TOKEN:
-                return handlePeopleRegisterPushToekn(args, cbCtx);
+                return handlePeopleRegisterPushToken(args, cbCtx);
             case PEOPLE_SET:
                 return handlePeopleSet(args, cbCtx);
             default:
@@ -173,9 +173,8 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
-    private boolean handleRegister(JSONArray args, final CallbackContext cbCtx) {
+    private boolean handleRegisterSuperProperties(JSONArray args, final CallbackContext cbCtx) {
         JSONObject superProperties = args.optJSONObject(0);
-
         if (superProperties == null) {
             superProperties = new JSONObject();
         }
@@ -219,12 +218,8 @@ public class MixpanelPlugin extends CordovaPlugin {
         return true;
     }
 
-    private boolean handlePeopleRegisterPushToekn(JSONArray args, final CallbackContext cbCtx) {
+    private boolean handlePeopleRegisterPushToken(JSONArray args, final CallbackContext cbCtx) {
         String token = args.optString(0);
-        if (token == null) {
-            this.error(cbCtx, "missing device token");
-            return false;
-        }
         mixpanel.getPeople().initPushHandling(token);
         cbCtx.success();
         return true;
