@@ -26,9 +26,11 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
         ALIAS("alias"),
+        DISTINCT_ID("distinctId"),
         FLUSH("flush"),
         IDENTIFY("identify"),
         INIT("init"),
+        REGISTER("register"),
         RESET("reset"),
         TRACK("track"),
 
@@ -36,8 +38,9 @@ public class MixpanelPlugin extends CordovaPlugin {
         // PEOPLE API
 
 
-        PEOPLE_SET("people_set"),
-        PEOPLE_IDENTIFY("people_identify");
+        PEOPLE_IDENTIFY("people_identify"),
+        PEOPLE_REGISTER_PUSH_TOKEN("people_registerPushToken"),
+        PEOPLE_SET("people_set");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -79,20 +82,26 @@ public class MixpanelPlugin extends CordovaPlugin {
         switch (act) {
             case ALIAS:
                 return handleAlias(args, cbCtx);
+            case DISTINCT_ID:
+                return handleDistinctId(args, cbCtx);
             case FLUSH:
                 return handleFlush(args, cbCtx);
             case IDENTIFY:
                 return handleIdentify(args, cbCtx);
             case INIT:
                 return handleInit(args, cbCtx);
+            case REGISTER:
+                return handleRegister(args, cbCtx);
             case RESET:
                 return handleReset(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
-            case PEOPLE_SET:
-                return handlePeopleSet(args, cbCtx);
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
+            case PEOPLE_REGISTER_PUSH_TOKEN:
+                return handlePeopleRegisterPushToekn(args, cbCtx);
+            case PEOPLE_SET:
+                return handlePeopleSet(args, cbCtx);
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -131,6 +140,13 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
+    private boolean handleDistinctId(JSONArray args, final CallbackContext cbCtx) {
+        String distinctId = mixpanel.getDistinctId();
+        cbCtx.success(distinctId);
+        return true;
+    }
+
+
     private boolean handleFlush(JSONArray args, final CallbackContext cbCtx) {
         Runnable runnable = new Runnable() {
             @Override
@@ -165,6 +181,18 @@ public class MixpanelPlugin extends CordovaPlugin {
         }
         Context ctx = cordova.getActivity();
         mixpanel = MixpanelAPI.getInstance(ctx, token);
+        cbCtx.success();
+        return true;
+    }
+
+
+    private boolean handleRegister(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject superProperties = args.optJSONObject(0);
+
+        if (superProperties == null) {
+            superProperties = new JSONObject();
+        }
+        mixpanel.registerSuperProperties(superProperties);
         cbCtx.success();
         return true;
     }
@@ -213,6 +241,17 @@ public class MixpanelPlugin extends CordovaPlugin {
             return false;
         }
         mixpanel.getPeople().set(properties);
+        cbCtx.success();
+        return true;
+    }
+
+    private boolean handlePeopleRegisterPushToekn(JSONArray args, final CallbackContext cbCtx) {
+        String token = args.optString(0);
+        if (token == null) {
+            this.error(cbCtx, "missing device token");
+            return false;
+        }
+        mixpanel.getPeople().initPushHandling(token);
         cbCtx.success();
         return true;
     }

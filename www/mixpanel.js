@@ -8,10 +8,13 @@ var exec = require('cordova/exec'),
 
 // MIXPANEL API
 
-
 mixpanel.alias = mixpanel.createAlias = function(alias, originalId, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, originalId]);
 };
+
+mixpanel.distinctId = function(onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'distinctId');
+}
 
 mixpanel.flush = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'flush', []);
@@ -23,6 +26,10 @@ mixpanel.identify = function(id, onSuccess, onFail) {
 
 mixpanel.init = function(token, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'init', [token]);
+};
+
+mixpanel.register = function(superProperties, onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'register', [superProperties]);
 };
 
 mixpanel.reset = function(onSuccess, onFail) {
@@ -45,6 +52,9 @@ mixpanel.people.set = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set', [peopleProperties]);
 };
 
+mixpanel.people.registerPushToken = function(pushToken, onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'people_registerPushToken', [pushToken]);
+};
 
 // Exports
 
