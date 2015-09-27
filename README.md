@@ -39,7 +39,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
   });
   push.on('registration', function(data) {
     mixpanel.people.registerPushId(data.registrationId);
-  }.bind(this));
+  });
 ```
 - set(peopleProperties, onSuccess, onFail)
 
