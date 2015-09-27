@@ -211,7 +211,6 @@
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSArray* arguments = command.arguments;
     NSDictionary* peopleProperties = [command.arguments objectAtIndex:0];
 
     if (mixpanelInstance == nil)

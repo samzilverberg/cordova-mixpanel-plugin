@@ -27,10 +27,20 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 **window.mixpanel.people:**
 
 - identify(distinctId, onSuccess, onFail)
-- registerPushToken(apnsOrGcmToken, onSuccess, onFail)
+- registerPushId(registrationId, onSuccess, onFail)
   - More info about push notifications at:
     - [android](https://mixpanel.com/site_media/doctyl/uploads/Android-spec/com/mixpanel/android/mpmetrics/MixpanelAPI.People.html#initPushHandling(java.lang.String))
     - [ios](https://mixpanel.com/help/reference/ios-push-notifications)
+    - Note that the [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push) can be used to get the registrationId like so:
+```
+  var push = PushNotification.init({
+      'android': {'senderID': '<GCM Sender ID>'},
+      'ios': {'alert': 'true', 'badge': 'true', 'sound': 'true'}
+  });
+  push.on('registration', function(data) {
+    mixpanel.people.registerPushId(data.registrationId);
+  }.bind(this));
+```
 - set(peopleProperties, onSuccess, onFail)
 
 
