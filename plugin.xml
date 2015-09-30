@@ -12,7 +12,7 @@
 
     <repo>https://github.com/frugl/cordova-mixpanel-plugin.git</repo>
     <author>Frugl</author>
-    <keywords>/keywords>
+    <keywords></keywords>
 
     <engines>
         <engine name="cordova" version=">=3.5.0"/>
