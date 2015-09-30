@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="com.samz.mixpanel"
+        id="com.frugl.mixpanel"
         version="1.3.0">
 
     <name>Mixpanel</name>
 
     <description>
-        Mixpanel Cordova Plugin for iOS and Android
+        Mixpanel Cordova Plugin for iOS and Android. Origianlly Developed by Sam Zilverberg.
     </description>
 
-    <repo>https://github.com/samzilverberg/mixpanel-cordova.git</repo>
-    <author>Sam Zilverberg</author>
-    <keywords>mixpanel, cordova, phonegap, ionic, plugin, ios, android</keywords>
+    <repo>https://github.com/frugl/cordova-mixpanel-plugin.git</repo>
+    <author>Frugl</author>
+    <keywords>/keywords>
 
     <engines>
         <engine name="cordova" version=">=3.5.0"/>
@@ -27,9 +27,9 @@
 
         <!-- config.xml -->
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="Mixpanel">
-                <param name="android-package" value="com.samz.cordova.mixpanel.MixpanelPlugin"/>
-            </feature>
+          <feature name="Mixpanel">
+            <param name="android-package" value="com.frugl.cordova.mixpanel.MixpanelPlugin"/>
+          </feature>
         </config-file>
 
         <!-- Plugin files -->
@@ -41,6 +41,20 @@
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+            <application tools:ignore="AllowBackup">
+              <receiver android:name="com.mixpanel.android.mpmetrics.GCMReceiver"
+                        android:permission="com.google.android.c2dm.permission.SEND" >
+                        <intent-filter>
+                          <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                          <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                          <category android:name="$PACKAGE_NAME" />
+                        </intent-filter>
+              </receiver>
         </config-file>
     </platform>
 
