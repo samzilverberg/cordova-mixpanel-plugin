@@ -1,4 +1,4 @@
-package com.samz.cordova.mixpanel;
+package com.frugl.cordova.mixpanel;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -41,6 +41,8 @@ public class MixpanelPlugin extends CordovaPlugin {
         PEOPLE_IDENTIFY("people_identify"),
         PEOPLE_REGISTER_PUSH_TOKEN("people_registerPushToken"),
         PEOPLE_SET("people_set");
+        PEOPLE_TRACK_REVENUE("people_trackRevenue");
+        PEOPLE_INCREMENT("people_increment");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -101,6 +103,10 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handlePeopleRegisterPushToken(args, cbCtx);
             case PEOPLE_SET:
                 return handlePeopleSet(args, cbCtx);
+        case PEOPLE_TRACK_REVENUE:
+          return trackPeopleRevenue(args, cbCtx);
+        case PEOPLE_INCREMENT:
+          return incrementPeopleEvent(args, cbCtx);
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -224,4 +230,20 @@ public class MixpanelPlugin extends CordovaPlugin {
         cbCtx.success();
         return true;
     }
+
+  private boolean trackPeopleRevenue(JSONArray args, final CallbackContext cbCtx) {
+    Double charge = args.optDouble(0);
+    JSONObject properties = args.optJSONObject(1, null);
+    mixpanel.getPeople().charge(charge, properties);
+    cbCtx.success();
+    return true;
+  }
+
+  private boolean incrementPeopleEvent(JSONArray args, final CallbackContext cbCtx) {
+    String property  = args.optString(0);
+    Double increment = args.optDouble(1);
+    mixpanel.getPeople().increment(property, increment);
+    cbCtx.success();
+    return true;
+  }
 }

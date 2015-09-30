@@ -30,5 +30,9 @@
 -(void)people_identify:(CDVInvokedUrlCommand*)command;
 -(void)people_registerPushToken:(CDVInvokedUrlCommand*)command;
 -(void)people_set:(CDVInvokedUrlCommand*)command;
+-(void)people_trackRevenue:(CDVInvokedUrlCommand*)command;
+-(void)people_increment:(CDVInvokedUrlCommand*)command;
+
+
 
 @end
