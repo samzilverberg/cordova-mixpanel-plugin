@@ -55,6 +55,7 @@
                           <category android:name="$PACKAGE_NAME" />
                         </intent-filter>
               </receiver>
+            </application>
         </config-file>
     </platform>
 
