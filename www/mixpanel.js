@@ -86,12 +86,12 @@ mixpanel.people.set = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set', [peopleProperties]);
 };
 
-mixpanel.people.registerPushToken = function(pushToken, onSuccess, onFail) {
-  if (!pushToken || typeof pushToken !== 'string') {
-    return onFail(errors.invalid('pushToken', pushToken));
+mixpanel.people.registerPushId = function(pushId, onSuccess, onFail) {
+  if (!pushId || typeof pushId !== 'string') {
+    return onFail(errors.invalid('pushId', pushId));
   }
 
-  exec(onSuccess, onFail, 'Mixpanel', 'people_registerPushToken', [pushToken]);
+  exec(onSuccess, onFail, 'Mixpanel', 'people_registerPushId', [pushId]);
 };
 
 
