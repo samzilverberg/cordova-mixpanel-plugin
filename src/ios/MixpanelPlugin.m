@@ -165,11 +165,33 @@
 }
 
 
--(void)people_registerPushToken:(CDVInvokedUrlCommand*)command;
+// Helper function to convert NSString to NSData
+-(NSData*) convertToData:(NSString *)devToken;
+{
+    const char * chars = [devToken UTF8String];
+    int i = 0;
+    int len = (int)devToken.length;
+
+    NSMutableData *data = [NSMutableData dataWithCapacity:len / 2];
+    char byteChars[3] = {'\0','\0','\0'};
+    unsigned long wholeByte;
+
+    while (i < len) {
+        byteChars[0] = chars[i++];
+        byteChars[1] = chars[i++];
+        wholeByte = strtoul(byteChars, NULL, 16);
+        [data appendBytes:&wholeByte length:1];
+    }
+
+    return data;
+}
+
+
+-(void)people_registerPushId:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSData* deviceToken = [[command.arguments objectAtIndex:0] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData* deviceToken = [self convertToData:[command.arguments objectAtIndex:0]];
 
     if (mixpanelInstance == nil)
     {
@@ -189,7 +211,6 @@
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSArray* arguments = command.arguments;
     NSDictionary* peopleProperties = [command.arguments objectAtIndex:0];
 
     if (mixpanelInstance == nil)

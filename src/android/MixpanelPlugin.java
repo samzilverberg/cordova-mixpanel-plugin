@@ -39,7 +39,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
         PEOPLE_IDENTIFY("people_identify"),
-        PEOPLE_REGISTER_PUSH_TOKEN("people_registerPushToken"),
+        PEOPLE_REGISTER_PUSH_ID("people_registerPushId"),
         PEOPLE_SET("people_set");
         PEOPLE_TRACK_REVENUE("people_trackRevenue");
         PEOPLE_INCREMENT("people_increment");
@@ -99,8 +99,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleTrack(args, cbCtx);
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
-            case PEOPLE_REGISTER_PUSH_TOKEN:
-                return handlePeopleRegisterPushToken(args, cbCtx);
+            case PEOPLE_REGISTER_PUSH_ID:
+                return handlePeopleRegisterPushId(args, cbCtx);
             case PEOPLE_SET:
                 return handlePeopleSet(args, cbCtx);
         case PEOPLE_TRACK_REVENUE:
@@ -224,9 +224,9 @@ public class MixpanelPlugin extends CordovaPlugin {
         return true;
     }
 
-    private boolean handlePeopleRegisterPushToken(JSONArray args, final CallbackContext cbCtx) {
-        String token = args.optString(0);
-        mixpanel.getPeople().initPushHandling(token);
+    private boolean handlePeopleRegisterPushId(JSONArray args, final CallbackContext cbCtx) {
+        String regId = args.optString(0);
+        mixpanel.getPeople().setPushRegistrationId(regId);
         cbCtx.success();
         return true;
     }
