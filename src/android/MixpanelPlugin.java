@@ -233,7 +233,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
   private boolean trackPeopleRevenue(JSONArray args, final CallbackContext cbCtx) {
     Double charge = args.optDouble(0);
-    JSONObject properties = args.optJSONObject(1, null);
+    JSONObject properties = args.optJSONObject(1);
     mixpanel.getPeople().charge(charge, properties);
     cbCtx.success();
     return true;
