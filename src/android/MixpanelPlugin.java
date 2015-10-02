@@ -40,8 +40,8 @@ public class MixpanelPlugin extends CordovaPlugin {
 
         PEOPLE_IDENTIFY("people_identify"),
         PEOPLE_REGISTER_PUSH_ID("people_registerPushId"),
-        PEOPLE_SET("people_set");
-        PEOPLE_TRACK_REVENUE("people_trackRevenue");
+        PEOPLE_SET("people_set"),
+        PEOPLE_TRACK_REVENUE("people_trackRevenue"),
         PEOPLE_INCREMENT("people_increment");
 
         private final String name;
