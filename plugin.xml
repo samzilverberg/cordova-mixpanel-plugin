@@ -180,9 +180,6 @@
 
         <resource-file src="src/ios/Mixpanel/Media.xcassets" />
 
-        <!-- compiler-flags="-licucore" -->
-        <source-file src="src/ios/Mixpanel/libMPCategoryHelpers.a" framework="true"/>
-
 
         <!-- Mixpanel sdk requires frameworks -->
         <!--see https://github.com/mixpanel/mixpanel-iphone/blob/master/Mixpanel.podspec-->

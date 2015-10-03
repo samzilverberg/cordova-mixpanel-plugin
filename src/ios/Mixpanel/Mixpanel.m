@@ -545,7 +545,6 @@ static __unused NSString *MPURLEncode(NSString *s)
         self.peopleQueue = [NSMutableArray array];
         self.timedEvents = [NSMutableDictionary dictionary];
         self.shownSurveyCollections = [NSMutableSet set];
-        self.shownNotifications = [NSMutableSet set];
         self.decideResponseCached = NO;
         [self archive];
     });
