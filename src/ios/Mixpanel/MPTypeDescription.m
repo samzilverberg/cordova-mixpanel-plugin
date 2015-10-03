@@ -5,7 +5,7 @@
 
 @implementation MPTypeDescription
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [super init];
     if (self) {

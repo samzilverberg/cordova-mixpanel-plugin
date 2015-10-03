@@ -23,9 +23,9 @@
         // if the number is not a cgfloat, cast it to a cgfloat
         if (strcmp([number objCType], (char *) @encode(CGFloat)) != 0) {
             if (strcmp((char *) @encode(CGFloat), (char *) @encode(double)) == 0) {
-                value = @([number doubleValue]);
+                value = [NSNumber numberWithDouble:[number doubleValue]];
             } else {
-                value = @([number floatValue]);
+                value = [NSNumber numberWithFloat:[number floatValue]];
             }
         }
 

@@ -13,21 +13,16 @@
 
 @implementation MPEventBinding
 
-+ (MPEventBinding *)bindingWithJSONObject:(NSDictionary *)object
++ (MPEventBinding *)bindngWithJSONObject:(NSDictionary *)object
 {
     if (object == nil) {
         NSLog(@"must supply an JSON object to initialize from");
         return nil;
     }
 
-    NSString *bindingType = object[@"event_type"];
+    NSString *bindingType = [object objectForKey:@"event_type"];
     Class klass = [self subclassFromString:bindingType];
-    return [klass bindingWithJSONObject:object];
-}
-
-+ (MPEventBinding *)bindngWithJSONObject:(NSDictionary *)object
-{
-    return [self bindingWithJSONObject:object];
+    return [klass bindngWithJSONObject:object];
 }
 
 + (Class)subclassFromString:(NSString *)bindingType
@@ -46,13 +41,13 @@
     [[Mixpanel sharedInstance] track:event properties:bindingProperties];
 }
 
-- (instancetype)initWithEventName:(NSString *)eventName onPath:(NSString *)path
+- (id)initWithEventName:(NSString *)eventName onPath:(NSString *)path
 {
     if (self = [super init]) {
         self.eventName = eventName;
         self.path = [[MPObjectSelector alloc] initWithString:path];
         self.name = [[NSUUID UUID] UUIDString];
-        self.running = NO;
+        self.running = false;
     }
     return self;
 }
@@ -87,7 +82,7 @@
 
 #pragma mark -- NSCoder
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
+- (id)initWithCoder:(NSCoder *)aDecoder
 {
     NSString *path = [aDecoder decodeObjectForKey:@"path"];
     NSString *eventName = [aDecoder decodeObjectForKey:@"eventName"];
@@ -101,7 +96,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeObject:@(_ID) forKey:@"ID"];
+    [aCoder encodeObject:[NSNumber numberWithUnsignedLong:_ID] forKey:@"ID"];
     [aCoder encodeObject:_name forKey:@"name"];
     [aCoder encodeObject:_path.string forKey:@"path"];
     [aCoder encodeObject:_eventName forKey:@"eventName"];

@@ -13,7 +13,7 @@
     NSDictionary *_enums;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [super init];
     if (self) {
@@ -24,13 +24,13 @@
             MPClassDescription *classDescription = [[MPClassDescription alloc] initWithSuperclassDescription:superclassDescription
                                                                                                   dictionary:d];
 
-            classDescriptions[classDescription.name] = classDescription;
+            [classDescriptions setObject:classDescription forKey:classDescription.name];
         }
 
         NSMutableDictionary *enumDescriptions = [[NSMutableDictionary alloc] init];
         for (NSDictionary *d in dictionary[@"enums"]) {
             MPEnumDescription *enumDescription = [[MPEnumDescription alloc] initWithDictionary:d];
-            enumDescriptions[enumDescription.name] = enumDescription;
+            [enumDescriptions setObject:enumDescription forKey:enumDescription.name];
         }
 
         _classes = [classDescriptions copy];

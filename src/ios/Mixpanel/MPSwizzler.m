@@ -21,7 +21,7 @@
 @property (nonatomic, assign) uint numArgs;
 @property (nonatomic, copy) NSMapTable *blocks;
 
-- (instancetype)initWithBlock:(swizzleBlock)aBlock
+- (id)initWithBlock:(swizzleBlock)aBlock
               named:(NSString *)aName
            forClass:(Class)aClass
            selector:(SEL)aSelector
@@ -92,7 +92,7 @@ static void (*mp_swizzledMethods[MAX_ARGS - MIN_ARGS + 1])() = {mp_swizzledMetho
     NSEnumerator *en = [swizzles objectEnumerator];
     MPSwizzle *swizzle;
     while((swizzle = (MPSwizzle *)[en nextObject])) {
-        MixpanelError(@"%@", swizzle);
+        NSLog(@"%@", swizzle);
     }
 }
 
@@ -209,7 +209,7 @@ static void (*mp_swizzledMethods[MAX_ARGS - MIN_ARGS + 1])() = {mp_swizzledMetho
 
 @implementation MPSwizzle
 
-- (instancetype)init
+- (id)init
 {
     if ((self = [super init])) {
         self.blocks = [NSMapTable mapTableWithKeyOptions:(NSPointerFunctionsStrongMemory | NSPointerFunctionsObjectPersonality)
@@ -218,7 +218,7 @@ static void (*mp_swizzledMethods[MAX_ARGS - MIN_ARGS + 1])() = {mp_swizzledMetho
     return self;
 }
 
-- (instancetype)initWithBlock:(swizzleBlock)aBlock
+- (id)initWithBlock:(swizzleBlock)aBlock
               named:(NSString *)aName
            forClass:(Class)aClass
            selector:(SEL)aSelector

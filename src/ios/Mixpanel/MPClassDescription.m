@@ -6,7 +6,7 @@
 
 @implementation MPDelegateInfo
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary
 {
     if (self = [super init]) {
         _selectorName = dictionary[@"selector"];
@@ -23,7 +23,7 @@
     NSArray *_delegateInfos;
 }
 
-- (instancetype)initWithSuperclassDescription:(MPClassDescription *)superclassDescription dictionary:(NSDictionary *)dictionary
+- (id)initWithSuperclassDescription:(MPClassDescription *)superclassDescription dictionary:(NSDictionary *)dictionary
 {
     self = [super initWithDictionary:dictionary];
     if (self) {

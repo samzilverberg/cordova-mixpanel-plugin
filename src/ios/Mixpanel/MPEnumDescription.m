@@ -9,7 +9,7 @@
     NSMutableDictionary *_values;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary
 {
     NSParameterAssert(dictionary[@"flag_set"] != nil);
     NSParameterAssert(dictionary[@"base_type"] != nil);

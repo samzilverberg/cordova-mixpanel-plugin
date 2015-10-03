@@ -5,7 +5,7 @@
 
 @implementation MPPropertySelectorParameterDescription
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary
 {
     NSParameterAssert(dictionary[@"name"] != nil);
     NSParameterAssert(dictionary[@"type"] != nil);
@@ -23,7 +23,7 @@
 
 @implementation MPPropertySelectorDescription
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary
 {
     NSParameterAssert(dictionary[@"selector"] != nil);
     NSParameterAssert(dictionary[@"parameters"] != nil);
@@ -69,7 +69,7 @@
     return [NSValueTransformer valueTransformerForName:@"MPPassThroughValueTransformer"];
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary
 {
     NSParameterAssert(dictionary[@"name"] != nil);
 

@@ -8,6 +8,7 @@
 
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
+
 #import "MPObjectSelector.h"
 #import "NSData+MPBase64.h"
 
@@ -48,7 +49,7 @@
     return [[MPObjectSelector alloc] initWithString:string];
 }
 
-- (instancetype)initWithString:(NSString *)string
+- (id)initWithString:(NSString *)string
 {
     if (self = [super init]) {
         _string = string;
@@ -164,7 +165,7 @@
             NSString *predicateFormat;
             NSInteger index = 0;
             if ([_scanner scanInteger:&index] && [_scanner scanCharactersFromSet:_predicateEndChar intoString:nil]) {
-                filter.index = @((NSUInteger)index);
+                filter.index = [NSNumber numberWithUnsignedInteger:(NSUInteger)index];
             } else {
                 [_scanner scanUpToCharactersFromSet:_predicateEndChar intoString:&predicateFormat];
                 @try {
@@ -206,7 +207,7 @@
 
 @implementation MPObjectFilter
 
-- (instancetype)init
+- (id)init
 {
     if((self = [super init])) {
         self.unique = NO;
@@ -216,7 +217,7 @@
 }
 
 /*
- Apply this filter to the views, returning all of their children
+ Apply this filter to the views, returning all of their chhildren
  that match this filter's class / predicate pattern
  */
 - (NSArray *)apply:(NSArray *)views
@@ -368,17 +369,16 @@
             }
         }
     } else if ([obj isKindOfClass:[UIViewController class]]) {
-        UIViewController *viewController = (UIViewController *)obj;
-        for (NSObject *child in [viewController childViewControllers]) {
+        for (NSObject *child in [(UIViewController *)obj childViewControllers]) {
             if (!class || [child isKindOfClass:class]) {
                 [children addObject:child];
             }
         }
-        if (viewController.presentedViewController && (!class || [viewController.presentedViewController isKindOfClass:class])) {
-            [children addObject:viewController.presentedViewController];
+        if (((UIViewController *)obj).presentedViewController && (!class || [((UIViewController *)obj).presentedViewController isKindOfClass:class])) {
+            [children addObject:((UIViewController *)obj).presentedViewController];
         }
-        if (!class || (viewController.isViewLoaded && [viewController.view isKindOfClass:class])) {
-            [children addObject:viewController.view];
+        if (!class || [((UIViewController *)obj).view isKindOfClass:class]) {
+            [children addObject:((UIViewController *)obj).view];
         }
     }
     NSArray *result;

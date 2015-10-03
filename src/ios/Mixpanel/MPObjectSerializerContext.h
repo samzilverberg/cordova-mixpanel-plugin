@@ -5,7 +5,7 @@
 
 @interface MPObjectSerializerContext : NSObject
 
-- (instancetype)initWithRootObject:(id)object;
+- (id)initWithRootObject:(id)object;
 
 - (BOOL)hasUnvisitedObjects;
 

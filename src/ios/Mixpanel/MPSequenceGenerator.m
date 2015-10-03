@@ -10,12 +10,12 @@
     int32_t _value;
 }
 
-- (instancetype)init
+- (id)init
 {
     return [self initWithInitialValue:0];
 }
 
-- (instancetype)initWithInitialValue:(int32_t)initialValue
+- (id)initWithInitialValue:(int32_t)initialValue
 {
     self = [super init];
     if (self) {

@@ -13,7 +13,7 @@
 /*!
  @param     An array of MPClassDescription instances.
  */
-- (instancetype)initWithConfiguration:(MPObjectSerializerConfig *)configuration objectIdentityProvider:(MPObjectIdentityProvider *)objectIdentityProvider;
+- (id)initWithConfiguration:(MPObjectSerializerConfig *)configuration objectIdentityProvider:(MPObjectIdentityProvider *)objectIdentityProvider;
 
 - (NSDictionary *)serializedObjectsWithRootObject:(id)rootObject;
 

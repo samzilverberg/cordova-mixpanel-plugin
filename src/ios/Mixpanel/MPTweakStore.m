@@ -49,7 +49,7 @@
 
 - (void)addTweak:(MPTweak *)tweak
 {
-  _namedTweaks[tweak.name] = tweak;
+  [_namedTweaks setObject:tweak forKey:tweak.name];
   [_orderedTweaks addObject:tweak];
 }
 
