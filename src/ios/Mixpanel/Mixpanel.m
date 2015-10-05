@@ -672,6 +672,12 @@ static Mixpanel *sharedInstance = nil;
         self.eventsQueue = [NSMutableArray array];
         self.peopleQueue = [NSMutableArray array];
         self.timedEvents = [NSMutableDictionary dictionary];
+<<<<<<< HEAD
+=======
+        self.shownSurveyCollections = [NSMutableSet set];
+        self.shownNotifications = [NSMutableSet set];
+        self.decideResponseCached = NO;
+>>>>>>> parent of 7579e2b... updated to the new mixpanel plugin
         [self archive];
     });
 }

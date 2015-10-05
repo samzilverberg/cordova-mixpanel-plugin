@@ -226,7 +226,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private boolean handlePeopleRegisterPushId(JSONArray args, final CallbackContext cbCtx) {
         String regId = args.optString(0);
-        mixpanel.getPeople().setPushRegistrationId(regId);
+        mixpanel.getPeople().initPushHandling(regId);
         cbCtx.success();
         return true;
     }

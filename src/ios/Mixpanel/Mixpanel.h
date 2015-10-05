@@ -543,6 +543,26 @@
 
 /*!
  @method
+<<<<<<< HEAD
+=======
+ 
+ @abstract
+ Calls flush, then optionally archives and calls a handler when finished.
+ 
+ @discussion
+ When calling <code>flush</code> manually, it is sometimes important to verify
+ that the flush has finished before further action is taken. This is
+ especially important when the app is in the background and could be suspended
+ at any time if protocol is not followed. Delegate methods like
+ <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code>
+ are called when an app is brought to the background and require a handler to
+ be called when it finishes.
+ */
+- (void)flushWithCompletion:(void (^)())handler;
+
+/*!
+ @method
+>>>>>>> parent of 7579e2b... updated to the new mixpanel plugin
 
  @abstract
  Writes current project info, including distinct ID, super properties and pending event
