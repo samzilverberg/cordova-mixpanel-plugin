@@ -1,6 +1,14 @@
 Changelog
 =========
 
+
+### 1.3.1 2015-10-17
+- fix registerPushToken functionality (thanks [Steven Feaster](https://github.com/sfeast))
+  - use correct fn on android
+  - fix data conversion of pushId on ios
+  - rename it to setPushId to avoid confusion with 'registration' process
+
+
 ### 1.3.0 2015-09-24
 
 - more mixpanel functionality (thanks [Josh Dover](https://github.com/joshdover))
@@ -9,8 +17,8 @@ Changelog
     - registerSuperProperties
   - mixpanel people api:
     - registerPushToken
-
 - perform arguments checks in js instead in native code
+
 
 ### 1.2.1 2015-05-29
 
