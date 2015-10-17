@@ -39,7 +39,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
         PEOPLE_IDENTIFY("people_identify"),
-        PEOPLE_REGISTER_PUSH_ID("people_registerPushId"),
+        PEOPLE_SET_PUSH_ID("people_setPushId"),
         PEOPLE_SET("people_set");
 
         private final String name;
@@ -97,8 +97,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleTrack(args, cbCtx);
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
-            case PEOPLE_REGISTER_PUSH_ID:
-                return handlePeopleRegisterPushId(args, cbCtx);
+            case PEOPLE_SET_PUSH_ID:
+                return handlePeopleSetPushId(args, cbCtx);
             case PEOPLE_SET:
                 return handlePeopleSet(args, cbCtx);
             default:
@@ -218,9 +218,9 @@ public class MixpanelPlugin extends CordovaPlugin {
         return true;
     }
 
-    private boolean handlePeopleRegisterPushId(JSONArray args, final CallbackContext cbCtx) {
-        String regId = args.optString(0);
-        mixpanel.getPeople().setPushRegistrationId(regId);
+    private boolean handlePeopleSetPushId(JSONArray args, final CallbackContext cbCtx) {
+        String pushId = args.optString(0);
+        mixpanel.getPeople().setPushRegistrationId(pushId);
         cbCtx.success();
         return true;
     }

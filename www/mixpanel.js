@@ -86,12 +86,17 @@ mixpanel.people.set = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set', [peopleProperties]);
 };
 
-mixpanel.people.registerPushId = function(pushId, onSuccess, onFail) {
+/**
+ * @param pushId is the token/id you get back when registering the device with the notification service
+ *        for android - this is the GCM token
+ *        for ios - this is the APN token
+ */
+mixpanel.people.setPushId = function(pushId, onSuccess, onFail) {
   if (!pushId || typeof pushId !== 'string') {
     return onFail(errors.invalid('pushId', pushId));
   }
 
-  exec(onSuccess, onFail, 'Mixpanel', 'people_registerPushId', [pushId]);
+  exec(onSuccess, onFail, 'Mixpanel', 'people_setPushId', [pushId]);
 };
 
 

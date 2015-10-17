@@ -187,11 +187,11 @@
 }
 
 
--(void)people_registerPushId:(CDVInvokedUrlCommand*)command;
+-(void)people_setPushId:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSData* deviceToken = [self convertToData:[command.arguments objectAtIndex:0]];
+    NSData* pushId = [self convertToData:[command.arguments objectAtIndex:0]];
 
     if (mixpanelInstance == nil)
     {
@@ -199,7 +199,7 @@
     }
     else
     {
-        [mixpanelInstance.people addPushDeviceToken:deviceToken];
+        [mixpanelInstance.people addPushDeviceToken:pushId];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
 

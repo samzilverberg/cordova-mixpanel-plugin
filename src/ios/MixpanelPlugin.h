@@ -28,7 +28,7 @@
 
 
 -(void)people_identify:(CDVInvokedUrlCommand*)command;
--(void)people_registerPushId:(CDVInvokedUrlCommand*)command;
+-(void)people_setPushId:(CDVInvokedUrlCommand*)command;
 -(void)people_set:(CDVInvokedUrlCommand*)command;
 
 @end
