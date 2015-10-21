@@ -23,7 +23,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 - registerSuperProperties(superProperties, onSuccess, onFail)
 - reset(onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
-- showSurvey() **currently only iOS**
+- showSurvey(onSuccess, onFail)) **currently only iOS**
   -  by default the SDK attempts to show any available survey at app launch.  If you'd like to trigger a survey after a particular action though use this.
 
 **window.mixpanel.people:**
@@ -46,7 +46,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 - set(peopleProperties, onSuccess, onFail)
 - setOnce(peopleProperties, onSuccess, onFail)
 - increment(peopleProperties, onSuccess, onFail) **currently only iOS**
-     -mixpanel.people.increment({"thing to increment":number to increment by});
+     ```mixpanel.people.increment({"thing to increment":number to increment by});```
 
 ## TODOs
 
