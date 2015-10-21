@@ -86,6 +86,22 @@ mixpanel.people.set = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set', [peopleProperties]);
 };
 
+mixpanel.people.setOnce = function(peopleProperties, onSuccess, onFail) {
+  if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
+    return onFail(errors.invalid('properties', peopleProperties));
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_set_once', [peopleProperties]);
+};
+
+mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
+  if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
+    return onFail(errors.invalid('properties', peopleProperties));
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_increment', [peopleProperties]);
+};
+
 /**
  * @param pushId is the token/id you get back when registering the device with the notification service
  *        for android - this is the GCM token

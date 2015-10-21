@@ -176,7 +176,8 @@
         <source-file src="src/ios/Mixpanel/UIImage+MPAverageColor.m" />
         <source-file src="src/ios/Mixpanel/UIImage+MPImageEffects.m" />
         <source-file src="src/ios/Mixpanel/_MPTweakBindObserver.m" />
-
+        <resource-file src="src/ios/Mixpanel/MPNotification.storyboard" target-dir="Mixpanel"/>
+        <resource-file src="src/ios/Mixpanel/MPSurvey.storyboard" target-dir="Mixpanel"/>
 
         <resource-file src="src/ios/Mixpanel/Media.xcassets" />
 
