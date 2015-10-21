@@ -46,7 +46,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 - set(peopleProperties, onSuccess, onFail)
 - setOnce(peopleProperties, onSuccess, onFail)
 - increment(peopleProperties, onSuccess, onFail) **currently only iOS**
-     -mixpanel.people.increment({"thing to increment":number to increment by});
+     ``` mixpanel.people.increment({"thing to increment":number to increment by}); ```
 
 ## TODOs
 
