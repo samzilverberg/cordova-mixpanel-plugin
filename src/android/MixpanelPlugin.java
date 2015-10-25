@@ -40,7 +40,8 @@ public class MixpanelPlugin extends CordovaPlugin {
 
         PEOPLE_IDENTIFY("people_identify"),
         PEOPLE_SET_PUSH_ID("people_setPushId"),
-        PEOPLE_SET("people_set");
+        PEOPLE_SET("people_set"),
+        PEOPLE_SET_ONCE("people_set_once");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -101,6 +102,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handlePeopleSetPushId(args, cbCtx);
             case PEOPLE_SET:
                 return handlePeopleSet(args, cbCtx);
+            case PEOPLE_SET_ONCE:
+                return handlePeopleSetOnce(args, cbCtx);
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -214,6 +217,12 @@ public class MixpanelPlugin extends CordovaPlugin {
     private boolean handlePeopleSet(JSONArray args, final CallbackContext cbCtx) {
         JSONObject properties = args.optJSONObject(0);
         mixpanel.getPeople().set(properties);
+        cbCtx.success();
+        return true;
+    }
+    private boolean handlePeopleSetOnce(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject properties = args.optJSONObject(0);
+        mixpanel.getPeople().setOnce(properties);
         cbCtx.success();
         return true;
     }
