@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="com.samz.mixpanel"
-        version="1.3.1">
+        id="cordova-plugin-mixpanel"
+        version="2.0.0">
 
     <name>Mixpanel</name>
 
-    <description>
-        Mixpanel Cordova Plugin for iOS and Android
-    </description>
+    <description>Mixpanel Cordova Plugin for iOS and Android</description>
 
     <repo>https://github.com/samzilverberg/mixpanel-cordova.git</repo>
     <author>Sam Zilverberg</author>
@@ -196,7 +194,5 @@
         <framework src="QuartzCore.framework"/>
         <framework src="UIKit.framework"/>
         <framework src="libicucore.dylib" />
-
-
     </platform>
 </plugin>
