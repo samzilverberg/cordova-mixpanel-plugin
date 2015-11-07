@@ -227,7 +227,23 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
     private boolean handlePeopleIncrement(JSONArray args, final CallbackContext cbCtx) {
-        JSONObject properties = args.optJSONObject(0);
+        JSONObject jsonPropertiesObj = args.optJSONObject(0);
+        Map<String, Number> properties = new HashMap<String, Number>();
+
+        JSONArray keys = jsonPropertiesObj.names();
+
+        try {
+            for(int i = 0; i< keys.length(); i++){
+                String key = keys.getString(i);
+                Number value = (Number) jsonPropertiesObj.get(key);
+                properties.put(key, value);
+            }
+        }
+        catch(Exception e){
+            this.error(cbCtx, "passed in properties should be a json object with String keys and Number values");
+            return false;
+        }
+
         mixpanel.getPeople().increment(properties);
         cbCtx.success();
         return true;
