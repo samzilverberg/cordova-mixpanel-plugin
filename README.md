@@ -29,29 +29,25 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 **window.mixpanel.people:**
 
 - identify(distinctId, onSuccess, onFail)
+- increment(peopleProperties, onSuccess, onFail)
 - setPushId(pushId, onSuccess, onFail)
   - More info about push notifications at:
     - [android](https://mixpanel.com/site_media/doctyl/uploads/Android-spec/com/mixpanel/android/mpmetrics/MixpanelAPI.People.html#initPushHandling(java.lang.String))
     - [ios](https://mixpanel.com/help/reference/ios-push-notifications)
-  - Usage example using the [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push):  
+  - Usage example using the [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push):
   ```
-    var push = PushNotification.init({  
-        'android': {'senderID': '<GCM Sender ID>'},  
-        'ios': {'alert': 'true', 'badge': 'true', 'sound': 'true'}  
-    });  
-    push.on('registration', function(data) {  
-      mixpanel.people.setPushId(data.registrationId, function onSuccess(){}, function onFail(){});  
+    var push = PushNotification.init({
+        'android': {'senderID': '<GCM Sender ID>'},
+        'ios': {'alert': 'true', 'badge': 'true', 'sound': 'true'}
+    });
+    push.on('registration', function(data) {
+      mixpanel.people.setPushId(data.registrationId, function onSuccess(){}, function onFail(){});
     });
   ```
 - set(peopleProperties, onSuccess, onFail)
 - setOnce(peopleProperties, onSuccess, onFail)
-- increment(peopleProperties, onSuccess, onFail) **currently only iOS**  
-     ```mixpanel.people.increment({"thing to increment":number to increment by});```
 
 ## TODOs
-
-- check if sdks need to be updated
-- [publish to npm](https://cordova.apache.org/announcements/2015/04/21/plugins-release-and-move-to-npm.html)
 - add more Mixpanel People operations
   - unset, delete (more?)
 - make sure ios/android use same error messages

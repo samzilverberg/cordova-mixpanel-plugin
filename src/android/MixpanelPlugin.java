@@ -39,6 +39,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
         PEOPLE_IDENTIFY("people_identify"),
+        PEOPLE_INCREMENT("people_increment"),
         PEOPLE_SET_PUSH_ID("people_setPushId"),
         PEOPLE_SET("people_set"),
         PEOPLE_SET_ONCE("people_set_once");
@@ -98,6 +99,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleTrack(args, cbCtx);
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
+            case PEOPLE_INCREMENT:
+                return handlePeopleIncrement(args, cbCtx);
             case PEOPLE_SET_PUSH_ID:
                 return handlePeopleSetPushId(args, cbCtx);
             case PEOPLE_SET:
@@ -214,18 +217,29 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
+    private boolean handlePeopleIncrement(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject properties = args.optJSONObject(0);
+        mixpanel.getPeople().increment(properties);
+        cbCtx.success();
+        return true;
+    }
+
+
     private boolean handlePeopleSet(JSONArray args, final CallbackContext cbCtx) {
         JSONObject properties = args.optJSONObject(0);
         mixpanel.getPeople().set(properties);
         cbCtx.success();
         return true;
     }
+
+
     private boolean handlePeopleSetOnce(JSONArray args, final CallbackContext cbCtx) {
         JSONObject properties = args.optJSONObject(0);
         mixpanel.getPeople().setOnce(properties);
         cbCtx.success();
         return true;
     }
+
 
     private boolean handlePeopleSetPushId(JSONArray args, final CallbackContext cbCtx) {
         String pushId = args.optString(0);
