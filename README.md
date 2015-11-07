@@ -7,7 +7,11 @@
 #### Install
 
 ```
-cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
+for cordova version > 5.x.x:
+  cordova plugin add cordova-plugin-mixpanel
+
+older versions:
+  cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 ```
 
 #### Usage
@@ -47,6 +51,7 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 - set(peopleProperties, onSuccess, onFail)
 - setOnce(peopleProperties, onSuccess, onFail)
 
+
 ## TODOs
 - add more Mixpanel People operations
   - unset, delete (more?)
@@ -54,6 +59,15 @@ cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
 - refactor ios code
   - remove code duplication of checking that mixpanel was init
 
+
+## Contributing and Testing
+
+contributions of all sorts to the source code are more than welcome.
+any contribution will be noted in the changeslog (for FAME! :-D ).
+
+Please try to test your contributions using your cordova project or a dummy test project.
+You may use mine which i've published to NPM:
+https://www.npmjs.com/package/cordova-mixpanel-plugin-testapp
 
 
 ## Troubleshooting
@@ -79,6 +93,12 @@ cordova build ios
 ```
 and setting up the build phase correctly again, as described in last question.
 
+
+#### hey i'm on iOS>9 and nothing is happening, why?
+
+google for NSAppTransportSecurity.
+since iOS9 they are more strict about what your app is allowed to connect to.
+you will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
 
 
 ##### Keywords
