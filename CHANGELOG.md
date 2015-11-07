@@ -1,6 +1,9 @@
 Changelog
 =========
 
+### 2.0.1 2015-11-07
+- same as 2.0.0, just bumped it because of npm publish problem
+
 ### 2.0.0 2015-11-07
 - release on NPM to support cordova 5.x.x
   - install plugin via ``` cordova add cordova-plugin-mixpanel ```
