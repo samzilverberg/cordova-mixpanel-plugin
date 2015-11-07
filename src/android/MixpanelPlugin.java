@@ -32,6 +32,7 @@ public class MixpanelPlugin extends CordovaPlugin {
         INIT("init"),
         REGISTER_SUPER_PROPERTIES("registerSuperProperties"),
         RESET("reset"),
+        SHOW_SURVEY("showSurvey"),
         TRACK("track"),
 
 
@@ -95,6 +96,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleRegisterSuperProperties(args, cbCtx);
             case RESET:
                 return handleReset(args, cbCtx);
+            case SHOW_SURVEY:
+                return handleShowSurvey(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
             case PEOPLE_IDENTIFY:
@@ -194,6 +197,12 @@ public class MixpanelPlugin extends CordovaPlugin {
         mixpanel.reset();
         cbCtx.success();
         return true;
+    }
+
+
+    private boolean handleShowSurvey(JSONArray args, final CallbackContext cbCtx) {
+        this.error(cbCtx, "not implemented");
+        return false;
     }
 
 
