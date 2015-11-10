@@ -28,7 +28,6 @@ this.__x == private - only use within the class
 
 Globals should be all caps
 */
-console.log('oooo mixpanel lib');
 (function (mixpanel) {
 
 /*
