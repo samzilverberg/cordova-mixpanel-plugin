@@ -200,4 +200,18 @@
 
 
     </platform>
+    
+    <platform name="browser">
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="Mixpanel">
+                <param name="browser-package" value="MixpanelPlugin"/>
+            </feature>
+        </config-file>
+
+        <js-module src="src/libs/mixpanel-js-lib.js" name="DeviceProxy">
+            <runs />
+        </js-module>
+    </platform>
+
 </plugin>
