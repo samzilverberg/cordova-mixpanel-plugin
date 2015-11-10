@@ -213,6 +213,9 @@
             <runs />
         </js-module>
         
+        <source-file src="src/browser/mixpanel-js-lib.js" target-dir="src/browser"/>
+        
+        
     </platform>
 
 </plugin>
