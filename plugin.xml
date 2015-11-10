@@ -213,7 +213,7 @@
             <runs />
         </js-module>
         
-        <source-file src="src/browser/mixpanel-js-lib.js" target-dir="src/browser"/>
+        <asset src="src/browser/mixpanel-js-lib.js" target="plugins/cordova-plugin-mixpanel/src/browser/mixpanel-js-lib.js"/>
         
         
     </platform>
