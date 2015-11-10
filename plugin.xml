@@ -212,6 +212,9 @@
         <js-module src="src/browser/MixpanelProxy.js" name="MixpanelProxy">
             <runs />
         </js-module>
+        
+        <source-file src="src/libs/mixpanel-js-lib.js" target-dir="libs/"/>
+        
     </platform>
 
 </plugin>
