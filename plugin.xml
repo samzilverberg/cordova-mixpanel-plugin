@@ -209,7 +209,7 @@
             </feature>
         </config-file>
 
-        <js-module src="src/libs/mixpanel-js-lib.js" name="DeviceProxy">
+        <js-module src="src/browser/MixpanelProxy.js" name="MixpanelProxy">
             <runs />
         </js-module>
     </platform>
