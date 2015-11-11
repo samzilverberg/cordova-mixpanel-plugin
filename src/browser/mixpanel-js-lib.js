@@ -1,113 +1,136 @@
-/*
- * Mixpanel JS Library v2.2.1
- *
- * Copyright 2012, Mixpanel, Inc. All Rights Reserved
- * http://mixpanel.com/
- *
- * Includes portions of Underscore.js
- * http://documentcloud.github.com/underscore/
- * (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
- * Released under the MIT License.
- */
+(function () { 'use strict';
 
-// ==ClosureCompiler==
-// @compilation_level ADVANCED_OPTIMIZATIONS
-// @output_file_name mixpanel-2.2.min.js
-// ==/ClosureCompiler==
+    /*
+     * Mixpanel JS Library
+     *
+     * Copyright 2012, Mixpanel, Inc. All Rights Reserved
+     * http://mixpanel.com/
+     *
+     * Includes portions of Underscore.js
+     * http://documentcloud.github.com/underscore/
+     * (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
+     * Released under the MIT License.
+     */
 
-/*
-Will export window.mixpanel
-*/
+    // ==ClosureCompiler==
+    // @compilation_level ADVANCED_OPTIMIZATIONS
+    // @output_file_name mixpanel-2.7.min.js
+    // ==/ClosureCompiler==
 
-/*
-SIMPLE STYLE GUIDE:
+    /*
+    SIMPLE STYLE GUIDE:
 
-this.x == public function
-this._x == internal - only use within this file
-this.__x == private - only use within the class
+    this.x == public function
+    this._x == internal - only use within this file
+    this.__x == private - only use within the class
 
-Globals should be all caps
-*/
-(function (mixpanel) {
+    Globals should be all caps
+    */
 
-/*
- * Saved references to long variable names, so that closure compiler can
- * minimize file size.
- */
-    var   ArrayProto        = Array.prototype
-        , ObjProto          = Object.prototype
-        , slice             = ArrayProto.slice
-        , toString          = ObjProto.toString
-        , hasOwnProperty    = ObjProto.hasOwnProperty
-        , windowConsole     = window.console
-        , navigator         = window.navigator
-        , document          = window.document
-        , userAgent         = navigator.userAgent;
+    var LIB_VERSION = '2.7.1';
 
-/*
- * Constants
- */
-/** @const */   var   PRIMARY_INSTANCE_NAME     = "mixpanel"
-/** @const */       , SET_QUEUE_KEY             = "__mps"
-/** @const */       , SET_ONCE_QUEUE_KEY        = "__mpso"
-/** @const */       , ADD_QUEUE_KEY             = "__mpa"
-/** @const */       , APPEND_QUEUE_KEY          = "__mpap"
-/** @const */       , SET_ACTION                = "$set"
-/** @const */       , SET_ONCE_ACTION           = "$set_once"
-/** @const */       , ADD_ACTION                = "$add"
-/** @const */       , APPEND_ACTION             = "$append"
-// This key is deprecated, but we want to check for it to see whether aliasing is allowed.
-/** @const */       , PEOPLE_DISTINCT_ID_KEY    = "$people_distinct_id"
-/** @const */       , ALIAS_ID_KEY              = "__alias"
-/** @const */       , RESERVED_PROPERTIES       = [SET_QUEUE_KEY, SET_ONCE_QUEUE_KEY, ADD_QUEUE_KEY, APPEND_QUEUE_KEY, PEOPLE_DISTINCT_ID_KEY, ALIAS_ID_KEY];
-
-/*
- * Dynamic... constants? Is that an oxymoron?
- */
-    var   HTTP_PROTOCOL     = (("https:" == document.location.protocol) ? "https://" : "http://")
-        , SNIPPET_VERSION   = (mixpanel && mixpanel['__SV']) || 0
-        // http://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
-        // https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest#withCredentials
-        , USE_XHR           = (window.XMLHttpRequest && 'withCredentials' in new XMLHttpRequest())
-        // IE<10 does not support cross-origin XHR's but script tags
-        // with defer won't block window.onload; ENQUEUE_REQUESTS
-        // should only be true for Opera<12
-        , ENQUEUE_REQUESTS  = !USE_XHR && (userAgent.indexOf('MSIE') == -1);
-
-/*
- * Closure-level globals
- */
-    var   _                 = {}
-        , DEBUG             = false
-        , DEFAULT_CONFIG    = {
-              "api_host":                   HTTP_PROTOCOL + 'api.mixpanel.com'
-            , "cross_subdomain_cookie":     true
-            , "cookie_name":                ""
-            , "loaded":                     function() {}
-            , "store_google":               true
-            , "save_referrer":              true
-            , "test":                       false
-            , "verbose":                    false
-            , "img":                        false
-            , "track_pageview":             true
-            , "debug":                      false
-            , "track_links_timeout":        300
-            , "cookie_expiration":          365
-            , "upgrade":                    false
-            , "disable_cookie":             false
-            , "secure_cookie":              false
-            , "ip":                         true
-        }
-        , DOM_LOADED        = false;
-
+    var init_type;
+    var mixpanel_master;
+    var INIT_MODULE  = 0;
+    var INIT_SNIPPET = 1;
+    var ArrayProto     = Array.prototype;
+    var FuncProto      = Function.prototype;
+    var ObjProto       = Object.prototype;
+    var slice          = ArrayProto.slice;
+    var toString       = ObjProto.toString;
+    var hasOwnProperty = ObjProto.hasOwnProperty;
+    var windowConsole  = window.console;
+    var navigator      = window.navigator;
+    var document       = window.document;
+    var userAgent      = navigator.userAgent;
+    var PRIMARY_INSTANCE_NAME     = "mixpanel";
+    var SET_QUEUE_KEY             = "__mps";
+    var SET_ONCE_QUEUE_KEY        = "__mpso";
+    var ADD_QUEUE_KEY             = "__mpa";
+    var APPEND_QUEUE_KEY          = "__mpap";
+    var UNION_QUEUE_KEY           = "__mpu";
+    var SET_ACTION                = "$set";
+    var SET_ONCE_ACTION           = "$set_once";
+    var ADD_ACTION                = "$add";
+    var APPEND_ACTION             = "$append";
+    var UNION_ACTION              = "$union";
+    var PEOPLE_DISTINCT_ID_KEY    = "$people_distinct_id";
+    var ALIAS_ID_KEY              = "__alias";
+    var CAMPAIGN_IDS_KEY          = "__cmpns";
+    var EVENT_TIMERS_KEY          = "__timers";
+    var RESERVED_PROPERTIES       = [
+                            SET_QUEUE_KEY,
+                            SET_ONCE_QUEUE_KEY,
+                            ADD_QUEUE_KEY,
+                            APPEND_QUEUE_KEY,
+                            UNION_QUEUE_KEY,
+                            PEOPLE_DISTINCT_ID_KEY,
+                            ALIAS_ID_KEY,
+                            CAMPAIGN_IDS_KEY,
+                            EVENT_TIMERS_KEY
+                        ];
+    var HTTP_PROTOCOL = (("https:" == document.location.protocol) ? "https://" : "http://");
+    var USE_XHR = (window.XMLHttpRequest && 'withCredentials' in new XMLHttpRequest());
+    var ENQUEUE_REQUESTS = !USE_XHR && (userAgent.indexOf('MSIE') == -1) && (userAgent.indexOf('Mozilla') == -1);
+    var _ = {};
+    var DEBUG = false;
+    var DEFAULT_CONFIG = {
+              "api_host":               HTTP_PROTOCOL + 'api.mixpanel.com'
+            , "cross_subdomain_cookie": true
+            , "persistence":            "cookie"
+            , "persistence_name":       ""
+            , "cookie_name":            ""
+            , "loaded":                 function() {}
+            , "store_google":           true
+            , "save_referrer":          true
+            , "test":                   false
+            , "verbose":                false
+            , "img":                    false
+            , "track_pageview":         true
+            , "debug":                  false
+            , "track_links_timeout":    300
+            , "cookie_expiration":      365
+            , "upgrade":                false
+            , "disable_persistence":    false
+            , "disable_cookie":         false
+            , "secure_cookie":          false
+            , "ip":                     true
+            , "property_blacklist":     []
+        };
+    var DOM_LOADED = false;
     // UNDERSCORE
     // Embed part of the Underscore Library
 
     (function() {
-        var nativeForEach = ArrayProto.forEach,
+        var nativeBind    = FuncProto.bind,
+            nativeForEach = ArrayProto.forEach,
             nativeIndexOf = ArrayProto.indexOf,
             nativeIsArray = Array.isArray,
             breaker = {};
+
+        _.bind = function (func, context) {
+            var args, bound;
+            if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+            if (!_.isFunction(func)) throw new TypeError;
+            args = slice.call(arguments, 2);
+            return bound = function() {
+                if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
+                ctor.prototype = func.prototype;
+                var self = new ctor;
+                ctor.prototype = null;
+                var result = func.apply(self, args.concat(slice.call(arguments)));
+                if (Object(result) === result) return result;
+                return self;
+            };
+        };
+
+        _.bind_instance_methods = function(obj) {
+            for (var func in obj) {
+                if (typeof(obj[func]) === 'function') {
+                    obj[func] = _.bind(obj[func], obj);
+                }
+            }
+        };
 
         /**
          * @param {*=} obj
@@ -129,6 +152,19 @@ Globals should be all caps
                     }
                 }
             }
+        };
+
+        _.escapeHTML = function(s) {
+            var escaped = s;
+            if (escaped && _.isString(escaped)) {
+                escaped = escaped
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+            return escaped;
         };
 
         _.extend = function(obj) {
@@ -256,6 +292,22 @@ Globals should be all caps
             + pad(d.getUTCHours()) + ':'
             + pad(d.getUTCMinutes()) + ':'
             + pad(d.getUTCSeconds());
+    };
+
+    _.safewrap = function(f) {
+        return function() {
+            try {
+                f.apply(this, arguments);
+            } catch(e) {
+                console.critical('Implementation error. Please contact support@mixpanel.com.');
+            }
+        };
+    };
+
+    _.safewrap_class = function(klass, functions) {
+        for (var i = 0; i < functions.length; i++) {
+            klass.prototype[functions[i]] = _.safewrap(klass.prototype[functions[i]]);
+        }
     };
 
     _.strip_empty_properties = function(p) {
@@ -802,7 +854,7 @@ Globals should be all caps
     _.HTTPBuildQuery = function(formdata, arg_separator) {
         var key, use_val, use_key, tmp_arr = [];
 
-        if (typeof(arg_separator) === "undefined") {
+        if (_.isUndefined(arg_separator)) {
             arg_separator = '&';
         }
 
@@ -879,6 +931,45 @@ Globals should be all caps
         }
     };
 
+    // _.localStorage
+    _.localStorage = {
+        error: function(msg) {
+            console.error('localStorage error: ' + msg);
+        },
+
+        get: function(name) {
+            try {
+                return window.localStorage.getItem(name);
+            } catch (err) {
+                _.localStorage.error(err);
+            }
+            return null;
+        },
+
+        parse: function(name) {
+            try {
+                return _.JSONDecode(_.localStorage.get(name)) || {};
+            } catch (err) {}
+            return null;
+        },
+
+        set: function(name, value) {
+            try {
+                window.localStorage.setItem(name, value);
+            } catch (err) {
+                _.localStorage.error(err);
+            }
+        },
+
+        remove: function(name) {
+            try {
+                window.localStorage.removeItem(name);
+            } catch (err) {
+                _.localStorage.error(err);
+            }
+        }
+    };
+
     _.register_event = (function() {
         // written by Dean Edwards, 2005
         // with input from Tino Zijdel - crisp@xs4all.nl
@@ -888,11 +979,11 @@ Globals should be all caps
         // https://gist.github.com/1930440
 
         /**
-        * @param {Object} element
-        * @param {string} type
-        * @param {function(...[*])} handler
-        * @param {boolean=} oldSchool
-        */
+         * @param {Object} element
+         * @param {string} type
+         * @param {function(...[*])} handler
+         * @param {boolean=} oldSchool
+         */
         var register_event = function(element, type, handler, oldSchool) {
             if (!element) {
                 console.error("No valid element provided to register_event");
@@ -1050,11 +1141,12 @@ Globals should be all caps
                     continue; // Skip to next token
                 }
                 // Code to deal with attribute selectors
-                if (token.match(/^(\w*)\[(\w+)([=~\|\^\$\*]?)=?"?([^\]"]*)"?\]$/)) {
-                    var tagName = RegExp.$1;
-                    var attrName = RegExp.$2;
-                    var attrOperator = RegExp.$3;
-                    var attrValue = RegExp.$4;
+                var token_match = token.match(/^(\w*)\[(\w+)([=~\|\^\$\*]?)=?"?([^\]"]*)"?\]$/);
+                if (token_match) {
+                    var tagName = token_match[1];
+                    var attrName = token_match[2];
+                    var attrOperator = token_match[3];
+                    var attrValue = token_match[4];
                     if (!tagName) {
                         tagName = '*';
                     }
@@ -1179,13 +1271,17 @@ Globals should be all caps
          */
         browser: function(user_agent, vendor, opera) {
             var vendor = vendor || ''; // vendor is undefined for at least IE9
-            if (opera) {
+            if (opera || _.includes(user_agent, " OPR/")) {
                 if (_.includes(user_agent, "Mini")) {
                     return "Opera Mini";
                 }
                 return "Opera";
             } else if (/(BlackBerry|PlayBook|BB10)/i.test(user_agent)) {
                 return 'BlackBerry';
+            } else if (_.includes(user_agent, "IEMobile") || _.includes(user_agent, "WPDesktop")) {
+                return "Internet Explorer Mobile";
+            } else if (_.includes(user_agent, "Edge")) {
+                return "Microsoft Edge";
             } else if (_.includes(user_agent, "FBIOS")) {
                 return "Facebook Mobile";
             } else if (_.includes(user_agent, "Chrome")) {
@@ -1212,10 +1308,43 @@ Globals should be all caps
             }
         },
 
+        /**
+         * This function detects which browser version is running this script,
+         * parsing major and minor version (e.g., 42.1). User agent strings from:
+         * http://www.useragentstring.com/pages/useragentstring.php
+         */
+        browserVersion: function(userAgent, vendor, opera) {
+            var browser = _.info.browser(userAgent, vendor, opera);
+            var versionRegexs = {
+                "Internet Explorer Mobile": /rv:(\d+(\.\d+)?)/,
+                "Microsoft Edge":           /Edge\/(\d+(\.\d+)?)/,
+                "Chrome":                   /Chrome\/(\d+(\.\d+)?)/,
+                "Chrome iOS":               /Chrome\/(\d+(\.\d+)?)/,
+                "Safari":                   /Version\/(\d+(\.\d+)?)/,
+                "Mobile Safari":            /Version\/(\d+(\.\d+)?)/,
+                "Opera":                    /(Opera|OPR)\/(\d+(\.\d+)?)/,
+                "Firefox":                  /Firefox\/(\d+(\.\d+)?)/,
+                "Konqueror":                /Konqueror:(\d+(\.\d+)?)/,
+                "BlackBerry":               /BlackBerry (\d+(\.\d+)?)/,
+                "Android Mobile":           /android\s(\d+(\.\d+)?)/,
+                "Internet Explorer":        /(rv:|MSIE )(\d+(\.\d+)?)/,
+                "Mozilla":                  /rv:(\d+(\.\d+)?)/
+            };
+            var regex = versionRegexs[browser];
+            if (regex == undefined) {
+                return null;
+            }
+            var matches = userAgent.match(regex);
+            if (!matches) {
+                return null;
+            }
+            return parseFloat(matches[matches.length - 2]);
+        },
+
         os: function() {
             var a = userAgent;
             if (/Windows/i.test(a)) {
-                if (/Phone/.test(a)) { return 'Windows Mobile'; }
+                if (/Phone/.test(a) || /WPDesktop/.test(a)) { return 'Windows Phone'; }
                 return 'Windows';
             } else if (/(iPhone|iPad|iPod)/.test(a)) {
                 return 'iOS';
@@ -1233,7 +1362,9 @@ Globals should be all caps
         },
 
         device: function(user_agent) {
-            if (/iPad/.test(user_agent)) {
+            if (/Windows Phone/i.test(user_agent) || /WPDesktop/.test(user_agent)) {
+                return 'Windows Phone';
+            } else if (/iPad/.test(user_agent)) {
                 return 'iPad';
             } else if (/iPod/.test(user_agent)) {
                 return 'iPod Touch';
@@ -1241,8 +1372,6 @@ Globals should be all caps
                 return 'iPhone';
             } else if (/(BlackBerry|PlayBook|BB10)/i.test(user_agent)) {
                 return 'BlackBerry';
-            } else if (/Windows Phone/i.test(user_agent)) {
-                return 'Windows Phone';
             } else if (/Android/.test(user_agent)) {
                 return 'Android';
             } else {
@@ -1266,16 +1395,21 @@ Globals should be all caps
                 '$referring_domain': _.info.referringDomain(document.referrer),
                 '$device': _.info.device(userAgent)
             }), {
+                '$current_url': window.location.href,
+                '$browser_version': _.info.browserVersion(userAgent, navigator.vendor, window.opera),
                 '$screen_height': screen.height,
                 '$screen_width': screen.width,
-                'mp_lib': 'web'
+                'mp_lib': 'web',
+                '$lib_version': LIB_VERSION
             });
         },
 
         people_properties: function() {
-            return _.strip_empty_properties({
+            return _.extend(_.strip_empty_properties({
                 '$os': _.info.os(),
                 '$browser': _.info.browser(userAgent, navigator.vendor, window.opera)
+            }), {
+                '$browser_version': _.info.browserVersion(userAgent, navigator.vendor, window.opera)
             });
         },
 
@@ -1437,7 +1571,12 @@ Globals should be all caps
     };
 
     LinkTracker.prototype.event_handler = function(evt, element, options) {
-        options.new_tab = (evt.which === 2 || evt.metaKey || element.target === "_blank");
+        options.new_tab = (
+            evt.which === 2 ||
+            evt.metaKey ||
+            evt.ctrlKey ||
+            element.target === "_blank"
+        );
         options.href = element.href;
 
         if (!options.new_tab) {
@@ -1475,25 +1614,56 @@ Globals should be all caps
     };
 
     /**
-     * Mixpanel Cookie Object
+     * Mixpanel Persistence Object
      * @constructor
      */
-    var MixpanelCookie = function(config) {
+    var MixpanelPersistence = function(config) {
         this['props'] = {};
         this.campaign_params_saved = false;
 
-        if (config['cookie_name']) {
-            this.name = "mp_" + config['cookie_name'];
+        if (config['persistence_name']) {
+            this.name = "mp_" + config['persistence_name'];
         } else {
             this.name = "mp_" + config['token'] + "_mixpanel";
         }
+
+        var storage_type = config['persistence'];
+        if (storage_type !== 'cookie' && storage_type !== 'localStorage') {
+            console.critical('Unknown persistence type "' + storage_type + '"; falling back to "cookie"');
+            storage_type = config['persistence'] = 'cookie';
+        }
+
+        var localStorage_supported = function() {
+            var supported = true;
+            try {
+                var key = '__mplssupport__',
+                    val = 'xyz';
+                _.localStorage.set(key, val);
+                if (_.localStorage.get(key) !== val) {
+                    supported = false;
+                }
+                _.localStorage.remove(key);
+            } catch (err) {
+                supported = false;
+            }
+            if (!supported) {
+                console.error('localStorage unsupported; falling back to cookie store');
+            }
+            return supported;
+        };
+        if (storage_type === 'localStorage' && localStorage_supported()) {
+            this.storage = _.localStorage;
+        } else {
+            this.storage = _.cookie;
+        }
+
         this.load();
         this.update_config(config);
         this.upgrade(config);
         this.save();
     };
 
-    MixpanelCookie.prototype.properties = function() {
+    MixpanelPersistence.prototype.properties = function() {
         var p = {};
         // Filter out reserved properties
         _.each(this['props'], function(v, k) {
@@ -1504,33 +1674,33 @@ Globals should be all caps
         return p;
     };
 
-    MixpanelCookie.prototype.load = function() {
+    MixpanelPersistence.prototype.load = function() {
         if (this.disabled) { return; }
 
-        var cookie = _.cookie.parse(this.name);
+        var entry = this.storage.parse(this.name);
 
-        if (cookie) {
-            this['props'] = _.extend({}, cookie);
+        if (entry) {
+            this['props'] = _.extend({}, entry);
         }
     };
 
-    MixpanelCookie.prototype.upgrade = function(config) {
-        var should_upgrade = config['upgrade'],
+    MixpanelPersistence.prototype.upgrade = function(config) {
+        var upgrade_from_old_lib = config['upgrade'],
             old_cookie_name,
             old_cookie;
 
-        if (should_upgrade) {
+        if (upgrade_from_old_lib) {
             old_cookie_name = "mp_super_properties";
             // Case where they had a custom cookie name before.
-            if (typeof(should_upgrade) === "string") {
-                old_cookie_name = should_upgrade;
+            if (typeof(upgrade_from_old_lib) === "string") {
+                old_cookie_name = upgrade_from_old_lib;
             }
 
-            old_cookie = _.cookie.parse(old_cookie_name);
+            old_cookie = this.storage.parse(old_cookie_name);
 
             // remove the cookie
-            _.cookie.remove(old_cookie_name);
-            _.cookie.remove(old_cookie_name, true);
+            this.storage.remove(old_cookie_name);
+            this.storage.remove(old_cookie_name, true);
 
             if (old_cookie) {
                 this['props'] = _.extend(
@@ -1545,22 +1715,34 @@ Globals should be all caps
             // special case to handle people with cookies of the form
             // mp_TOKEN_INSTANCENAME from the first release of this library
             old_cookie_name = "mp_" + config['token'] + "_" + config['name'];
-            old_cookie = _.cookie.parse(old_cookie_name);
+            old_cookie = this.storage.parse(old_cookie_name);
 
             if (old_cookie) {
-                _.cookie.remove(old_cookie_name);
-                _.cookie.remove(old_cookie_name, true);
+                this.storage.remove(old_cookie_name);
+                this.storage.remove(old_cookie_name, true);
 
                 // Save the prop values that were in the cookie from before -
                 // this should only happen once as we delete the old one.
                 this.register_once(old_cookie);
             }
         }
+
+        if (this.storage === _.localStorage) {
+            old_cookie = _.cookie.parse(this.name);
+
+            _.cookie.remove(this.name);
+            _.cookie.remove(this.name, true);
+
+            if (old_cookie) {
+                this.register_once(old_cookie);
+            }
+        }
     };
 
-    MixpanelCookie.prototype.save = function() {
+    MixpanelPersistence.prototype.save = function() {
         if (this.disabled) { return; }
-        _.cookie.set(
+        this._expire_notification_campaigns();
+        this.storage.set(
             this.name,
             _.JSONEncode(this['props']),
             this.expire_days,
@@ -1569,15 +1751,15 @@ Globals should be all caps
         );
     };
 
-    MixpanelCookie.prototype.remove = function() {
+    MixpanelPersistence.prototype.remove = function() {
         // remove both domain and subdomain cookies
-        _.cookie.remove(this.name, false);
-        _.cookie.remove(this.name, true);
+        this.storage.remove(this.name, false);
+        this.storage.remove(this.name, true);
     };
 
-    // removes the cookie and deletes all loaded data
+    // removes the storage entry and deletes all loaded data
     // forced name for tests
-    MixpanelCookie.prototype.clear = function() {
+    MixpanelPersistence.prototype.clear = function() {
         this.remove();
         this['props'] = {};
     };
@@ -1587,7 +1769,7 @@ Globals should be all caps
      * @param {*=} default_value
      * @param {number=} days
      */
-    MixpanelCookie.prototype.register_once = function(props, default_value, days) {
+    MixpanelPersistence.prototype.register_once = function(props, default_value, days) {
         if (_.isObject(props)) {
             if (typeof(default_value) === 'undefined') { default_value = "None"; }
             this.expire_days = (typeof(days) === 'undefined') ? this.default_expiry : days;
@@ -1609,7 +1791,7 @@ Globals should be all caps
      * @param {Object} props
      * @param {number=} days
      */
-    MixpanelCookie.prototype.register = function(props, days) {
+    MixpanelPersistence.prototype.register = function(props, days) {
         if (_.isObject(props)) {
             this.expire_days = (typeof(days) === 'undefined') ? this.default_expiry : days;
 
@@ -1622,26 +1804,42 @@ Globals should be all caps
         return false;
     };
 
-    MixpanelCookie.prototype.unregister = function(prop) {
+    MixpanelPersistence.prototype.unregister = function(prop) {
         if (prop in this['props']) {
             delete this['props'][prop];
             this.save();
         }
     };
 
-    MixpanelCookie.prototype.update_campaign_params = function() {
+    MixpanelPersistence.prototype._expire_notification_campaigns = _.safewrap(function() {
+        var campaigns_shown = this['props'][CAMPAIGN_IDS_KEY],
+            EXPIRY_TIME = DEBUG ? 60 * 1000 : 60 * 60 * 1000; // 1 minute (DEBUG) / 1 hour (PDXN)
+        if (!campaigns_shown) {
+            return;
+        }
+        for (var campaign_id in campaigns_shown) {
+            if (1 * new Date() - campaigns_shown[campaign_id] > EXPIRY_TIME) {
+                delete campaigns_shown[campaign_id];
+            }
+        }
+        if (_.isEmptyObject(campaigns_shown)) {
+            delete this['props'][CAMPAIGN_IDS_KEY];
+        }
+    });
+
+    MixpanelPersistence.prototype.update_campaign_params = function() {
         if (!this.campaign_params_saved) {
             this.register_once(_.info.campaignParams());
             this.campaign_params_saved = true;
         }
     };
 
-    MixpanelCookie.prototype.update_search_keyword = function(referrer) {
+    MixpanelPersistence.prototype.update_search_keyword = function(referrer) {
         this.register(_.info.searchInfo(referrer));
     };
 
     // EXPORTED METHOD, we test this directly.
-    MixpanelCookie.prototype.update_referrer_info = function(referrer) {
+    MixpanelPersistence.prototype.update_referrer_info = function(referrer) {
         // If referrer doesn't exist, we want to note the fact that it was type-in traffic.
         this.register_once({
             "$initial_referrer": referrer || "$direct",
@@ -1649,17 +1847,17 @@ Globals should be all caps
         }, "");
     };
 
-    MixpanelCookie.prototype.get_referrer_info = function() {
+    MixpanelPersistence.prototype.get_referrer_info = function() {
         return _.strip_empty_properties({
             '$initial_referrer': this['props']['$initial_referrer'],
             '$initial_referring_domain': this['props']['$initial_referring_domain']
         });
     };
 
-    // safely fills the passed in object with the cookies properties,
+    // safely fills the passed in object with stored properties,
     // does not override any properties defined in both
     // returns the passed in object
-    MixpanelCookie.prototype.safe_merge = function(props) {
+    MixpanelPersistence.prototype.safe_merge = function(props) {
         _.each(this['props'], function(val, prop) {
             if (!(prop in props)) {
                 props[prop] = val;
@@ -1669,21 +1867,21 @@ Globals should be all caps
         return props;
     };
 
-    MixpanelCookie.prototype.update_config = function(config) {
+    MixpanelPersistence.prototype.update_config = function(config) {
         this.default_expiry = this.expire_days = config['cookie_expiration'];
-        this.set_disabled(config['disable_cookie']);
+        this.set_disabled(config['disable_persistence']);
         this.set_cross_subdomain(config['cross_subdomain_cookie']);
         this.set_secure(config['secure_cookie']);
     };
 
-    MixpanelCookie.prototype.set_disabled = function(disabled) {
+    MixpanelPersistence.prototype.set_disabled = function(disabled) {
         this.disabled = disabled;
         if (this.disabled) {
             this.remove();
         }
     };
 
-    MixpanelCookie.prototype.set_cross_subdomain = function(cross_subdomain) {
+    MixpanelPersistence.prototype.set_cross_subdomain = function(cross_subdomain) {
         if (cross_subdomain !== this.cross_subdomain) {
             this.cross_subdomain = cross_subdomain;
             this.remove();
@@ -1691,11 +1889,11 @@ Globals should be all caps
         }
     };
 
-    MixpanelCookie.prototype.get_cross_subdomain = function() {
+    MixpanelPersistence.prototype.get_cross_subdomain = function() {
         return this.cross_subdomain;
     };
 
-    MixpanelCookie.prototype.set_secure = function(secure) {
+    MixpanelPersistence.prototype.set_secure = function(secure) {
         if (secure !== this.secure) {
             this.secure = secure ? true : false;
             this.remove();
@@ -1703,12 +1901,13 @@ Globals should be all caps
         }
     };
 
-    MixpanelCookie.prototype._add_to_people_queue = function(queue, data) {
+    MixpanelPersistence.prototype._add_to_people_queue = function(queue, data) {
         var q_key = this._get_queue_key(queue),
             q_data = data[queue],
             set_q = this._get_or_create_queue(SET_ACTION),
             set_once_q = this._get_or_create_queue(SET_ONCE_ACTION),
             add_q = this._get_or_create_queue(ADD_ACTION),
+            union_q = this._get_or_create_queue(UNION_ACTION),
             append_q = this._get_or_create_queue(APPEND_ACTION, []);
 
         if (q_key === SET_QUEUE_KEY) {
@@ -1717,6 +1916,9 @@ Globals should be all caps
             // if there was a pending increment, override it
             // with the set.
             this._pop_from_people_queue(ADD_ACTION, q_data);
+            // if there was a pending union, override it
+            // with the set.
+            this._pop_from_people_queue(UNION_ACTION, q_data);
         } else if (q_key === SET_ONCE_QUEUE_KEY) {
             // only queue the data if there is not already a set_once call for it.
             _.each(q_data, function(v, k) {
@@ -1739,6 +1941,16 @@ Globals should be all caps
                     add_q[k] += v;
                 }
             }, this);
+        } else if (q_key === UNION_QUEUE_KEY) {
+            _.each(q_data, function(v, k) {
+                if (_.isArray(v)) {
+                    if (!(k in union_q)) {
+                        union_q[k] = [];
+                    }
+                    // We may send duplicates, the server will dedup them.
+                    union_q[k] = union_q[k].concat(v);
+                }
+            });
         } else if (q_key === APPEND_QUEUE_KEY) {
             append_q.push(q_data);
         }
@@ -1749,7 +1961,7 @@ Globals should be all caps
         this.save();
     };
 
-    MixpanelCookie.prototype._pop_from_people_queue = function(queue, data) {
+    MixpanelPersistence.prototype._pop_from_people_queue = function(queue, data) {
         var q = this._get_queue(queue);
         if (!_.isUndefined(q)) {
             _.each(data, function(v, k) {
@@ -1760,7 +1972,7 @@ Globals should be all caps
         }
     };
 
-    MixpanelCookie.prototype._get_queue_key = function(queue) {
+    MixpanelPersistence.prototype._get_queue_key = function(queue) {
         if (queue === SET_ACTION) {
             return SET_QUEUE_KEY;
         } else if (queue === SET_ONCE_ACTION) {
@@ -1769,19 +1981,38 @@ Globals should be all caps
             return ADD_QUEUE_KEY;
         } else if (queue === APPEND_ACTION) {
             return APPEND_QUEUE_KEY;
+        } else if (queue === UNION_ACTION) {
+            return UNION_QUEUE_KEY;
         } else {
             console.error("Invalid queue:", queue);
         }
     };
 
-    MixpanelCookie.prototype._get_queue = function(queue) {
+    MixpanelPersistence.prototype._get_queue = function(queue) {
         return this['props'][this._get_queue_key(queue)];
     };
-    MixpanelCookie.prototype._get_or_create_queue = function(queue, default_val) {
+    MixpanelPersistence.prototype._get_or_create_queue = function(queue, default_val) {
         var key = this._get_queue_key(queue),
             default_val = _.isUndefined(default_val) ? {} : default_val;
 
         return this['props'][key] || (this['props'][key] = default_val);
+    };
+
+    MixpanelPersistence.prototype.set_event_timer = function(event_name, timestamp) {
+        var timers = this['props'][EVENT_TIMERS_KEY] || {};
+        timers[event_name] = timestamp;
+        this['props'][EVENT_TIMERS_KEY] = timers;
+        this.save();
+    };
+
+    MixpanelPersistence.prototype.remove_event_timer = function(event_name) {
+        var timers = this['props'][EVENT_TIMERS_KEY] || {};
+        var timestamp = timers[event_name];
+        if (!_.isUndefined(timestamp)) {
+            delete this['props'][EVENT_TIMERS_KEY][event_name];
+            this.save();
+        }
+        return timestamp;
     };
 
     /**
@@ -1793,14 +2024,19 @@ Globals should be all caps
      * declared before this file has loaded).
      */
     var create_mplib = function(token, config, name) {
-        var instance, target = (name === PRIMARY_INSTANCE_NAME) ? mixpanel : mixpanel[name];
+        var instance,
+            target = (name === PRIMARY_INSTANCE_NAME) ? mixpanel_master : mixpanel_master[name];
 
-        if (target && !_.isArray(target)) {
-            console.error("You have already initialized " + name);
-            return;
+        if (target && init_type === INIT_MODULE) {
+            instance = target;
+        } else {
+            if (target && !_.isArray(target)) {
+                console.error("You have already initialized " + name);
+                return;
+            }
+            instance = new MixpanelLib();
         }
 
-        instance = new MixpanelLib();
         instance._init(token, config, name);
 
         instance['people'] = new MixpanelPeople();
@@ -1812,7 +2048,7 @@ Globals should be all caps
 
         // if target is not defined, we called init after the lib already
         // loaded, so there won't be an array of things to execute
-        if (!_.isUndefined(target)) {
+        if (!_.isUndefined(target) && _.isArray(target)) {
             // Crunch through the people queue first - we queue this data up &
             // flush on identify, so it's better to do all these operations first
             instance._execute_array.call(instance['people'], target['people']);
@@ -1831,23 +2067,23 @@ Globals should be all caps
     // Initialization methods
 
     /**
-     * This function initialize a new instance of the Mixpanel tracking object.
+     * This function initializes a new instance of the Mixpanel tracking object.
      * All new instances are added to the main mixpanel object as sub properties (such as
-     * mixpanel.your_library_name) and also returned by this function.  If you wanted
-     * to define a second instance on the page you would do it like so:
+     * mixpanel.library_name) and also returned by this function. To define a
+     * second instance on the page, you would call:
      *
-     *      mixpanel.init("new token", { your: "config" }, "library_name")
+     *     mixpanel.init("new token", { your: "config" }, "library_name");
      *
-     * and use it like this:
+     * and use it like so:
      *
-     *      mixpanel.library_name.track(...)
+     *     mixpanel.library_name.track(...);
      *
      * @param {String} token   Your Mixpanel API token
      * @param {Object} [config]  A dictionary of config options to override
      * @param {String} [name]    The name for the new mixpanel instance that you want created
      */
     MixpanelLib.prototype.init = function (token, config, name) {
-        if (typeof(name) === "undefined") {
+        if (_.isUndefined(name)) {
             console.error("You must name your new library: init(token, config, name)");
             return;
         }
@@ -1857,7 +2093,7 @@ Globals should be all caps
         }
 
         var instance = create_mplib(token, config, name);
-        mixpanel[name] = instance;
+        mixpanel_master[name] = instance;
         instance._loaded();
 
         return instance;
@@ -1890,7 +2126,7 @@ Globals should be all caps
             , "identify_called": false
         };
 
-        this['cookie'] = new MixpanelCookie(this['config']);
+        this['persistence'] = this['cookie'] = new MixpanelPersistence(this['config']);
         this.register_once({'distinct_id': _.UUID()}, "");
     };
 
@@ -1974,6 +2210,7 @@ Globals should be all caps
 
         // needed to correctly format responses
         var verbose_mode = this.get_config('verbose');
+        if (data['verbose']) { verbose_mode = true; }
 
         if (this.get_config('test')) { data['test'] = 1; }
         if (verbose_mode) { data['verbose'] = 1; }
@@ -2039,7 +2276,7 @@ Globals should be all caps
      * (and are thus stored in an array so they can be called later)
      *
      * Note: we fire off all the mixpanel function calls && user defined
-     * functions BEFORE we fire off mixpanel tracking calls.  This is so
+     * functions BEFORE we fire off mixpanel tracking calls. This is so
      * identify/register/set_config calls can properly modify early
      * tracking calls.
      *
@@ -2078,7 +2315,7 @@ Globals should be all caps
      * behavior around after the lib is loaded.
      * This is only useful for external integrations that
      * do not wish to rely on our convenience methods
-     * (created in the snippet). Good example is Optimizely.
+     * (created in the snippet).
      *
      * ### Usage:
      *     mixpanel.push(['register', { a: 'b' }]);
@@ -2090,13 +2327,13 @@ Globals should be all caps
     };
 
     /**
-     * Disable events on the Mixpanel object.  If passed no arguments,
-     * this function disables tracking of any event.  If passed an
+     * Disable events on the Mixpanel object. If passed no arguments,
+     * this function disables tracking of any event. If passed an
      * array of event names, those events will be disabled, but other
      * events will continue to be tracked.
      *
-     * Note: this function doesn't stop regular mixpanel functions from
-     * firing such as register and name_tag.
+     * Note: this function does not stop other mixpanel functions from
+     * firing, such as register() or people.set().
      *
      * @param {Array} [events] An array of event names to disable
      */
@@ -2109,54 +2346,68 @@ Globals should be all caps
     };
 
     /**
-     * Track an event.  This is the most important Mixpanel function and
-     * the one you will be using the most.
+     * Track an event. This is the most important and
+     * frequently used Mixpanel function.
      *
      * ### Usage:
      *
      *     // track an event named "Registered"
      *     mixpanel.track("Registered", {"Gender": "Male", "Age": 21});
      *
-     * For tracking link clicks or form submissions, see mixpanel.track_links or mixpanel.track_forms.
+     * To track link clicks or form submissions, see track_links() or track_forms().
      *
      * @param {String} event_name The name of the event. This can be anything the user does - "Button Click", "Sign Up", "Item Purchased", etc.
      * @param {Object} [properties] A set of properties to include with the event you're sending. These describe the user who did the event or details about the event itself.
      * @param {Function} [callback] If provided, the callback function will be called after tracking the event.
      */
     MixpanelLib.prototype.track = function(event_name, properties, callback) {
-        if (typeof(event_name) === "undefined") {
+        if (_.isUndefined(event_name)) {
             console.error("No event name provided to mixpanel.track");
             return;
         }
 
-        if (_.isBlockedUA(userAgent)
-        ||  this._flags.disable_all_events
-        ||  _.include(this.__disabled_events, event_name)) {
+        if (this._event_is_disabled(event_name)) {
             if (typeof(callback) !== 'undefined') { callback(0); }
             return;
         }
 
         // set defaults
         properties = properties || {};
-        properties['token'] = properties.token || this.get_config('token');
+        properties['token'] = this.get_config('token');
 
-        // update cookie
-        this['cookie'].update_search_keyword(document.referrer);
+        // set $duration if time_event was previously called for this event
+        var start_timestamp = this['persistence'].remove_event_timer(event_name);
+        if (!_.isUndefined(start_timestamp)) {
+            var duration_in_ms = new Date().getTime() - start_timestamp;
+            properties['$duration'] = parseFloat((duration_in_ms / 1000).toFixed(3));
+        }
 
-        if (this.get_config('store_google')) { this['cookie'].update_campaign_params(); }
-        if (this.get_config('save_referrer')) { this['cookie'].update_referrer_info(document.referrer); }
+        // update persistence
+        this['persistence'].update_search_keyword(document.referrer);
+
+        if (this.get_config('store_google')) { this['persistence'].update_campaign_params(); }
+        if (this.get_config('save_referrer')) { this['persistence'].update_referrer_info(document.referrer); }
 
         // note: extend writes to the first object, so lets make sure we
-        // don't write to the cookie properties object and info
+        // don't write to the persistence properties object and info
         // properties object by passing in a new object
 
         // update properties with pageview info and super-properties
         properties = _.extend(
             {}
             , _.info.properties()
-            , this['cookie'].properties()
+            , this['persistence'].properties()
             , properties
         );
+
+        var property_blacklist = this.get_config('property_blacklist');
+        if (_.isArray(property_blacklist)) {
+            _.each(property_blacklist, function(blacklisted_prop) {
+                delete properties[blacklisted_prop];
+            });
+        } else {
+            console.error('Invalid value for property_blacklist config: ' + property_blacklist);
+        }
 
         var data = {
               'event': event_name
@@ -2188,12 +2439,12 @@ Globals should be all caps
      * @api private
      */
     MixpanelLib.prototype.track_pageview = function(page) {
-        if (typeof(page) === "undefined") { page = document.location.href; }
+        if (_.isUndefined(page)) { page = document.location.href; }
         this.track("mp_page_view", _.info.pageviewInfo(page));
     };
 
     /**
-     * Track clicks on a set of document elements.  Selector must be a
+     * Track clicks on a set of document elements. Selector must be a
      * valid query. Elements must exist on the page at the time track_links is called.
      *
      * ### Usage:
@@ -2207,10 +2458,10 @@ Globals should be all caps
      * servers to respond. If they have not responded by that time
      * it will head to the link without ensuring that your event
      * has been tracked.  To configure this timeout please see the
-     * mixpanel.set_config docs below.
+     * set_config() documentation below.
      *
      * If you pass a function in as the properties argument, the
-     * function will receive the DOMElement which triggered the
+     * function will receive the DOMElement that triggered the
      * event as an argument.  You are expected to return an object
      * from the function; any properties defined on this object
      * will be sent to mixpanel as event properties.
@@ -2225,7 +2476,7 @@ Globals should be all caps
     };
 
     /**
-     * Tracks form submissions. Selector must be a valid query.
+     * Track form submissions. Selector must be a valid query.
      *
      * ### Usage:
      *
@@ -2238,10 +2489,10 @@ Globals should be all caps
      * servers to respond, if they have not responded by that time
      * it will head to the link without ensuring that your event
      * has been tracked.  To configure this timeout please see the
-     * mixpanel.set_config docs below.
+     * set_config() documentation below.
      *
      * If you pass a function in as the properties argument, the
-     * function will receive the DOMElement which triggered the
+     * function will receive the DOMElement that triggered the
      * event as an argument.  You are expected to return an object
      * from the function; any properties defined on this object
      * will be sent to mixpanel as event properties.
@@ -2256,19 +2507,67 @@ Globals should be all caps
     };
 
     /**
+     * Time an event by including the time between this call and a
+     * later 'track' call for the same event in the properties sent
+     * with the event.
+     *
+     * ### Usage:
+     *
+     *     // time an event named "Registered"
+     *     mixpanel.time_event("Registered");
+     *     mixpanel.track("Registered", {"Gender": "Male", "Age": 21});
+     *
+     * When called for a particular event name, the next track call for that event
+     * name will include the elapsed time between the 'time_event' and 'track'
+     * calls. This value is stored as seconds in the '$duration' property.
+     *
+     * @param {String} event_name The name of the event.
+     */
+    MixpanelLib.prototype.time_event = function(event_name) {
+        if (_.isUndefined(event_name)) {
+            console.error("No event name provided to mixpanel.time_event");
+            return;
+        }
+
+        if (this._event_is_disabled(event_name)) {
+            return;
+        }
+
+        this['persistence'].set_event_timer(event_name,  new Date().getTime());
+    };
+
+    /**
      * Register a set of super properties, which are included with all
-     * events.  This will overwrite previous super property values.
+     * events. This will overwrite previous super property values.
+     *
+     * ### Usage:
+     *
+     *     // register "Gender" as a super property
+     *     mixpanel.register({'Gender': 'Female'});
+     *
+     *     // register several super properties when a user signs up
+     *     mixpanel.register({
+     *         'Email': 'jdoe@example.com',
+     *         'Account Type': 'Free'
+     *     });
      *
      * @param {Object} properties An associative array of properties to store about the user
      * @param {Number} [days] How many days since the user's last visit to store the super properties
      */
     MixpanelLib.prototype.register = function(props, days) {
-        this['cookie'].register(props, days);
+        this['persistence'].register(props, days);
     };
 
     /**
-     * Register a set of super properties only once.  This will not
+     * Register a set of super properties only once. This will not
      * overwrite previous super property values, unlike register().
+     *
+     * ### Usage:
+     *
+     *     // register a super property for the first time only
+     *     mixpanel.register_once({
+     *         'First Login Date': new Date().toISOString()
+     *     });
      *
      * ### Notes:
      *
@@ -2280,7 +2579,7 @@ Globals should be all caps
      * @param {Number} [days] How many days since the users last visit to store the super properties
      */
     MixpanelLib.prototype.register_once = function(props, default_value, days) {
-        this['cookie'].register_once(props, default_value, days);
+        this['persistence'].register_once(props, default_value, days);
     };
 
     /**
@@ -2289,7 +2588,7 @@ Globals should be all caps
      * @param {String} property The name of the super property to remove
      */
     MixpanelLib.prototype.unregister = function(property) {
-        this['cookie'].unregister(property);
+        this['persistence'].unregister(property);
     };
 
     MixpanelLib.prototype._register_single = function(prop, value) {
@@ -2299,27 +2598,35 @@ Globals should be all caps
     };
 
     /**
-     * Identify a user with a unique id.  All subsequent
-     * actions caused by this user will be tied to this identity.  This
-     * property is used to track unique visitors.  If the method is
+     * Identify a user with a unique ID. All subsequent
+     * actions caused by this user will be tied to this unique ID. This
+     * property is used to track unique visitors. If the method is
      * never called, then unique visitors will be identified by a UUID
      * generated the first time they visit the site.
      *
-     * ### Note:
+     * ### Notes:
      *
      * You can call this function to overwrite a previously set
-     * unique id for the current user.  Mixpanel cannot translate
-     * between ids at this time, so when you change a users id
+     * unique ID for the current user. Mixpanel cannot translate
+     * between IDs at this time, so when you change a user's ID
      * they will appear to be a new user.
+     *
+     * identify() should not be called to link anonymous activity to
+     * subsequent activity when a unique ID is first assigned.
+     * Use alias() when a unique ID is first assigned (registration), and
+     * use identify() to identify the user with that unique ID on an ongoing
+     * basis (e.g., each time a user logs in after registering).
+     * Do not call identify() at the same time as alias().
      *
      * @param {String} unique_id A string that uniquely identifies a user
      */
-    MixpanelLib.prototype.identify = function(unique_id, _set_callback, _add_callback, _append_callback, _set_once_callback) {
+    MixpanelLib.prototype.identify = function(unique_id, _set_callback, _add_callback, _append_callback, _set_once_callback, _union_callback) {
         // Optional Parameters
         //  _set_callback:function  A callback to be run if and when the People set queue is flushed
         //  _add_callback:function  A callback to be run if and when the People add queue is flushed
         //  _append_callback:function  A callback to be run if and when the People append queue is flushed
         //  _set_once_callback:function  A callback to be run if and when the People set_once queue is flushed
+        //  _union_callback:function  A callback to be run if and when the People union queue is flushed
 
         // identify only changes the distinct id if it doesn't match either the existing or the alias;
         // if it's new, blow away the alias as well.
@@ -2327,14 +2634,27 @@ Globals should be all caps
             this.unregister(ALIAS_ID_KEY);
             this._register_single('distinct_id', unique_id);
         }
+        this._check_and_handle_notifications(this.get_distinct_id());
         this._flags.identify_called = true;
         // Flush any queued up people requests
-        this['people']._flush(_set_callback, _add_callback, _append_callback, _set_once_callback);
+        this['people']._flush(_set_callback, _add_callback, _append_callback, _set_once_callback, _union_callback);
     };
 
     /**
      * Returns the current distinct id of the user. This is either the id automatically
-     * generated by the library or the id that has been passed by a call to mixpanel.identify
+     * generated by the library or the id that has been passed by a call to identify().
+     *
+     * ### Notes:
+     *
+     * get_distinct_id() can only be called after the Mixpanel library has finished loading.
+     * init() has a loaded function available to handle this automatically. For example:
+     *
+     *     // set distinct_id after the mixpanel library has loaded
+     *     mixpanel.init("YOUR PROJECT TOKEN", {
+     *         loaded: function() {
+     *             distinct_id = mixpanel.get_distinct_id();
+     *         }
+     *     });
      */
     MixpanelLib.prototype.get_distinct_id = function() {
         return this.get_property('distinct_id');
@@ -2342,20 +2662,27 @@ Globals should be all caps
 
     /**
      * Create an alias, which Mixpanel will use to link two distinct_ids going forward (not retroactively).
-     *  Multiple aliases can map to the same original ID, but not vice-versa. Aliases can also be chained - the
-     *  following is a valid scenario:
+     * Multiple aliases can map to the same original ID, but not vice-versa. Aliases can also be chained - the
+     * following is a valid scenario:
      *
-     *      mixpanel.alias("new_id", "existing_id");
-     *      ...
-     *      mixpanel.alias("newer_id", "new_id");
+     *     mixpanel.alias("new_id", "existing_id");
+     *     ...
+     *     mixpanel.alias("newer_id", "new_id");
      *
      * If the original ID is not passed in, we will use the current distinct_id - probably the auto-generated GUID.
+     *
+     * ### Notes:
+     *
+     * The best practice is to call alias() when a unique ID is first created for a user
+     * (e.g., when a user first registers for an account and provides an email address).
+     * alias() should never be called more than once for a given user, except to
+     * chain a newer ID to a previously new ID, as described above.
      *
      * @param {String} alias A unique identifier that you want to use for this user in the future.
      * @param {String} [original] The current identifier being used for this user.
      */
     MixpanelLib.prototype.alias = function(alias, original) {
-        // If the $people_distinct_id key exists in the cookie, there has been a previous
+        // If the $people_distinct_id key exists in persistence, there has been a previous
         // mixpanel.people.identify() call made for this user. It is VERY BAD to make an alias with
         // this ID, as it will duplicate users.
         if (alias === this.get_property(PEOPLE_DISTINCT_ID_KEY)) {
@@ -2381,9 +2708,9 @@ Globals should be all caps
     };
 
     /**
-     * Provide a string to recognize the user by.  The string passed to
+     * Provide a string to recognize the user by. The string passed to
      * this method will appear in the Mixpanel Streams product rather
-     * than an automatically generated name.  Name tags do not have to
+     * than an automatically generated name. Name tags do not have to
      * be unique.
      *
      * This value will only be included in Streams data.
@@ -2401,35 +2728,45 @@ Globals should be all caps
      * The default config is:
      *
      *     {
-     *       // super properties span subdomains
-     *       cross_subdomain_cookie:     true
-     *
-     *       // super properties cookie name
-     *       cookie_name:                ""
-     *
      *       // super properties cookie expiration (in days)
      *       cookie_expiration:          365
      *
-     *       // should we track a page view on page load
-     *       track_pageview:             true
+     *       // super properties span subdomains
+     *       cross_subdomain_cookie:     true
+     *
+     *       // if this is true, the mixpanel cookie or localStorage entry
+     *       // will be deleted, and no user persistence will take place
+     *       disable_persistence:        false
+     *
+     *       // type of persistent store for super properties (cookie/
+     *       // localStorage) if set to "localStorage", any existing
+     *       // mixpanel cookie value with the same persistence_name
+     *       // will be transferred to localStorage and deleted
+     *       persistence:                "cookie"
+     *
+     *       // name for super properties persistent store
+     *       persistence_name:           ""
+     *
+     *       // names of properties/superproperties which should never
+     *       // be sent with track() calls
+     *       property_blacklist:         []
+     *
+     *       // if this is true, mixpanel cookies will be marked as
+     *       // secure, meaning they will only be transmitted over https
+     *       secure_cookie:              false
      *
      *       // the amount of time track_links will
      *       // wait for Mixpanel's servers to respond
      *       track_links_timeout:        300
      *
-     *       // if this is true, the mixpanel cookie will be deleted,
-     *       // and no user persistence will take place
-     *       disable_cookie:             false
+     *       // should we track a page view on page load
+     *       track_pageview:             true
      *
-     *       // if this is true, the mixpanel cookie will be marked as
-     *       // secure, meaning it will only be transmitted over https
-     *       secure_cookie:              false
-     *
-     *       // if you set upgrade to be true, the library will check for a
-     *       // cookie from our old js library and import super
+     *       // if you set upgrade to be true, the library will check for
+     *       // a cookie from our old js library and import super
      *       // properties from it, then the old cookie is deleted
-     *       // The upgrade config option only works in the initialization, so
-     *       // make sure you set it when you create the library.
+     *       // The upgrade config option only works in the initialization,
+     *       // so make sure you set it when you create the library.
      *       upgrade:                    false
      *     }
      *
@@ -2439,7 +2776,17 @@ Globals should be all caps
     MixpanelLib.prototype.set_config = function(config) {
         if (_.isObject(config)) {
             _.extend(this['config'], config);
-            if (this['cookie']) { this['cookie'].update_config(this['config']); }
+
+            if (!this.get_config('persistence_name')) {
+                this['config']['persistence_name'] = this['config']['cookie_name'];
+            }
+            if (!this.get_config('disable_persistence')) {
+                this['config']['disable_persistence'] = this['config']['disable_cookie'];
+            }
+
+            if (this['persistence']) {
+                this['persistence'].update_config(this['config']);
+            }
             DEBUG = DEBUG || this.get_config('debug');
         }
     };
@@ -2453,12 +2800,24 @@ Globals should be all caps
 
     /**
      * Returns the value of the super property named property_name. If no such
-     * property is set, get_property will return the undefined value.
+     * property is set, get_property() will return the undefined value.
+     *
+     * ### Notes:
+     *
+     * get_property() can only be called after the Mixpanel library has finished loading.
+     * init() has a loaded function available to handle this automatically. For example:
+     *
+     *     // grab value for "user_id" after the mixpanel library has loaded
+     *     mixpanel.init("YOUR PROJECT TOKEN", {
+     *         loaded: function() {
+     *             user_id = mixpanel.get_property("user_id");
+     *         }
+     *     });
      *
      * @param {String} property_name The name of the super property you want to retrieve
      */
     MixpanelLib.prototype.get_property = function(property_name) {
-        return this['cookie']['props'][property_name];
+        return this['persistence']['props'][property_name];
     };
 
     MixpanelLib.prototype.toString = function() {
@@ -2469,14 +2828,51 @@ Globals should be all caps
         return name;
     };
 
+    MixpanelLib.prototype._event_is_disabled = function(event_name) {
+        return _.isBlockedUA(userAgent)
+            || this._flags.disable_all_events
+            || _.include(this.__disabled_events, event_name);
+    };
+
+    MixpanelLib.prototype._check_and_handle_notifications = function(distinct_id) {
+        if (!distinct_id || this._flags.identify_called || this.get_config('disable_notifications')) {
+            return;
+        }
+
+        console.log("MIXPANEL NOTIFICATION CHECK");
+
+        var data = {
+            'verbose':     true,
+            'version':     '1',
+            'lib':         'web',
+            'token':       this.get_config('token'),
+            'distinct_id': distinct_id
+        };
+        var self = this;
+        this._send_request(
+            this.get_config('api_host') + '/decide/',
+            data,
+            this._prepare_callback(function(r) {
+                if (r['notifications'] && r['notifications'].length > 0) {
+                    self._show_notification.call(self, r['notifications'][0]);
+                }
+            })
+        );
+    };
+
+    MixpanelLib.prototype._show_notification = function(notification_data) {
+        var notification = new MPNotif(notification_data, this);
+        notification.show();
+    };
+
     /**
      * Mixpanel People Object
      * @constructor
      */
     var MixpanelPeople = function(){ };
 
-    MixpanelPeople.prototype._init = function(mixpanel) {
-        this._mixpanel = mixpanel;
+    MixpanelPeople.prototype._init = function(mixpanel_instance) {
+        this._mixpanel = mixpanel_instance;
     };
 
     /*
@@ -2503,13 +2899,10 @@ Globals should be all caps
         var $set = {};
         if (_.isObject(prop)) {
             _.each(prop, function(v, k) {
-                // We will get these ourselves
-                if (k == '$distinct_id' || k == '$token') {
-                    return;
-                } else {
+                if (!this._is_reserved_property(k)) {
                     $set[k] = v;
                 }
-            });
+            }, this);
             callback = to;
         } else {
             $set[prop] = to;
@@ -2517,13 +2910,13 @@ Globals should be all caps
 
         // make sure that the referrer info has been updated and saved
         if (this._get_config('save_referrer')) {
-            this._mixpanel.cookie.update_referrer_info(document.referrer);
+            this._mixpanel['persistence'].update_referrer_info(document.referrer);
         }
 
         // update $set object with default people properties
         $set = _.extend({}
             , _.info.people_properties()
-            , this._mixpanel.cookie.get_referrer_info()
+            , this._mixpanel['persistence'].get_referrer_info()
             , $set
         );
 
@@ -2534,6 +2927,8 @@ Globals should be all caps
 
     /*
      * Set properties on a user record, only if they do not yet exist.
+     * This will not overwrite previous people property values, unlike
+     * people.set().
      *
      * ### Usage:
      *
@@ -2556,13 +2951,10 @@ Globals should be all caps
         var $set_once = {};
         if (_.isObject(prop)) {
             _.each(prop, function(v, k) {
-                // We will get these ourselves
-                if (k == '$distinct_id' || k == '$token') {
-                    return;
-                } else {
+                if (!this._is_reserved_property(k)) {
                     $set_once[k] = v;
                 }
-            });
+            }, this);
             callback = to;
         } else {
             $set_once[prop] = to;
@@ -2578,17 +2970,18 @@ Globals should be all caps
      *
      *     mixpanel.people.increment('page_views', 1);
      *
-     *     // or, for convenience, if you're just incrementing a counter by 1, you can
-     *     // simply do
+     *     // or, for convenience, if you're just incrementing a counter by
+     *     // 1, you can simply do
      *     mixpanel.people.increment('page_views');
      *
      *     // to decrement a counter, pass a negative number
-     *     mixpanel.people.increment('credits_left': -1);
+     *     mixpanel.people.increment('credits_left', -1);
      *
-     *     // like mixpanel.people.set(), you can increment multiple properties at once:
+     *     // like mixpanel.people.set(), you can increment multiple
+     *     // properties at once:
      *     mixpanel.people.increment({
      *         counter1: 1,
-     *         counter2: 1
+     *         counter2: 6
      *     });
      *
      * @param {Object|String} prop If a string, this is the name of the property. If an object, this is an associative array of names and numeric values.
@@ -2600,15 +2993,15 @@ Globals should be all caps
         var $add = {};
         if (_.isObject(prop)) {
             _.each(prop, function(v, k) {
-                if (k == '$distinct_id' || k == '$token') {
-                    return;
-                } else if (isNaN(parseFloat(v))) {
-                    console.error("Invalid increment value passed to mixpanel.people.increment - must be a number");
-                    return;
-                } else {
-                    $add[k] = v;
+                if (!this._is_reserved_property(k)) {
+                    if (isNaN(parseFloat(v))) {
+                        console.error("Invalid increment value passed to mixpanel.people.increment - must be a number");
+                        return;
+                    } else {
+                        $add[k] = v;
+                    }
                 }
-            });
+            }, this);
             callback = by;
         } else {
             // convenience: mixpanel.people.increment('property'); will
@@ -2631,13 +3024,14 @@ Globals should be all caps
      *     // append a value to a list, creating it if needed
      *     mixpanel.people.append('pages_visited', 'homepage');
      *
-     *     // like mixpanel.people.set(), you can append multiple properties at once:
+     *     // like mixpanel.people.set(), you can append multiple
+     *     // properties at once:
      *     mixpanel.people.append({
      *         list1: 'bob',
      *         list2: 123
      *     });
      *
-     * @param {Object|String} prop If a string, this is the name of the property. If an object, this is an associative array of names and numeric values.
+     * @param {Object|String} prop If a string, this is the name of the property. If an object, this is an associative array of names and values.
      * @param {*} [value] An item to append to the list
      * @param {Function} [callback] If provided, the callback will be called after the tracking event
      */
@@ -2646,12 +3040,10 @@ Globals should be all caps
         var $append = {};
         if (_.isObject(list_name)) {
             _.each(list_name, function(v, k) {
-                if (k == '$distinct_id' || k == '$token') {
-                    return;
-                } else {
+                if (!this._is_reserved_property(k)) {
                     $append[k] = v;
                 }
-            });
+            }, this);
             callback = value;
         } else {
             $append[list_name] = value;
@@ -2662,8 +3054,52 @@ Globals should be all caps
     };
 
     /*
+     * Merge a given list with a list-valued people analytics property,
+     * excluding duplicate values.
+     *
+     * ### Usage:
+     *
+     *     // merge a value to a list, creating it if needed
+     *     mixpanel.people.union('pages_visited', 'homepage');
+     *
+     *     // like mixpanel.people.set(), you can append multiple
+     *     // properties at once:
+     *     mixpanel.people.union({
+     *         list1: 'bob',
+     *         list2: 123
+     *     });
+     *
+     *     // like mixpanel.people.append(), you can append multiple
+     *     // values to the same list:
+     *     mixpanel.people.union({
+     *         list1: ['bob', 'billy']
+     *     });
+     *
+     * @param {Object|String} prop If a string, this is the name of the property. If an object, this is an associative array of names and values.
+     * @param {*} [value] Value / values to merge with the given property
+     * @param {Function} [callback] If provided, the callback will be called after the tracking event
+     */
+    MixpanelPeople.prototype.union = function(list_name, values, callback) {
+        var data = {};
+        var $union = {};
+        if (_.isObject(list_name)) {
+            _.each(list_name, function(v, k) {
+                if (!this._is_reserved_property(k)) {
+                    $union[k] = _.isArray(v) ? v : [v];
+                }
+            }, this);
+            callback = values;
+        } else {
+            $union[list_name] = _.isArray(values) ? values : [values];
+        }
+        data[UNION_ACTION] = $union;
+
+        return this._send_request(data, callback);
+    };
+
+    /*
      * Record that you have charged the current user a certain amount
-     * of money. Charges recorded with track_charge will appear in the
+     * of money. Charges recorded with track_charge() will appear in the
      * Mixpanel revenue report.
      *
      * ### Usage:
@@ -2672,7 +3108,9 @@ Globals should be all caps
      *     mixpanel.people.track_charge(50);
      *
      *     // charge a user $30.50 on the 2nd of january
-     *     mixpanel.people.track_charge(30.50, { '$time': new Date('jan 1 2012') });
+     *     mixpanel.people.track_charge(30.50, {
+     *         '$time': new Date('jan 1 2012')
+     *     });
      *
      * @param {Number} amount The amount of money charged to the current user
      * @param {Object} [properties] An associative array of properties associated with the charge
@@ -2773,13 +3211,15 @@ Globals should be all caps
     // Queue up engage operations if identify hasn't been called yet.
     MixpanelPeople.prototype._enqueue = function(data) {
         if (SET_ACTION in data) {
-            this._mixpanel.cookie._add_to_people_queue(SET_ACTION, data);
+            this._mixpanel['persistence']._add_to_people_queue(SET_ACTION, data);
         } else if (SET_ONCE_ACTION in data) {
-            this._mixpanel.cookie._add_to_people_queue(SET_ONCE_ACTION, data);
+            this._mixpanel['persistence']._add_to_people_queue(SET_ONCE_ACTION, data);
         } else if (ADD_ACTION in data) {
-            this._mixpanel.cookie._add_to_people_queue(ADD_ACTION, data);
+            this._mixpanel['persistence']._add_to_people_queue(ADD_ACTION, data);
         } else if (APPEND_ACTION in data) {
-            this._mixpanel.cookie._add_to_people_queue(APPEND_ACTION, data);
+            this._mixpanel['persistence']._add_to_people_queue(APPEND_ACTION, data);
+        } else if (UNION_ACTION in data) {
+            this._mixpanel['persistence']._add_to_people_queue(UNION_ACTION, data);
         } else {
             console.error("Invalid call to _enqueue():", data);
         }
@@ -2787,19 +3227,20 @@ Globals should be all caps
 
     // Flush queued engage operations - order does not matter,
     // and there are network level race conditions anyway
-    MixpanelPeople.prototype._flush = function(_set_callback, _add_callback, _append_callback, _set_once_callback) {
+    MixpanelPeople.prototype._flush = function(_set_callback, _add_callback, _append_callback, _set_once_callback, _union_callback) {
         var _this = this,
-            $set_queue = _.extend({}, this._mixpanel.cookie._get_queue(SET_ACTION)),
-            $set_once_queue = _.extend({}, this._mixpanel.cookie._get_queue(SET_ONCE_ACTION)),
-            $add_queue = _.extend({}, this._mixpanel.cookie._get_queue(ADD_ACTION)),
-            $append_queue = this._mixpanel.cookie._get_queue(APPEND_ACTION);
+            $set_queue = _.extend({}, this._mixpanel['persistence']._get_queue(SET_ACTION)),
+            $set_once_queue = _.extend({}, this._mixpanel['persistence']._get_queue(SET_ONCE_ACTION)),
+            $add_queue = _.extend({}, this._mixpanel['persistence']._get_queue(ADD_ACTION)),
+            $append_queue = this._mixpanel['persistence']._get_queue(APPEND_ACTION),
+            $union_queue = _.extend({}, this._mixpanel['persistence']._get_queue(UNION_ACTION));
 
         if (!_.isUndefined($set_queue) && _.isObject($set_queue) && !_.isEmptyObject($set_queue)) {
-            _this._mixpanel.cookie._pop_from_people_queue(SET_ACTION, $set_queue);
+            _this._mixpanel['persistence']._pop_from_people_queue(SET_ACTION, $set_queue);
             this.set($set_queue, function(response, data) {
                 // on bad response, we want to add it back to the queue
                 if (response == 0) {
-                    _this._mixpanel.cookie._add_to_people_queue(SET_ACTION, $set_queue);
+                    _this._mixpanel['persistence']._add_to_people_queue(SET_ACTION, $set_queue);
                 }
                 if (!_.isUndefined(_set_callback)) {
                     _set_callback(response, data);
@@ -2808,11 +3249,11 @@ Globals should be all caps
         }
 
         if (!_.isUndefined($set_once_queue) && _.isObject($set_once_queue) && !_.isEmptyObject($set_once_queue)) {
-            _this._mixpanel.cookie._pop_from_people_queue(SET_ONCE_ACTION, $set_once_queue);
+            _this._mixpanel['persistence']._pop_from_people_queue(SET_ONCE_ACTION, $set_once_queue);
             this.set_once($set_once_queue, function(response, data) {
                 // on bad response, we want to add it back to the queue
                 if (response == 0) {
-                    _this._mixpanel.cookie._add_to_people_queue(SET_ONCE_ACTION, $set_once_queue);
+                    _this._mixpanel['persistence']._add_to_people_queue(SET_ONCE_ACTION, $set_once_queue);
                 }
                 if (!_.isUndefined(_set_once_callback)) {
                     _set_once_callback(response, data);
@@ -2821,14 +3262,27 @@ Globals should be all caps
         }
 
         if (!_.isUndefined($add_queue) && _.isObject($add_queue) && !_.isEmptyObject($add_queue)) {
-            _this._mixpanel.cookie._pop_from_people_queue(ADD_ACTION, $add_queue);
+            _this._mixpanel['persistence']._pop_from_people_queue(ADD_ACTION, $add_queue);
             this.increment($add_queue, function(response, data) {
                 // on bad response, we want to add it back to the queue
                 if (response == 0) {
-                    _this._mixpanel.cookie._add_to_people_queue(ADD_ACTION, $add_queue);
+                    _this._mixpanel['persistence']._add_to_people_queue(ADD_ACTION, $add_queue);
                 }
                 if (!_.isUndefined(_add_callback)) {
                     _add_callback(response, data);
+                }
+            });
+        }
+
+        if (!_.isUndefined($union_queue) && _.isObject($union_queue) && !_.isEmptyObject($union_queue)) {
+            _this._mixpanel['persistence']._pop_from_people_queue(UNION_ACTION, $union_queue);
+            this.union($union_queue, function(response, data) {
+                // on bad response, we want to add it back to the queue
+                if (response == 0) {
+                    _this._mixpanel['persistence']._add_to_people_queue(UNION_ACTION, $union_queue);
+                }
+                if (!_.isUndefined(_union_callback)) {
+                    _union_callback(response, data);
                 }
             });
         }
@@ -2840,188 +3294,1500 @@ Globals should be all caps
                 var $append_item = $append_queue.pop();
                 _this.append($append_item, function(response, data) {
                     if (response == 0) {
-                        _this._mixpanel.cookie._add_to_people_queue(APPEND_ACTION, $append_item);
+                        _this._mixpanel['persistence']._add_to_people_queue(APPEND_ACTION, $append_item);
                     }
                     if (!_.isUndefined(_append_callback)) { _append_callback(response, data); }
                 });
             };
             // Save the shortened append queue
-            _this._mixpanel.cookie.save();
+            _this._mixpanel['persistence'].save();
         }
     };
+
+    MixpanelPeople.prototype._is_reserved_property = function(prop) {
+        return prop === '$distinct_id' || prop === '$token';
+    };
+
+
+    // Internal class for notification display
+    MixpanelLib._Notification = function(notif_data, mixpanel_instance) {
+        _.bind_instance_methods(this);
+
+        this.mixpanel    = mixpanel_instance;
+        this.persistence = this.mixpanel['persistence'];
+
+        this.campaign_id = _.escapeHTML(notif_data['id']);
+        this.message_id  = _.escapeHTML(notif_data['message_id']);
+
+        this.body            = (_.escapeHTML(notif_data['body']) || '').replace(/\n/g, '<br/>');
+        this.cta             = _.escapeHTML(notif_data['cta']) || 'Close';
+        this.dest_url        = _.escapeHTML(notif_data['cta_url']) || null;
+        this.image_url       = _.escapeHTML(notif_data['image_url']) || null;
+        this.notif_type      = _.escapeHTML(notif_data['type']) || 'takeover';
+        this.style           = _.escapeHTML(notif_data['style']) || 'light';
+        this.thumb_image_url = _.escapeHTML(notif_data['thumb_image_url']) || null;
+        this.title           = _.escapeHTML(notif_data['title']) || '';
+        this.video_url       = _.escapeHTML(notif_data['video_url']) || null;
+        this.video_width     = MPNotif.VIDEO_WIDTH;
+        this.video_height    = MPNotif.VIDEO_HEIGHT;
+
+        this.clickthrough = true;
+        if (!this.dest_url) {
+            this.dest_url = '#dismiss';
+            this.clickthrough = false;
+        }
+
+        this.mini = this.notif_type === 'mini';
+        if (!this.mini) {
+            this.notif_type = 'takeover';
+        }
+        this.notif_width = !this.mini ? MPNotif.NOTIF_WIDTH : MPNotif.NOTIF_WIDTH_MINI;
+
+        this._set_client_config();
+        this.imgs_to_preload = this._init_image_html();
+        this._init_video();
+    };
+
+    var MPNotif = MixpanelLib._Notification;
+
+        MPNotif.ANIM_TIME         = 200;
+        MPNotif.MARKUP_PREFIX     = 'mixpanel-notification';
+        MPNotif.BG_OPACITY        = 0.6;
+        MPNotif.NOTIF_TOP         = 25;
+        MPNotif.NOTIF_START_TOP   = 200;
+        MPNotif.NOTIF_WIDTH       = 388;
+        MPNotif.NOTIF_WIDTH_MINI  = 420;
+        MPNotif.NOTIF_HEIGHT_MINI = 85;
+        MPNotif.THUMB_BORDER_SIZE = 5;
+        MPNotif.THUMB_IMG_SIZE    = 60;
+        MPNotif.THUMB_OFFSET      = Math.round(MPNotif.THUMB_IMG_SIZE / 2);
+        MPNotif.VIDEO_WIDTH       = 595;
+        MPNotif.VIDEO_HEIGHT      = 334;
+
+        MPNotif.prototype.show = function() {
+            var self = this;
+            this._set_client_config();
+
+            // don't display until HTML body exists
+            if (!this.body_el) {
+                setTimeout(function() { self.show(); }, 300);
+                return;
+            }
+
+            this._init_styles();
+            this._init_notification_el();
+
+            // wait for any images to load before showing notification
+            this._preload_images(this._attach_and_animate);
+        };
+
+        MPNotif.prototype.dismiss = _.safewrap(function() {
+            if (!this.marked_as_shown) {
+                // unexpected condition: user interacted with notif even though we didn't consider it
+                // visible (see _mark_as_shown()); send tracking signals to mark delivery
+                this._mark_delivery({'invisible': true});
+            }
+
+            var exiting_el = this.showing_video ? this._get_el('video') : this._get_notification_display_el();
+            if (this.use_transitions) {
+                this._remove_class('bg', 'visible');
+                this._add_class(exiting_el, 'exiting');
+                setTimeout(this._remove_notification_el, MPNotif.ANIM_TIME);
+            } else {
+                var notif_attr, notif_start, notif_goal;
+                if (this.mini) {
+                    notif_attr  = 'right';
+                    notif_start = 20;
+                    notif_goal  = -100;
+                } else {
+                    notif_attr  = 'top';
+                    notif_start = MPNotif.NOTIF_TOP;
+                    notif_goal  = MPNotif.NOTIF_START_TOP + MPNotif.NOTIF_TOP;
+                }
+                this._animate_els([
+                    {
+                        el:    this._get_el('bg'),
+                        attr:  'opacity',
+                        start: MPNotif.BG_OPACITY,
+                        goal:  0.0
+                    },
+                    {
+                        el:    exiting_el,
+                        attr:  'opacity',
+                        start: 1.0,
+                        goal:  0.0
+                    },
+                    {
+                        el:    exiting_el,
+                        attr:  notif_attr,
+                        start: notif_start,
+                        goal:  notif_goal
+                    }
+                ], MPNotif.ANIM_TIME, this._remove_notification_el);
+            }
+        });
+
+        MPNotif.prototype._add_class = _.safewrap(function(el, class_name) {
+            class_name = MPNotif.MARKUP_PREFIX + '-' + class_name;
+            if (typeof el === 'string') {
+                el = this._get_el(el);
+            }
+            if (!el.className) {
+                el.className = class_name;
+            } else if (!~(' ' + el.className + ' ').indexOf(' ' + class_name + ' ')) {
+                el.className += ' ' + class_name;
+            }
+        });
+        MPNotif.prototype._remove_class = _.safewrap(function(el, class_name) {
+            class_name = MPNotif.MARKUP_PREFIX + '-' + class_name;
+            if (typeof el === 'string') {
+                el = this._get_el(el);
+            }
+            if (el.className) {
+                el.className = (' ' + el.className + ' ')
+                    .replace(' ' + class_name + ' ', '')
+                    .replace(/^[\s\xA0]+/, '')
+                    .replace(/[\s\xA0]+$/, '');
+            }
+        });
+
+        MPNotif.prototype._animate_els = _.safewrap(function(anims, mss, done_cb, start_time) {
+            var self = this,
+                in_progress = false,
+                ai, anim,
+                cur_time = 1 * new Date(), time_diff;
+
+            start_time = start_time || cur_time;
+            time_diff = cur_time - start_time;
+
+            for (ai = 0; ai < anims.length; ai++) {
+                anim = anims[ai];
+                if (typeof anim.val === 'undefined') {
+                    anim.val = anim.start;
+                }
+                if (anim.val !== anim.goal) {
+                    in_progress = true;
+                    var anim_diff = anim.goal - anim.start,
+                        anim_dir = anim.goal >= anim.start ? 1 : -1;
+                    anim.val = anim.start + anim_diff * time_diff / mss;
+                    if (anim.attr !== 'opacity') {
+                        anim.val = Math.round(anim.val);
+                    }
+                    if ((anim_dir > 0 && anim.val >= anim.goal) || (anim_dir < 0 && anim.val <= anim.goal)) {
+                        anim.val = anim.goal;
+                    }
+                }
+            }
+            if (!in_progress) {
+                if (done_cb) {
+                    done_cb();
+                }
+                return;
+            }
+
+            for (ai = 0; ai < anims.length; ai++) {
+                anim = anims[ai];
+                if (anim.el) {
+                    var suffix = anim.attr === 'opacity' ? '' : 'px';
+                    anim.el.style[anim.attr] = String(anim.val) + suffix;
+                }
+            }
+            setTimeout(function() { self._animate_els(anims, mss, done_cb, start_time); }, 10);
+        });
+
+        MPNotif.prototype._attach_and_animate = _.safewrap(function() {
+            var self = this;
+
+            // no possibility to double-display
+            if (this.shown || this._get_shown_campaigns()[this.campaign_id]) {
+                return;
+            }
+            this.shown = true;
+
+            this.body_el.appendChild(this.notification_el);
+            setTimeout(function() {
+                var notif_el = self._get_notification_display_el();
+                if (self.use_transitions) {
+                    if (!self.mini) {
+                        self._add_class('bg', 'visible');
+                    }
+                    self._add_class(notif_el, 'visible');
+                    self._mark_as_shown();
+                } else {
+                    var notif_attr, notif_start, notif_goal;
+                    if (self.mini) {
+                        notif_attr  = 'right';
+                        notif_start = -100;
+                        notif_goal  = 20;
+                    } else {
+                        notif_attr  = 'top';
+                        notif_start = MPNotif.NOTIF_START_TOP + MPNotif.NOTIF_TOP;
+                        notif_goal  = MPNotif.NOTIF_TOP;
+                    }
+                    self._animate_els([
+                        {
+                            el:    self._get_el('bg'),
+                            attr:  'opacity',
+                            start: 0.0,
+                            goal:  MPNotif.BG_OPACITY
+                        },
+                        {
+                            el:    notif_el,
+                            attr:  'opacity',
+                            start: 0.0,
+                            goal:  1.0
+                        },
+                        {
+                            el:    notif_el,
+                            attr:  notif_attr,
+                            start: notif_start,
+                            goal:  notif_goal
+                        }
+                    ], MPNotif.ANIM_TIME, self._mark_as_shown);
+                }
+            }, 100);
+            _.register_event(self._get_el('cancel'), 'click', function(e) {
+                e.preventDefault();
+                self.dismiss();
+            });
+            var click_el = self._get_el('button') ||
+                           self._get_el('mini-content');
+            _.register_event(click_el, 'click', function(e) {
+                e.preventDefault();
+                if (self.show_video) {
+                    self._track_event('$campaign_open', {'$resource_type': 'video'});
+                    self._switch_to_video();
+                } else {
+                    self.dismiss();
+                    if (self.clickthrough) {
+                        self._track_event('$campaign_open', {'$resource_type': 'link'}, function() {
+                            window.location.href = self.dest_url;
+                        });
+                    }
+                }
+            });
+        });
+
+        MPNotif.prototype._get_el = function(id) {
+            return document.getElementById(MPNotif.MARKUP_PREFIX + '-' + id);
+        };
+
+        MPNotif.prototype._get_notification_display_el = function() {
+            return this._get_el(this.notif_type);
+        };
+
+        MPNotif.prototype._get_shown_campaigns = function() {
+            return this.persistence['props'][CAMPAIGN_IDS_KEY] || (this.persistence['props'][CAMPAIGN_IDS_KEY] = {});
+        };
+
+        MPNotif.prototype._browser_lte = function(browser, version) {
+            return this.browser_versions[browser] && this.browser_versions[browser] <= version;
+        };
+
+        MPNotif.prototype._init_image_html = function() {
+            var imgs_to_preload = [];
+
+            if (!this.mini) {
+                if (this.image_url) {
+                    imgs_to_preload.push(this.image_url);
+                    this.img_html = '<img id="img" src="' + this.image_url + '"/>';
+                } else {
+                    this.img_html = '';
+                }
+                if (this.thumb_image_url) {
+                    imgs_to_preload.push(this.thumb_image_url);
+                    this.thumb_img_html =
+                        '<div id="thumbborder-wrapper"><div id="thumbborder"></div></div>' +
+                        '<img id="thumbnail"' +
+                            ' src="' + this.thumb_image_url + '"' +
+                            ' width="' + MPNotif.THUMB_IMG_SIZE + '"' +
+                            ' height="' + MPNotif.THUMB_IMG_SIZE + '"' +
+                        '/>' +
+                        '<div id="thumbspacer"></div>';
+                } else {
+                    this.thumb_img_html = '';
+                }
+            } else {
+                this.thumb_image_url = this.thumb_image_url || '//cdn.mxpnl.com/site_media/images/icons/notifications/mini-news-dark.png';
+                imgs_to_preload.push(this.thumb_image_url);
+            }
+
+            return imgs_to_preload;
+        };
+
+        MPNotif.prototype._init_notification_el = function() {
+            var notification_html = '',
+                video_src         = '',
+                video_html        = '',
+                cancel_html       = '<div id="cancel">' +
+                                        '<div id="cancel-icon"></div>' +
+                                    '</div>';
+
+            this.notification_el = document.createElement('div');
+            this.notification_el.id = MPNotif.MARKUP_PREFIX + '-wrapper';
+            if (!this.mini) {
+                // TAKEOVER notification
+                var close_html  = (this.clickthrough || this.show_video) ? '' : '<div id="button-close"></div>',
+                    play_html   = this.show_video ? '<div id="button-play"></div>' : '';
+                if (this._browser_lte('ie', 7)) {
+                    close_html = '';
+                    play_html = '';
+                }
+                notification_html =
+                    '<div id="takeover">' +
+                        this.thumb_img_html +
+                        '<div id="mainbox">' +
+                            cancel_html +
+                            '<div id="content">' +
+                                this.img_html +
+                                '<div id="title">' + this.title + '</div>' +
+                                '<div id="body">' + this.body + '</div>' +
+                                '<div id="tagline">' +
+                                    '<a href="http://mixpanel.com?from=inapp" target="_blank">POWERED BY MIXPANEL</a>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div id="button">' +
+                                close_html +
+                                '<a id="button-link" href="' + this.dest_url + '">' + this.cta + '</a>' +
+                                play_html +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+            } else {
+                // MINI notification
+                notification_html =
+                    '<div id="mini">' +
+                        '<div id="mainbox">' +
+                            cancel_html +
+                            '<div id="mini-content">' +
+                                '<div id="mini-icon">' +
+                                    '<div id="mini-icon-img"></div>' +
+                                '</div>' +
+                                '<div id="body">' +
+                                    '<div id="body-text"><div>' + this.body + '</div></div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div id="mini-border"></div>' +
+                    '</div>';
+            }
+            if (this.youtube_video) {
+                video_src = '//www.youtube.com/embed/' + this.youtube_video +
+                    '?wmode=transparent&showinfo=0&modestbranding=0&rel=0&autoplay=1&loop=0&vq=hd1080';
+                if (this.yt_custom) {
+                    video_src += '&enablejsapi=1&html5=1&controls=0';
+                    video_html =
+                        '<div id="video-controls">' +
+                            '<div id="video-progress" class="video-progress-el">' +
+                                '<div id="video-progress-total" class="video-progress-el"></div>' +
+                                '<div id="video-elapsed" class="video-progress-el"></div>' +
+                            '</div>' +
+                            '<div id="video-time" class="video-progress-el"></div>' +
+                        '</div>';
+                }
+            } else if (this.vimeo_video) {
+                video_src = '//player.vimeo.com/video/' + this.vimeo_video + '?autoplay=1&title=0&byline=0&portrait=0';
+            }
+            if (this.show_video) {
+                this.video_iframe =
+                    '<iframe id="' + MPNotif.MARKUP_PREFIX + '-video-frame" ' +
+                        'width="' + this.video_width + '" height="' + this.video_height + '" ' +
+                        ' src="' + video_src + '"' +
+                        ' frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen="1" scrolling="no"' +
+                    '></iframe>';
+                video_html =
+                    '<div id="video-' + (this.flip_animate ? '' : 'no') + 'flip">' +
+                        '<div id="video">' +
+                            '<div id="video-holder"></div>' +
+                            video_html +
+                        '</div>' +
+                    '</div>';
+            }
+            var main_html = video_html + notification_html;
+            if (this.flip_animate) {
+                main_html =
+                    (this.mini ? notification_html : '') +
+                    '<div id="flipcontainer"><div id="flipper">' +
+                        (this.mini ? video_html : main_html) +
+                    '</div></div>';
+            }
+
+            this.notification_el.innerHTML =
+                ('<div id="overlay" class="' + this.notif_type + '">' +
+                    '<div id="campaignid-' + this.campaign_id + '">' +
+                        '<div id="bgwrapper">' +
+                            '<div id="bg"></div>' +
+                            main_html +
+                        '</div>' +
+                    '</div>' +
+                '</div>')
+                .replace(/class=\"/g, 'class="' + MPNotif.MARKUP_PREFIX + '-')
+                .replace(/id=\"/g, 'id="' + MPNotif.MARKUP_PREFIX + '-');
+        };
+
+        MPNotif.prototype._init_styles = function() {
+            if (this.style === 'dark') {
+                this.style_vals = {
+                    bg:             '#1d1f25',
+                    bg_actions:     '#282b32',
+                    bg_hover:       '#3a4147',
+                    bg_light:       '#4a5157',
+                    border_gray:    '#32353c',
+                    cancel_opacity: '0.4',
+                    mini_hover:     '#2a3137',
+                    text_title:     '#fff',
+                    text_main:      '#9498a3',
+                    text_tagline:   '#464851',
+                    text_hover:     '#ddd'
+                };
+            } else {
+                this.style_vals = {
+                    bg:             '#fff',
+                    bg_actions:     '#e7eaee',
+                    bg_hover:       '#eceff3',
+                    bg_light:       '#f5f5f5',
+                    border_gray:    '#e4ecf2',
+                    cancel_opacity: '1.0',
+                    mini_hover:     '#fafafa',
+                    text_title:     '#5c6578',
+                    text_main:      '#8b949b',
+                    text_tagline:   '#ced9e6',
+                    text_hover:     '#7c8598'
+                };
+            }
+            var shadow = '0px 0px 35px 0px rgba(45, 49, 56, 0.7)',
+                video_shadow = shadow,
+                mini_shadow = shadow,
+                thumb_total_size = MPNotif.THUMB_IMG_SIZE + MPNotif.THUMB_BORDER_SIZE * 2,
+                anim_seconds = (MPNotif.ANIM_TIME / 1000) + 's';
+            if (this.mini) {
+                shadow = 'none';
+            }
+
+            // don't display on small viewports
+            var notif_media_queries = {},
+                min_width = MPNotif.NOTIF_WIDTH_MINI + 20;
+            notif_media_queries['@media only screen and (max-width: ' + (min_width - 1) + 'px)'] = {
+                '#overlay': {
+                    'display': 'none'
+                }
+            };
+            var notif_styles = {
+                '.flipped': {
+                    'transform': 'rotateY(180deg)'
+                },
+                '#overlay': {
+                    'position': 'fixed',
+                    'top': '0',
+                    'left': '0',
+                    'width': '100%',
+                    'height': '100%',
+                    'overflow': 'auto',
+                    'text-align': 'center',
+                    'z-index': '10000',
+                    'font-family': '"Helvetica", "Arial", sans-serif',
+                    '-webkit-font-smoothing': 'antialiased',
+                    '-moz-osx-font-smoothing': 'grayscale'
+                },
+                    '#overlay.mini': {
+                        'height': '0',
+                        'overflow': 'visible'
+                    },
+                '#overlay a': {
+                    'width': 'initial',
+                    'padding': '0',
+                    'text-decoration': 'none',
+                    'text-transform': 'none',
+                    'color': 'inherit'
+                },
+                '#bgwrapper': {
+                    'position': 'relative',
+                    'width': '100%',
+                    'height': '100%'
+                },
+                '#bg': {
+                    'position': 'fixed',
+                    'top': '0',
+                    'left': '0',
+                    'width': '100%',
+                    'height': '100%',
+                    'min-width': this.doc_width * 4 + 'px',
+                    'min-height': this.doc_height * 4 + 'px',
+                    'background-color': 'black',
+                    'opacity': '0.0',
+                    '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=60)', // IE8
+                    'filter': 'alpha(opacity=60)', // IE5-7
+                    'transition': 'opacity ' + anim_seconds
+                },
+                    '#bg.visible': {
+                        'opacity': MPNotif.BG_OPACITY
+                    },
+                    '.mini #bg': {
+                        'width': '0',
+                        'height': '0',
+                        'min-width': '0'
+                    },
+                '#flipcontainer': {
+                    'perspective': '1000px',
+                    'position': 'absolute',
+                    'width': '100%'
+                },
+                '#flipper': {
+                    'position': 'relative',
+                    'transform-style': 'preserve-3d',
+                    'transition': '0.3s'
+                },
+                '#takeover': {
+                    'position': 'absolute',
+                    'left': '50%',
+                    'width': MPNotif.NOTIF_WIDTH + 'px',
+                    'margin-left': Math.round(-MPNotif.NOTIF_WIDTH / 2) + 'px',
+                    'backface-visibility': 'hidden',
+                    'transform': 'rotateY(0deg)',
+                    'opacity': '0.0',
+                    'top': MPNotif.NOTIF_START_TOP + 'px',
+                    'transition': 'opacity ' + anim_seconds + ', top ' + anim_seconds
+                 },
+                    '#takeover.visible': {
+                        'opacity': '1.0',
+                        'top': MPNotif.NOTIF_TOP + 'px'
+                    },
+                    '#takeover.exiting': {
+                        'opacity': '0.0',
+                        'top': MPNotif.NOTIF_START_TOP + 'px'
+                    },
+                '#thumbspacer': {
+                    'height': MPNotif.THUMB_OFFSET + 'px'
+                },
+                '#thumbborder-wrapper': {
+                    'position': 'absolute',
+                    'top': (-MPNotif.THUMB_BORDER_SIZE) + 'px',
+                    'left': (MPNotif.NOTIF_WIDTH / 2 - MPNotif.THUMB_OFFSET - MPNotif.THUMB_BORDER_SIZE) + 'px',
+                    'width': thumb_total_size + 'px',
+                    'height': (thumb_total_size / 2) + 'px',
+                    'overflow': 'hidden'
+                },
+                '#thumbborder': {
+                    'position': 'absolute',
+                    'width': thumb_total_size + 'px',
+                    'height': thumb_total_size + 'px',
+                    'border-radius': thumb_total_size + 'px',
+                    'background-color': this.style_vals.bg_actions,
+                    'opacity': '0.5'
+                },
+                '#thumbnail': {
+                    'position': 'absolute',
+                    'top': '0px',
+                    'left': (MPNotif.NOTIF_WIDTH / 2 - MPNotif.THUMB_OFFSET) + 'px',
+                    'width': MPNotif.THUMB_IMG_SIZE + 'px',
+                    'height': MPNotif.THUMB_IMG_SIZE + 'px',
+                    'overflow': 'hidden',
+                    'z-index': '100',
+                    'border-radius': MPNotif.THUMB_IMG_SIZE + 'px'
+                },
+                '#mini': {
+                    'position': 'absolute',
+                    'right': '20px',
+                    'top': MPNotif.NOTIF_TOP + 'px',
+                    'width': this.notif_width + 'px',
+                    'height': MPNotif.NOTIF_HEIGHT_MINI * 2 + 'px',
+                    'margin-top': 20 - MPNotif.NOTIF_HEIGHT_MINI + 'px',
+                    'backface-visibility': 'hidden',
+                    'opacity': '0.0',
+                    'transform': 'rotateX(90deg)',
+                    'transition': 'opacity 0.3s, transform 0.3s, right 0.3s'
+                },
+                    '#mini.visible': {
+                        'opacity': '1.0',
+                        'transform': 'rotateX(0deg)'
+                    },
+                    '#mini.exiting': {
+                        'opacity': '0.0',
+                        'right': '-150px'
+                    },
+                '#mainbox': {
+                    'border-radius': '4px',
+                    'box-shadow': shadow,
+                    'text-align': 'center',
+                    'background-color': this.style_vals.bg,
+                    'font-size': '14px',
+                    'color': this.style_vals.text_main
+                },
+                    '#mini #mainbox': {
+                        'height': MPNotif.NOTIF_HEIGHT_MINI + 'px',
+                        'margin-top': MPNotif.NOTIF_HEIGHT_MINI + 'px',
+                        'border-radius': '3px',
+                        'transition': 'background-color ' + anim_seconds
+                    },
+                '#mini-border': {
+                    'height': (MPNotif.NOTIF_HEIGHT_MINI + 6) + 'px',
+                    'width': (MPNotif.NOTIF_WIDTH_MINI + 6) + 'px',
+                    'position': 'absolute',
+                    'top': '-3px',
+                    'left': '-3px',
+                    'margin-top': MPNotif.NOTIF_HEIGHT_MINI + 'px',
+                    'border-radius': '6px',
+                    'opacity': '0.25',
+                    'background-color': '#fff',
+                    'z-index': '-1',
+                    'box-shadow': mini_shadow
+                },
+                '#mini-icon': {
+                    'position': 'relative',
+                    'display': 'inline-block',
+                    'width': '75px',
+                    'height': MPNotif.NOTIF_HEIGHT_MINI + 'px',
+                    'border-radius': '3px 0 0 3px',
+                    'background-color': this.style_vals.bg_actions,
+                    'background': 'linear-gradient(135deg, ' + this.style_vals.bg_light + ' 0%, ' + this.style_vals.bg_actions + ' 100%)',
+                    'transition': 'background-color ' + anim_seconds
+                },
+                '#mini:hover #mini-icon': {
+                    'background-color': this.style_vals.mini_hover
+                },
+                '#mini:hover #mainbox': {
+                    'background-color': this.style_vals.mini_hover
+                },
+                '#mini-icon-img': {
+                    'position': 'absolute',
+                    'background-image': 'url(' + this.thumb_image_url + ')',
+                    'width': '48px',
+                    'height': '48px',
+                    'top': '20px',
+                    'left': '12px'
+                },
+                '#content': {
+                    'padding': '30px 20px 0px 20px'
+                },
+                '#mini-content': {
+                    'text-align': 'left',
+                    'height': MPNotif.NOTIF_HEIGHT_MINI + 'px',
+                    'cursor': 'pointer'
+                },
+                '#img': {
+                    'width': '328px',
+                    'margin-top': '30px',
+                    'border-radius': '5px'
+                },
+                '#title': {
+                    'max-height': '600px',
+                    'overflow': 'hidden',
+                    'word-wrap': 'break-word',
+                    'padding': '25px 0px 20px 0px',
+                    'font-size': '19px',
+                    'font-weight': 'bold',
+                    'color': this.style_vals.text_title
+                },
+                '#body': {
+                    'max-height': '600px',
+                    'margin-bottom': '25px',
+                    'overflow': 'hidden',
+                    'word-wrap': 'break-word',
+                    'line-height': '21px',
+                    'font-size': '15px',
+                    'font-weight': 'normal',
+                    'text-align': 'left'
+                },
+                    '#mini #body': {
+                        'display': 'inline-block',
+                        'max-width': '250px',
+                        'margin': '0 0 0 30px',
+                        'height': MPNotif.NOTIF_HEIGHT_MINI + 'px',
+                        'font-size': '16px',
+                        'letter-spacing': '0.8px',
+                        'color': this.style_vals.text_title
+                    },
+                    '#mini #body-text': {
+                        'display': 'table',
+                        'height': MPNotif.NOTIF_HEIGHT_MINI + 'px'
+                    },
+                    '#mini #body-text div': {
+                        'display': 'table-cell',
+                        'vertical-align': 'middle'
+                    },
+                '#tagline': {
+                    'margin-bottom': '15px',
+                    'font-size': '10px',
+                    'font-weight': '600',
+                    'letter-spacing': '0.8px',
+                    'color': '#ccd7e0',
+                    'text-align': 'left'
+                },
+                '#tagline a': {
+                    'color': this.style_vals.text_tagline,
+                    'transition': 'color ' + anim_seconds
+                },
+                '#tagline a:hover': {
+                    'color': this.style_vals.text_hover
+                },
+                '#cancel': {
+                    'position': 'absolute',
+                    'right': '0',
+                    'width': '8px',
+                    'height': '8px',
+                    'padding': '10px',
+                    'border-radius': '20px',
+                    'margin': '12px 12px 0 0',
+                    'box-sizing': 'content-box',
+                    'cursor': 'pointer',
+                    'transition': 'background-color ' + anim_seconds
+                },
+                    '#mini #cancel': {
+                        'margin': '7px 7px 0 0'
+                    },
+                '#cancel-icon': {
+                    'width': '8px',
+                    'height': '8px',
+                    'overflow': 'hidden',
+                    'background-image': 'url(//cdn.mxpnl.com/site_media/images/icons/notifications/cancel-x.png)',
+                    'opacity': this.style_vals.cancel_opacity
+                },
+                '#cancel:hover': {
+                    'background-color': this.style_vals.bg_hover
+                },
+                '#button': {
+                    'display': 'block',
+                    'height': '60px',
+                    'line-height': '60px',
+                    'text-align': 'center',
+                    'background-color': this.style_vals.bg_actions,
+                    'border-radius': '0 0 4px 4px',
+                    'overflow': 'hidden',
+                    'cursor': 'pointer',
+                    'transition': 'background-color ' + anim_seconds
+                },
+                '#button-close': {
+                    'display': 'inline-block',
+                    'width': '9px',
+                    'height': '60px',
+                    'margin-right': '8px',
+                    'vertical-align': 'top',
+                    'background-image': 'url(//cdn.mxpnl.com/site_media/images/icons/notifications/close-x-' + this.style + '.png)',
+                    'background-repeat': 'no-repeat',
+                    'background-position': '0px 25px'
+                },
+                '#button-play': {
+                    'display': 'inline-block',
+                    'width': '30px',
+                    'height': '60px',
+                    'margin-left': '15px',
+                    'background-image': 'url(//cdn.mxpnl.com/site_media/images/icons/notifications/play-' + this.style + '-small.png)',
+                    'background-repeat': 'no-repeat',
+                    'background-position': '0px 15px'
+                },
+                'a#button-link': {
+                    'display': 'inline-block',
+                    'vertical-align': 'top',
+                    'text-align': 'center',
+                    'font-size': '17px',
+                    'font-weight': 'bold',
+                    'overflow': 'hidden',
+                    'word-wrap': 'break-word',
+                    'color': this.style_vals.text_title,
+                    'transition': 'color ' + anim_seconds
+                },
+                '#button:hover': {
+                    'background-color': this.style_vals.bg_hover,
+                    'color': this.style_vals.text_hover
+                },
+                '#button:hover a': {
+                    'color': this.style_vals.text_hover
+                },
+
+                '#video-noflip': {
+                    'position': 'relative',
+                    'top': (-this.video_height * 2) + 'px'
+                },
+                '#video-flip': {
+                    'backface-visibility': 'hidden',
+                    'transform': 'rotateY(180deg)'
+                },
+                '#video': {
+                    'position': 'absolute',
+                    'width': (this.video_width - 1) + 'px',
+                    'height': this.video_height + 'px',
+                    'top': MPNotif.NOTIF_TOP + 'px',
+                    'margin-top': '100px',
+                    'left': '50%',
+                    'margin-left': Math.round(-this.video_width / 2) + 'px',
+                    'overflow': 'hidden',
+                    'border-radius': '5px',
+                    'box-shadow': video_shadow,
+                    'transform': 'translateZ(1px)', // webkit rendering bug http://stackoverflow.com/questions/18167981/clickable-link-area-unexpectedly-smaller-after-css-transform
+                    'transition': 'opacity ' + anim_seconds + ', top ' + anim_seconds
+                },
+                    '#video.exiting': {
+                        'opacity': '0.0',
+                        'top': this.video_height + 'px'
+                    },
+                '#video-holder': {
+                    'position': 'absolute',
+                    'width': (this.video_width - 1) + 'px',
+                    'height': this.video_height + 'px',
+                    'overflow': 'hidden',
+                    'border-radius': '5px'
+                },
+                '#video-frame': {
+                    'margin-left': '-1px',
+                    'width': this.video_width + 'px'
+                },
+                '#video-controls': {
+                    'opacity': '0',
+                    'transition': 'opacity 0.5s'
+                },
+                '#video:hover #video-controls': {
+                    'opacity': '1.0'
+                },
+                '#video .video-progress-el': {
+                    'position': 'absolute',
+                    'bottom': '0',
+                    'height': '25px',
+                    'border-radius': '0 0 0 5px'
+                },
+                '#video-progress': {
+                    'width': '90%'
+                },
+                '#video-progress-total': {
+                    'width': '100%',
+                    'background-color': this.style_vals.bg,
+                    'opacity': '0.7'
+                },
+                '#video-elapsed': {
+                    'width': '0',
+                    'background-color': '#6cb6f5',
+                    'opacity': '0.9'
+                },
+                '#video #video-time': {
+                    'width': '10%',
+                    'right': '0',
+                    'font-size': '11px',
+                    'line-height': '25px',
+                    'color': this.style_vals.text_main,
+                    'background-color': '#666',
+                    'border-radius': '0 0 5px 0'
+                }
+            };
+
+            // IE hacks
+            if (this._browser_lte('ie', 8)) {
+                _.extend(notif_styles, {
+                    '* html #overlay': {
+                        'position': 'absolute'
+                    },
+                    '* html #bg': {
+                        'position': 'absolute'
+                    },
+                    'html, body': {
+                        'height': '100%'
+                    }
+                });
+            }
+            if (this._browser_lte('ie', 7)) {
+                _.extend(notif_styles, {
+                    '#mini #body': {
+                        'display': 'inline',
+                        'zoom': '1',
+                        'border': '1px solid ' + this.style_vals.bg_hover
+                    },
+                    '#mini #body-text': {
+                        'padding': '20px'
+                    },
+                    '#mini #mini-icon': {
+                        'display': 'none'
+                    }
+                });
+            }
+
+            // add vendor-prefixed style rules
+            var VENDOR_STYLES   = ['backface-visibility', 'border-radius', 'box-shadow', 'opacity',
+                                   'perspective', 'transform', 'transform-style', 'transition'],
+                VENDOR_PREFIXES = ['khtml', 'moz', 'ms', 'o', 'webkit'];
+            for (var selector in notif_styles) {
+                for (var si = 0; si < VENDOR_STYLES.length; si++) {
+                    var prop = VENDOR_STYLES[si];
+                    if (prop in notif_styles[selector]) {
+                        var val = notif_styles[selector][prop];
+                        for (var pi = 0; pi < VENDOR_PREFIXES.length; pi++) {
+                            notif_styles[selector]['-' + VENDOR_PREFIXES[pi] + '-' + prop] = val;
+                        }
+                    }
+                }
+            }
+
+            var inject_styles = function(styles, media_queries) {
+                var create_style_text = function(style_defs) {
+                    var st = '';
+                    for (var selector in style_defs) {
+                        var mp_selector = selector
+                            .replace(/#/g, '#' + MPNotif.MARKUP_PREFIX + '-')
+                            .replace(/\./g, '.' + MPNotif.MARKUP_PREFIX + '-');
+                        st += '\n' + mp_selector + ' {';
+                        var props = style_defs[selector];
+                        for (var k in props) {
+                            st += k + ':' + props[k] + ';';
+                        }
+                        st += '}';
+                    }
+                    return st;
+                };
+                var create_media_query_text = function(mq_defs) {
+                    var mqt = '';
+                    for (var mq in mq_defs) {
+                        mqt += '\n' + mq + ' {' + create_style_text(mq_defs[mq]) + '\n}';
+                    }
+                    return mqt;
+                }
+
+                var style_text = create_style_text(styles) + create_media_query_text(media_queries),
+                    head_el = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
+                    style_el = document.createElement('style');
+                head_el.appendChild(style_el);
+                style_el.setAttribute('type', 'text/css');
+                if (style_el.styleSheet) { // IE
+                    style_el.styleSheet.cssText = style_text;
+                } else {
+                    style_el.textContent = style_text;
+                }
+            };
+            inject_styles(notif_styles, notif_media_queries);
+        };
+
+        MPNotif.prototype._init_video = _.safewrap(function() {
+            if (!this.video_url) {
+                return;
+            }
+            var self = this;
+
+            // Youtube iframe API compatibility
+            self.yt_custom = 'postMessage' in window;
+
+            // detect CSS compatibility
+            var sample_styles = document.createElement('div').style,
+                is_css_compatible = function(rule) {
+                    if (rule in sample_styles) {
+                        return true;
+                    }
+                    rule = rule[0].toUpperCase() + rule.slice(1);
+                    var props = ['O' + rule, 'ms' + rule, 'Webkit' + rule, 'Moz' + rule];
+                    for (var i = 0; i < props.length; i++) {
+                        if (props[i] in sample_styles) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+
+            self.dest_url = self.video_url;
+            var youtube_match = self.video_url.match(
+                    // http://stackoverflow.com/questions/2936467/parse-youtube-video-id-using-preg-match
+                    /(?:youtube(?:-nocookie)?\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i
+                ),
+                vimeo_match = self.video_url.match(
+                    /vimeo\.com\/.*?(\d+)/i
+                );
+            if (youtube_match) {
+                self.show_video = true;
+                self.youtube_video = youtube_match[1];
+
+                if (self.yt_custom) {
+                    window['onYouTubeIframeAPIReady'] = function() {
+                        if (self._get_el('video-frame')) {
+                            self._yt_video_ready();
+                        }
+                    };
+
+                    // load Youtube iframe API; see https://developers.google.com/youtube/iframe_api_reference
+                    var tag = document.createElement('script');
+                    tag.src = "//www.youtube.com/iframe_api";
+                    var firstScriptTag = document.getElementsByTagName('script')[0];
+                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                }
+            } else if (vimeo_match) {
+                self.show_video = true;
+                self.vimeo_video = vimeo_match[1];
+            }
+
+            // IE <= 7, FF <= 3: fall through to video link rather than embedded player
+            if (self._browser_lte('ie', 7) || self._browser_lte('firefox', 3)) {
+                self.show_video = false;
+                self.clickthrough = true;
+            }
+        });
+
+        MPNotif.prototype._mark_as_shown = _.safewrap(function() {
+            // click on background to dismiss
+            var self = this;
+            _.register_event(self._get_el('bg'), 'click', function(e) {
+                self.dismiss();
+            });
+
+            var get_style = function(el, style_name) {
+                var styles = {};
+                if (document.defaultView && document.defaultView.getComputedStyle) {
+                    styles = document.defaultView.getComputedStyle(el, null); // FF3 requires both args
+                } else if (el.currentStyle) { // IE
+                    styles = el.currentStyle;
+                }
+                return styles[style_name];
+            };
+
+            if (this.campaign_id) {
+                var notif_el = this._get_el('overlay');
+                if (notif_el && get_style(notif_el, 'visibility') !== 'hidden' && get_style(notif_el, 'display') !== 'none') {
+                    this._mark_delivery();
+                }
+            }
+        });
+
+        MPNotif.prototype._mark_delivery = _.safewrap(function(extra_props) {
+            if (!this.marked_as_shown) {
+                this.marked_as_shown = true;
+
+                if (this.campaign_id) {
+                    // mark notification shown (local cache)
+                    this._get_shown_campaigns()[this.campaign_id] = 1 * new Date();
+                    this.persistence.save();
+                }
+
+                // track delivery
+                this._track_event('$campaign_delivery', extra_props);
+
+                // mark notification shown (mixpanel property)
+                this.mixpanel['people']['append']({
+                    '$campaigns': this.campaign_id,
+                    '$notifications': {
+                        'campaign_id': this.campaign_id,
+                        'message_id':  this.message_id,
+                        'type':        'web',
+                        'time':        new Date()
+                    }
+                });
+            }
+        });
+
+        MPNotif.prototype._preload_images = function(all_loaded_cb) {
+            var self = this;
+            if (this.imgs_to_preload.length === 0) {
+                all_loaded_cb();
+                return;
+            }
+
+            var preloaded_imgs = 0,
+                img_objs = [];
+            for (var i = 0; i < this.imgs_to_preload.length; i++) {
+                var img = new Image(),
+                    onload = function() {
+                        preloaded_imgs++;
+                        if (preloaded_imgs === self.imgs_to_preload.length && all_loaded_cb) {
+                            all_loaded_cb();
+                            all_loaded_cb = null;
+                        }
+                    };
+                img.onload = onload;
+                img.src = this.imgs_to_preload[i];
+                if (img.complete) {
+                    onload();
+                }
+                img_objs.push(img);
+            }
+
+            // IE6/7 doesn't fire onload reliably
+            if (this._browser_lte('ie', 7)) {
+                setTimeout(function() {
+                    var imgs_loaded = true;
+                    for (i = 0; i < img_objs.length; i++) {
+                        if (!img_objs[i].complete) {
+                            imgs_loaded = false;
+                        }
+                    }
+                    if (imgs_loaded && all_loaded_cb) {
+                        all_loaded_cb();
+                        all_loaded_cb = null;
+                    }
+                }, 500);
+            }
+        };
+
+        MPNotif.prototype._remove_notification_el = _.safewrap(function() {
+            window.clearInterval(this._video_progress_checker);
+            this.notification_el.style.visibility = 'hidden';
+            this.body_el.removeChild(this.notification_el);
+        });
+
+        MPNotif.prototype._set_client_config = function() {
+            var get_browser_version = function(browser_ex) {
+                var match = navigator.userAgent.match(browser_ex);
+                return match && match[1];
+            };
+            this.browser_versions = {};
+            this.browser_versions['chrome']  = get_browser_version(/Chrome\/(\d+)/);
+            this.browser_versions['firefox'] = get_browser_version(/Firefox\/(\d+)/);
+            this.browser_versions['ie']      = get_browser_version(/MSIE (\d+).+/);
+            if (!this.browser_versions['ie'] && !(window.ActiveXObject) && "ActiveXObject" in window) {
+                this.browser_versions['ie'] = 11;
+            }
+
+            this.body_el = document.body || document.getElementsByTagName('body')[0];
+            if (this.body_el) {
+                this.doc_width = Math.max(
+                    this.body_el.scrollWidth, document.documentElement.scrollWidth,
+                    this.body_el.offsetWidth, document.documentElement.offsetWidth,
+                    this.body_el.clientWidth, document.documentElement.clientWidth
+                );
+                this.doc_height = Math.max(
+                    this.body_el.scrollHeight, document.documentElement.scrollHeight,
+                    this.body_el.offsetHeight, document.documentElement.offsetHeight,
+                    this.body_el.clientHeight, document.documentElement.clientHeight
+                );
+            }
+
+            // detect CSS compatibility
+            var ie_ver = this.browser_versions['ie'];
+            var sample_styles = document.createElement('div').style,
+                is_css_compatible = function(rule) {
+                    if (rule in sample_styles) {
+                        return true;
+                    }
+                    if (!ie_ver) {
+                        rule = rule[0].toUpperCase() + rule.slice(1);
+                        var props = ['O' + rule, 'Webkit' + rule, 'Moz' + rule];
+                        for (var i = 0; i < props.length; i++) {
+                            if (props[i] in sample_styles) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                };
+            this.use_transitions =
+                this.body_el &&
+                is_css_compatible('transition') &&
+                is_css_compatible('transform');
+            this.flip_animate =
+                (this.browser_versions['chrome'] >= 33 || this.browser_versions['firefox'] >= 15) &&
+                this.body_el &&
+                is_css_compatible('backfaceVisibility') &&
+                is_css_compatible('perspective') &&
+                is_css_compatible('transform');
+        };
+
+        MPNotif.prototype._switch_to_video = _.safewrap(function() {
+            var self = this,
+                anims = [
+                    {
+                        el:    self._get_notification_display_el(),
+                        attr:  'opacity',
+                        start: 1.0,
+                        goal:  0.0
+                    },
+                    {
+                        el:    self._get_notification_display_el(),
+                        attr:  'top',
+                        start: MPNotif.NOTIF_TOP,
+                        goal:  -500
+                    },
+                    {
+                        el:    self._get_el('video-noflip'),
+                        attr:  'opacity',
+                        start: 0.0,
+                        goal:  1.0
+                    },
+                    {
+                        el:    self._get_el('video-noflip'),
+                        attr:  'top',
+                        start: -self.video_height * 2,
+                        goal:  0
+                    }
+                ];
+
+            if (self.mini) {
+                var bg = self._get_el('bg'),
+                    overlay = self._get_el('overlay');
+                bg.style.width = '100%';
+                bg.style.height = '100%';
+                overlay.style.width = '100%';
+
+                self._add_class(self._get_notification_display_el(), 'exiting');
+                self._add_class(bg, 'visible');
+
+                anims.push({
+                    el:    self._get_el('bg'),
+                    attr:  'opacity',
+                    start: 0.0,
+                    goal:  MPNotif.BG_OPACITY
+                });
+            }
+
+            var video_el = self._get_el('video-holder');
+            video_el.innerHTML = self.video_iframe;
+
+            var video_ready = function() {
+                if (window['YT'] && window['YT']['loaded']) {
+                    self._yt_video_ready();
+                }
+                self.showing_video = true;
+                self._get_notification_display_el().style.visibility = 'hidden';
+            };
+            if (self.flip_animate) {
+                self._add_class('flipper', 'flipped');
+                setTimeout(video_ready, MPNotif.ANIM_TIME);
+            } else {
+                self._animate_els(anims, MPNotif.ANIM_TIME, video_ready);
+            }
+        });
+
+        MPNotif.prototype._track_event = function(event_name, properties, cb) {
+            if (this.campaign_id) {
+                properties = properties || {};
+                properties = _.extend(properties, {
+                    'campaign_id':     this.campaign_id,
+                    'message_id':      this.message_id,
+                    'message_type':    'web_inapp',
+                    'message_subtype': this.notif_type
+                });
+                this.mixpanel['track'](event_name, properties, cb);
+            } else {
+                cb && cb.call();
+            }
+        };
+
+        MPNotif.prototype._yt_video_ready = _.safewrap(function() {
+            var self = this;
+            if (self.video_inited) {
+                return;
+            }
+            self.video_inited = true;
+
+            var progress_bar  = self._get_el('video-elapsed'),
+                progress_time = self._get_el('video-time'),
+                progress_el   = self._get_el('video-progress');
+
+            new window['YT']['Player'](MPNotif.MARKUP_PREFIX + '-video-frame', {
+                'events': {
+                    'onReady': function(event) {
+                        var ytplayer = event['target'],
+                            video_duration = ytplayer['getDuration'](),
+                            pad = function(i) {
+                                return ('00' + i).slice(-2);
+                            },
+                            update_video_time = function(current_time) {
+                                var secs = Math.round(video_duration - current_time),
+                                    mins = Math.floor(secs / 60),
+                                    hours = Math.floor(mins / 60);
+                                secs -= mins * 60;
+                                mins -= hours * 60;
+                                progress_time.innerHTML = '-' + (hours ? hours + ':' : '') + pad(mins) + ':' + pad(secs);
+                            };
+                        update_video_time(0);
+                        self._video_progress_checker = window.setInterval(function() {
+                            var current_time = ytplayer['getCurrentTime']();
+                            progress_bar.style.width = (current_time / video_duration * 100) + '%';
+                            update_video_time(current_time);
+                        }, 250);
+                        _.register_event(progress_el, 'click', function(e) {
+                            var clickx = Math.max(0, e.pageX - progress_el.getBoundingClientRect().left);
+                            ytplayer['seekTo'](video_duration * clickx / progress_el.clientWidth, true);
+                        });
+                    }
+                }
+            });
+        });
 
     // EXPORTS (for closure compiler)
 
     // Underscore Exports
-    _['toArray']                                        = _.toArray;
-    _['isObject']                                       = _.isObject;
-    _['JSONEncode']                                     = _.JSONEncode;
-    _['JSONDecode']                                     = _.JSONDecode;
-    _['isBlockedUA']                                    = _.isBlockedUA;
-    _['isEmptyObject']                                  = _.isEmptyObject;
-    _['info']                                           = _.info;
-    _['info']['device']                                 = _.info.device;
-    _['info']['browser']                                = _.info.browser;
+    _['toArray']            = _.toArray;
+    _['isObject']           = _.isObject;
+    _['JSONEncode']         = _.JSONEncode;
+    _['JSONDecode']         = _.JSONDecode;
+    _['isBlockedUA']        = _.isBlockedUA;
+    _['isEmptyObject']      = _.isEmptyObject;
+    _['info']               = _.info;
+    _['info']['device']     = _.info.device;
+    _['info']['browser']    = _.info.browser;
+    _['info']['properties'] = _.info.properties;
 
     // MixpanelLib Exports
-    MixpanelLib.prototype['init']                       = MixpanelLib.prototype.init;
-    MixpanelLib.prototype['disable']                    = MixpanelLib.prototype.disable;
-    MixpanelLib.prototype['track']                      = MixpanelLib.prototype.track;
-    MixpanelLib.prototype['track_links']                = MixpanelLib.prototype.track_links;
-    MixpanelLib.prototype['track_forms']                = MixpanelLib.prototype.track_forms;
-    MixpanelLib.prototype['track_pageview']             = MixpanelLib.prototype.track_pageview;
-    MixpanelLib.prototype['register']                   = MixpanelLib.prototype.register;
-    MixpanelLib.prototype['register_once']              = MixpanelLib.prototype.register_once;
-    MixpanelLib.prototype['unregister']                 = MixpanelLib.prototype.unregister;
-    MixpanelLib.prototype['identify']                   = MixpanelLib.prototype.identify;
-    MixpanelLib.prototype['alias']                      = MixpanelLib.prototype.alias;
-    MixpanelLib.prototype['name_tag']                   = MixpanelLib.prototype.name_tag;
-    MixpanelLib.prototype['set_config']                 = MixpanelLib.prototype.set_config;
-    MixpanelLib.prototype['get_config']                 = MixpanelLib.prototype.get_config;
-    MixpanelLib.prototype['get_property']               = MixpanelLib.prototype.get_property;
-    MixpanelLib.prototype['get_distinct_id']            = MixpanelLib.prototype.get_distinct_id;
-    MixpanelLib.prototype['toString']                   = MixpanelLib.prototype.toString;
+    MixpanelLib.prototype['init']                            = MixpanelLib.prototype.init;
+    MixpanelLib.prototype['disable']                         = MixpanelLib.prototype.disable;
+    MixpanelLib.prototype['time_event']                      = MixpanelLib.prototype.time_event;
+    MixpanelLib.prototype['track']                           = MixpanelLib.prototype.track;
+    MixpanelLib.prototype['track_links']                     = MixpanelLib.prototype.track_links;
+    MixpanelLib.prototype['track_forms']                     = MixpanelLib.prototype.track_forms;
+    MixpanelLib.prototype['track_pageview']                  = MixpanelLib.prototype.track_pageview;
+    MixpanelLib.prototype['register']                        = MixpanelLib.prototype.register;
+    MixpanelLib.prototype['register_once']                   = MixpanelLib.prototype.register_once;
+    MixpanelLib.prototype['unregister']                      = MixpanelLib.prototype.unregister;
+    MixpanelLib.prototype['identify']                        = MixpanelLib.prototype.identify;
+    MixpanelLib.prototype['alias']                           = MixpanelLib.prototype.alias;
+    MixpanelLib.prototype['name_tag']                        = MixpanelLib.prototype.name_tag;
+    MixpanelLib.prototype['set_config']                      = MixpanelLib.prototype.set_config;
+    MixpanelLib.prototype['get_config']                      = MixpanelLib.prototype.get_config;
+    MixpanelLib.prototype['get_property']                    = MixpanelLib.prototype.get_property;
+    MixpanelLib.prototype['get_distinct_id']                 = MixpanelLib.prototype.get_distinct_id;
+    MixpanelLib.prototype['toString']                        = MixpanelLib.prototype.toString;
+    MixpanelLib.prototype['_check_and_handle_notifications'] = MixpanelLib.prototype._check_and_handle_notifications;
+    MixpanelLib.prototype['_show_notification']              = MixpanelLib.prototype._show_notification;
 
-    // MixpanelCookie Exports
-    MixpanelCookie.prototype['properties']              = MixpanelCookie.prototype.properties;
-    MixpanelCookie.prototype['update_search_keyword']   = MixpanelCookie.prototype.update_search_keyword;
-    MixpanelCookie.prototype['update_referrer_info']    = MixpanelCookie.prototype.update_referrer_info;
-    MixpanelCookie.prototype['get_cross_subdomain']     = MixpanelCookie.prototype.get_cross_subdomain;
-    MixpanelCookie.prototype['clear']                   = MixpanelCookie.prototype.clear;
+    // MixpanelPersistence Exports
+    MixpanelPersistence.prototype['properties']            = MixpanelPersistence.prototype.properties;
+    MixpanelPersistence.prototype['update_search_keyword'] = MixpanelPersistence.prototype.update_search_keyword;
+    MixpanelPersistence.prototype['update_referrer_info']  = MixpanelPersistence.prototype.update_referrer_info;
+    MixpanelPersistence.prototype['get_cross_subdomain']   = MixpanelPersistence.prototype.get_cross_subdomain;
+    MixpanelPersistence.prototype['clear']                 = MixpanelPersistence.prototype.clear;
 
     // MixpanelPeople Exports
-    MixpanelPeople.prototype['set']                     = MixpanelPeople.prototype.set;
-    MixpanelPeople.prototype['set_once']                = MixpanelPeople.prototype.set_once;
-    MixpanelPeople.prototype['increment']               = MixpanelPeople.prototype.increment;
-    MixpanelPeople.prototype['append']                  = MixpanelPeople.prototype.append;
-    MixpanelPeople.prototype['track_charge']            = MixpanelPeople.prototype.track_charge;
-    MixpanelPeople.prototype['clear_charges']           = MixpanelPeople.prototype.clear_charges;
-    MixpanelPeople.prototype['delete_user']             = MixpanelPeople.prototype.delete_user;
-    MixpanelPeople.prototype['toString']                = MixpanelPeople.prototype.toString;
+    MixpanelPeople.prototype['set']           = MixpanelPeople.prototype.set;
+    MixpanelPeople.prototype['set_once']      = MixpanelPeople.prototype.set_once;
+    MixpanelPeople.prototype['increment']     = MixpanelPeople.prototype.increment;
+    MixpanelPeople.prototype['append']        = MixpanelPeople.prototype.append;
+    MixpanelPeople.prototype['union']         = MixpanelPeople.prototype.union;
+    MixpanelPeople.prototype['track_charge']  = MixpanelPeople.prototype.track_charge;
+    MixpanelPeople.prototype['clear_charges'] = MixpanelPeople.prototype.clear_charges;
+    MixpanelPeople.prototype['delete_user']   = MixpanelPeople.prototype.delete_user;
+    MixpanelPeople.prototype['toString']      = MixpanelPeople.prototype.toString;
 
-    // Initialization
-    if (_.isUndefined(mixpanel)) {
-        // mixpanel wasn't initialized properly, report error and quit
-        console.critical("'mixpanel' object not initialized. Ensure you are using the latest version of the Mixpanel JS Library along with the snippet we provide.");
-        return;
-    }
-    if (mixpanel['__loaded'] || (mixpanel['config'] && mixpanel['cookie'])) {
-        // lib has already been loaded at least once; we don't want to override the global object this time so bomb early
-        console.error("Mixpanel library has already been downloaded at least once.");
-        return;
-    }
-    if (SNIPPET_VERSION < 1.1) {
-        // mixpanel wasn't initialized properly, report error and quit
-        console.critical("Version mismatch; please ensure you're using the latest version of the Mixpanel code snippet.");
-        return;
-    }
+    _.safewrap_class(MixpanelLib, ['identify', '_check_and_handle_notifications', '_show_notification']);
 
-    // Load instances of the Mixpanel Library
     var instances = {};
-    _.each(mixpanel['_i'], function(item) {
-        var name, instance;
-        if (item && _.isArray(item)) {
-            name = item[item.length-1];
-            instance = create_mplib.apply(this, item);
-
-            instances[name] = instance;
-        }
-    });
-
     var extend_mp = function() {
         // add all the sub mixpanel instances
         _.each(instances, function(instance, name) {
-            if (name !== PRIMARY_INSTANCE_NAME) { mixpanel[name] = instance; }
+            if (name !== PRIMARY_INSTANCE_NAME) { mixpanel_master[name] = instance; }
         });
 
         // add private functions as _
-        mixpanel['_'] = _;
+        mixpanel_master['_'] = _;
     };
 
-    // we override the snippets init function to handle the case where a
-    // user initializes the mixpanel library after the script loads & runs
-    mixpanel['init'] = function(token, config, name) {
-        if (name) {
-            // initialize a sub library
-            if (!mixpanel[name]) {
-                mixpanel[name] = instances[name] = create_mplib(token, config, name);
-                mixpanel[name]._loaded();
-            }
-        } else {
-            var instance = mixpanel;
+    var override_mp_init_func = function() {
+        // we override the snippets init function to handle the case where a
+        // user initializes the mixpanel library after the script loads & runs
+        mixpanel_master['init'] = function(token, config, name) {
+            if (name) {
+                // initialize a sub library
+                if (!mixpanel_master[name]) {
+                    mixpanel_master[name] = instances[name] = create_mplib(token, config, name);
+                    mixpanel_master[name]._loaded();
+                }
+                return mixpanel_master[name];
+            } else {
+                var instance = mixpanel_master;
 
-            if (instances[PRIMARY_INSTANCE_NAME]) {
-                // main mixpanel lib already initialized
-                instance = instances[PRIMARY_INSTANCE_NAME];
-            } else if (token) {
-                // intialize the main mixpanel lib
-                instance = create_mplib(token, config, PRIMARY_INSTANCE_NAME);
-            }
-
-            window[PRIMARY_INSTANCE_NAME] = mixpanel = instance;
-            extend_mp();
-        }
-    };
-
-    mixpanel['init']();
-
-    // Fire loaded events after updating the window's mixpanel object
-    _.each(instances, function(instance) {
-        instance._loaded();
-    });
-
-    // Cross browser DOM Loaded support
-
-    function dom_loaded_handler() {
-        // function flag since we only want to execute this once
-        if (dom_loaded_handler.done) { return; }
-        dom_loaded_handler.done = true;
-
-        DOM_LOADED = true;
-        ENQUEUE_REQUESTS = false;
-
-        _.each(instances, function(inst) {
-            inst._dom_loaded();
-        });
-    }
-
-    if (document.addEventListener) {
-        if (document.readyState == "complete") {
-            // safari 4 can fire the DOMContentLoaded event before loading all
-            // external JS (including this file). you will see some copypasta
-            // on the internet that checks for 'complete' and 'loaded', but
-            // 'loaded' is an IE thing
-            dom_loaded_handler();
-        } else {
-            document.addEventListener("DOMContentLoaded", dom_loaded_handler, false);
-        }
-    } else if (document.attachEvent) {
-        // IE
-        document.attachEvent("onreadystatechange", dom_loaded_handler);
-
-        // check to make sure we arn't in a frame
-        var toplevel = false;
-        try {
-            toplevel = window.frameElement == null;
-        } catch(e) {}
-
-        if (document.documentElement.doScroll && toplevel) {
-            function do_scroll_check() {
-                try {
-                    document.documentElement.doScroll("left");
-                } catch(e) {
-                    setTimeout(do_scroll_check, 1);
-                    return;
+                if (instances[PRIMARY_INSTANCE_NAME]) {
+                    // main mixpanel lib already initialized
+                    instance = instances[PRIMARY_INSTANCE_NAME];
+                } else if (token) {
+                    // intialize the main mixpanel lib
+                    instance = create_mplib(token, config, PRIMARY_INSTANCE_NAME);
+                    instance._loaded();
+                    instances[PRIMARY_INSTANCE_NAME] = instance;
                 }
 
-                dom_loaded_handler();
-            };
+                mixpanel_master = instance;
+                if (init_type === INIT_SNIPPET) {
+                    window[PRIMARY_INSTANCE_NAME] = mixpanel_master;
+                }
+                extend_mp();
+            }
+        };
+    };
 
-            do_scroll_check();
+    var add_dom_loaded_handler = function() {
+        // Cross browser DOM Loaded support
+        function dom_loaded_handler() {
+            // function flag since we only want to execute this once
+            if (dom_loaded_handler.done) { return; }
+            dom_loaded_handler.done = true;
+
+            DOM_LOADED = true;
+            ENQUEUE_REQUESTS = false;
+
+            _.each(instances, function(inst) {
+                inst._dom_loaded();
+            });
         }
+
+        function do_scroll_check() {
+            try {
+                document.documentElement.doScroll("left");
+            } catch(e) {
+                setTimeout(do_scroll_check, 1);
+                return;
+            }
+
+            dom_loaded_handler();
+        }
+
+        if (document.addEventListener) {
+            if (document.readyState == "complete") {
+                // safari 4 can fire the DOMContentLoaded event before loading all
+                // external JS (including this file). you will see some copypasta
+                // on the internet that checks for 'complete' and 'loaded', but
+                // 'loaded' is an IE thing
+                dom_loaded_handler();
+            } else {
+                document.addEventListener("DOMContentLoaded", dom_loaded_handler, false);
+            }
+        } else if (document.attachEvent) {
+            // IE
+            document.attachEvent("onreadystatechange", dom_loaded_handler);
+
+            // check to make sure we arn't in a frame
+            var toplevel = false;
+            try {
+                toplevel = window.frameElement == null;
+            } catch(e) {}
+
+            if (document.documentElement.doScroll && toplevel) {
+                do_scroll_check();
+            }
+        }
+
+        // fallback handler, always will work
+        _.register_event(window, 'load', dom_loaded_handler, true);
+    };
+
+    function init_from_snippet() {
+        init_type = INIT_SNIPPET;
+        mixpanel_master = window[PRIMARY_INSTANCE_NAME];
+
+        // Initialization
+        if (_.isUndefined(mixpanel_master)) {
+            // mixpanel wasn't initialized properly, report error and quit
+            console.critical("'mixpanel' object not initialized. Ensure you are using the latest version of the Mixpanel JS Library along with the snippet we provide.");
+            return;
+        }
+        if (mixpanel_master['__loaded'] || (mixpanel_master['config'] && mixpanel_master['persistence'])) {
+            // lib has already been loaded at least once; we don't want to override the global object this time so bomb early
+            console.error("Mixpanel library has already been downloaded at least once.");
+            return;
+        }
+        var snippet_version = mixpanel_master['__SV'] || 0;
+        if (snippet_version < 1.1) {
+            // mixpanel wasn't initialized properly, report error and quit
+            console.critical("Version mismatch; please ensure you're using the latest version of the Mixpanel code snippet.");
+            return;
+        }
+
+        // Load instances of the Mixpanel Library
+        _.each(mixpanel_master['_i'], function(item) {
+            if (item && _.isArray(item)) {
+                instances[item[item.length-1]] = create_mplib.apply(this, item);
+            }
+        });
+
+        override_mp_init_func();
+        mixpanel_master['init']();
+
+        // Fire loaded events after updating the window's mixpanel object
+        _.each(instances, function(instance) {
+            instance._loaded();
+        });
+
+        add_dom_loaded_handler();
     }
 
-    // fallback handler, always will work
-    _.register_event(window, 'load', dom_loaded_handler, true);
+    init_from_snippet();
 
-})(window['mixpanel']);
+})();
