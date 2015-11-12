@@ -1,6 +1,22 @@
 Changelog
 =========
 
+### 2.0.1 2015-11-07
+- same as 2.0.0, just bumped it because of npm publish problem
+
+### 2.0.0 2015-11-07
+- release on NPM to support cordova 5.x.x
+  - install plugin via ``` cordova add cordova-plugin-mixpanel ```
+- update android lib from 4.5.3 to 4.7.0 (thanks [Simon Arneson](https://github.com/scanniza))
+- more mixpanel functionality (thanks [Justin Young](https://github.com/soupman99))
+  - mixpanel api:
+    - showSurvey (only iOS currently)
+  - mixpanel people api:
+    - increment
+    - setOnce
+
+
+
 
 ### 1.3.1 2015-10-17
 - fix registerPushToken functionality (thanks [Steven Feaster](https://github.com/sfeast))

@@ -32,6 +32,7 @@ public class MixpanelPlugin extends CordovaPlugin {
         INIT("init"),
         REGISTER_SUPER_PROPERTIES("registerSuperProperties"),
         RESET("reset"),
+        SHOW_SURVEY("showSurvey"),
         TRACK("track"),
 
 
@@ -39,6 +40,7 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
         PEOPLE_IDENTIFY("people_identify"),
+        PEOPLE_INCREMENT("people_increment"),
         PEOPLE_SET_PUSH_ID("people_setPushId"),
         PEOPLE_SET("people_set"),
         PEOPLE_SET_ONCE("people_set_once");
@@ -94,10 +96,14 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleRegisterSuperProperties(args, cbCtx);
             case RESET:
                 return handleReset(args, cbCtx);
+            case SHOW_SURVEY:
+                return handleShowSurvey(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
+            case PEOPLE_INCREMENT:
+                return handlePeopleIncrement(args, cbCtx);
             case PEOPLE_SET_PUSH_ID:
                 return handlePeopleSetPushId(args, cbCtx);
             case PEOPLE_SET:
@@ -194,6 +200,12 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
+    private boolean handleShowSurvey(JSONArray args, final CallbackContext cbCtx) {
+        this.error(cbCtx, "not implemented");
+        return false;
+    }
+
+
     private boolean handleTrack(JSONArray args, final CallbackContext cbCtx) {
         String event = args.optString(0, "");
         JSONObject properties = args.optJSONObject(1);
@@ -214,18 +226,45 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
+    private boolean handlePeopleIncrement(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject jsonPropertiesObj = args.optJSONObject(0);
+        Map<String, Number> properties = new HashMap<String, Number>();
+
+        JSONArray keys = jsonPropertiesObj.names();
+
+        try {
+            for(int i = 0; i< keys.length(); i++){
+                String key = keys.getString(i);
+                Number value = (Number) jsonPropertiesObj.get(key);
+                properties.put(key, value);
+            }
+        }
+        catch(Exception e){
+            this.error(cbCtx, "passed in properties should be a json object with String keys and Number values");
+            return false;
+        }
+
+        mixpanel.getPeople().increment(properties);
+        cbCtx.success();
+        return true;
+    }
+
+
     private boolean handlePeopleSet(JSONArray args, final CallbackContext cbCtx) {
         JSONObject properties = args.optJSONObject(0);
         mixpanel.getPeople().set(properties);
         cbCtx.success();
         return true;
     }
+
+
     private boolean handlePeopleSetOnce(JSONArray args, final CallbackContext cbCtx) {
         JSONObject properties = args.optJSONObject(0);
         mixpanel.getPeople().setOnce(properties);
         cbCtx.success();
         return true;
     }
+
 
     private boolean handlePeopleSetPushId(JSONArray args, final CallbackContext cbCtx) {
         String pushId = args.optString(0);

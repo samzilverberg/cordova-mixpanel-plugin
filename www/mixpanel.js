@@ -58,6 +58,10 @@ mixpanel.reset = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'reset', []);
 };
 
+mixpanel.showSurvey = function(onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'showSurvey', []);
+};
+
 mixpanel.track = function(eventName, eventProperties, onSuccess, onFail) {
   if (!eventName || typeof eventName != 'string') {
     return onFail(errors.invalid('event', eventName));
