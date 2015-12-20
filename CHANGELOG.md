@@ -2,9 +2,10 @@ Changelog
 =========
 
 ### 2.1.0 2015-12-20
-- distinctId - fix by damienfa
+- fix for distinctId by damienfa
 - browser platform supported (thanks [Damien Fa](https://github.com/damienfa))
-
+- update ios lib from 2.7.2 to 2.9.1
+- fix for flush timer not starting after init
 
 ### 2.0.1 2015-11-07
 - same as 2.0.0, just bumped it because of npm publish problem
