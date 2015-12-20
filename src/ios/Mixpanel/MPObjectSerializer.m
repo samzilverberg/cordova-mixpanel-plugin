@@ -2,7 +2,7 @@
 // Copyright (c) 2014 Mixpanel. All rights reserved.
 
 #import <objc/runtime.h>
-#import "MPCategoryHelpers.h"
+#import "UIView+MPHelpers.h"
 #import "MPClassDescription.h"
 #import "MPEnumDescription.h"
 #import "MPObjectIdentityProvider.h"
@@ -23,7 +23,7 @@
     MPObjectIdentityProvider *_objectIdentityProvider;
 }
 
-- (id)initWithConfiguration:(MPObjectSerializerConfig *)configuration objectIdentityProvider:(MPObjectIdentityProvider *)objectIdentityProvider
+- (instancetype)initWithConfiguration:(MPObjectSerializerConfig *)configuration objectIdentityProvider:(MPObjectIdentityProvider *)objectIdentityProvider
 {
     self = [super init];
     if (self) {
@@ -131,7 +131,7 @@
 
     // TODO: write an algorithm that generates all the variations of parameter combinations.
     if ([selectorDescription.parameters count] > 0) {
-        MPPropertySelectorParameterDescription *parameterDescription = [selectorDescription.parameters objectAtIndex:0];
+        MPPropertySelectorParameterDescription *parameterDescription = (selectorDescription.parameters)[0];
         for (id value in [self allValuesForType:parameterDescription.type]) {
             [variations addObject:@[ value ]];
         }
