@@ -1,8 +1,14 @@
 Changelog
 =========
 
+### 2.1.0 2015-12-20
+- distinctId - fix by damienfa
+- browser platform supported (thanks [Damien Fa](https://github.com/damienfa))
+
+
 ### 2.0.1 2015-11-07
 - same as 2.0.0, just bumped it because of npm publish problem
+
 
 ### 2.0.0 2015-11-07
 - release on NPM to support cordova 5.x.x
@@ -14,8 +20,6 @@ Changelog
   - mixpanel people api:
     - increment
     - setOnce
-
-
 
 
 ### 1.3.1 2015-10-17

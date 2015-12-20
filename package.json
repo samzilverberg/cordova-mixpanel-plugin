@@ -1,14 +1,15 @@
 {
   "name": "cordova-plugin-mixpanel",
   "version": "2.0.1",
-  "description": "Mixpanel Cordova Plugin for iOS and Android",
+  "description": "Mixpanel Cordova Plugin for iOS, Android and Browser Platforms",
   "author": "Sam Zilverberg <samzilverberg@gmail.com>",
   "license": "MIT",
   "cordova": {
     "id": "cordova-plugin-mixpanel",
     "platforms": [
       "android",
-      "ios"
+      "ios",
+      "browser"
     ]
   },
   "repository": {
@@ -24,6 +25,7 @@
     "plugin",
     "ios",
     "android",
+    "browser",
     "ecosystem:cordova",
     "cordova-android",
     "cordova-ios"
