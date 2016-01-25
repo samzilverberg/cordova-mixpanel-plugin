@@ -48,6 +48,10 @@
             <uses-permission android:name="android.permission.WAKE_LOCK" />
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
+	  <activity android:name="com.mixpanel.android.surveys.SurveyActivity"
+		    android:theme="@style/com_mixpanel_android_SurveyActivityTheme"/>
+	</config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
           <receiver android:name="com.mixpanel.android.mpmetrics.GCMReceiver"
                     android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>

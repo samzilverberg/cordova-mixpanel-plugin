@@ -543,8 +543,6 @@
 
 /*!
  @method
-<<<<<<< HEAD
-=======
  
  @abstract
  Calls flush, then optionally archives and calls a handler when finished.
@@ -562,7 +560,6 @@
 
 /*!
  @method
->>>>>>> parent of 7579e2b... updated to the new mixpanel plugin
 
  @abstract
  Writes current project info, including distinct ID, super properties and pending event
