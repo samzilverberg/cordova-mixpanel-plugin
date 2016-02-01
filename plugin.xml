@@ -51,6 +51,9 @@
 	  <activity android:name="com.mixpanel.android.surveys.SurveyActivity"/>
 	</config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
+	  <activity android:name="com.mixpanel.android.MPConfig.EnableDebugLogging" android:value="true"/>
+	</config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
           <receiver android:name="com.mixpanel.android.mpmetrics.GCMReceiver"
                     android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
