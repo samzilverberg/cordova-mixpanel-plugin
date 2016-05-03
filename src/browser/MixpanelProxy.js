@@ -3,6 +3,8 @@ var MIXPANEL_LIB_URL = 'plugins/cordova-plugin-mixpanel/src/browser/mixpanel-js-
 
 var errors = {
     invalid: function(paramName, value) {
+      if (typeof paramName !== 'string') { console.error(paramName, value); return "invalid"; }
+      if (typeof value !== 'string') value = JSON.stringify(value);
       return 'invalid ' + paramName + ': ' + value;
     },
     notsupported: function(methodName) {
