@@ -74,14 +74,14 @@ mixpanel.timeEventStart = function(eventName, onSuccess, onFail){
   if (!eventName || typeof eventName != 'string') {
     return onFail(errors.invalid('event', eventName));
   }
-  exec(onSuccess, onFail, 'Mixpanel', 'timeEventStart', [eventName, eventProperties]);
+  exec(onSuccess, onFail, 'Mixpanel', 'timeEventStart', [eventName]);
 };
 
 mixpanel.timeEventStop = function(eventName, onSuccess, onFail){
   if (!eventName || typeof eventName != 'string') {
     return onFail(errors.invalid('event', eventName));
   }
-  exec(onSuccess, onFail, 'Mixpanel', 'timeEventStop', [eventName, eventProperties]);
+  exec(onSuccess, onFail, 'Mixpanel', 'timeEventStop', [eventName]);
 };
 
 
