@@ -171,6 +171,24 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+-(void)timeEventStart:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSString* eventName = [command argumentAtIndex:0];
+
+    [mixpanel timeEvent:eventName];
+}
+
+-(void)timeEventStop:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSString* eventName = [command argumentAtIndex:0];
+
+    [mixpanel track:eventName];
+}
+
 
 // PEOPLE API
 

@@ -1,6 +1,9 @@
 Changelog
 =========
 
+### 2.1.1 2016-05-17
+- add TimeEvent methods.
+
 ### 2.1.0 2015-12-20
 - fix for distinctId by damienfa
 - browser platform supported (thanks [Damien Fa](https://github.com/damienfa))
