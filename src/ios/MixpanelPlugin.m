@@ -282,4 +282,21 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+# pragma mark Private functions
+-(BOOL)checkMixpanelInstance:(CDVInvokedUrlCommand*)command
+{
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+
+    if (mixpanelInstance == nil)
+    {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+        return false;
+    }
+
+    return true;
+}
+
 @end
