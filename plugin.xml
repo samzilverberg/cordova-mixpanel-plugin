@@ -32,13 +32,22 @@
 
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
-        <source-file src="src/libs/mixpanel-android-4.7.0.jar" target-dir="libs/"/>
+        <framework src="com.mixpanel.android:mixpanel-android:4.+" />
+        <framework src="com.google.android.gms:play-services:3.1+" />
 
         <!-- AndroidManifest.xml -->
         <!-- see https://github.com/mixpanel/mixpanel-android/blob/master/src/main/AndroidManifest.xml -->
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        </config-file>
+        
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+          <meta-data
+      android:name="com.mixpanel.android.MPConfig.EnableDebugLogging"
+      android:value="true" />
+      
+            <activity android:name="com.mixpanel.android.surveys.SurveyActivity" android:theme="@style/com_mixpanel_android_SurveyActivityTheme"/> 
         </config-file>
     </platform>
 
