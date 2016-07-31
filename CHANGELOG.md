@@ -1,14 +1,18 @@
 Changelog
 =========
 
-### 2.1.1 2016-05-17
+### Master: pending for release
+- update ios lib from 2.9.1 to 3.0.0 (thanks [Timan Rebel](https://github.com/timanrebel))
+- update android lib from 4.7.0 to 4.9.1 and use maven repo (thanks [Timan Rebel](https://github.com/timanrebel))
 - add TimeEvent methods.
+
 
 ### 2.1.0 2015-12-20
 - fix for distinctId by damienfa
 - browser platform supported (thanks [Damien Fa](https://github.com/damienfa))
 - update ios lib from 2.7.2 to 2.9.1
 - fix for flush timer not starting after init
+
 
 ### 2.0.1 2015-11-07
 - same as 2.0.0, just bumped it because of npm publish problem
