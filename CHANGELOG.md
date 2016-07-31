@@ -1,10 +1,11 @@
 Changelog
 =========
 
-### Master: pending for release
+### 2.2.0 2016-07-31
 - update ios lib from 2.9.1 to 3.0.0 (thanks [Timan Rebel](https://github.com/timanrebel))
 - update android lib from 4.7.0 to 4.9.1 and use maven repo (thanks [Timan Rebel](https://github.com/timanrebel))
-- add TimeEvent methods.
+- add TimeEvent methods (thanks [Jon Smart](https://github.com/JonSmart))
+- add typescript declarations file (thanks [Jon Smart](https://github.com/JonSmart))
 
 
 ### 2.1.0 2015-12-20
