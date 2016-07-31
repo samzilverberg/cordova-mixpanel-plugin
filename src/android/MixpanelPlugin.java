@@ -33,9 +33,8 @@ public class MixpanelPlugin extends CordovaPlugin {
         REGISTER_SUPER_PROPERTIES("registerSuperProperties"),
         RESET("reset"),
         SHOW_SURVEY("showSurvey"),
+        TIME_EVENT("timeEvent"),
         TRACK("track"),
-        TIME_EVENT_START("timeEventStart"),
-        TIME_EVENT_STOP("timeEventStop"),
 
         // PEOPLE API
 
@@ -99,12 +98,10 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleReset(args, cbCtx);
             case SHOW_SURVEY:
                 return handleShowSurvey(args, cbCtx);
+            case TIME_EVENT:
+                return handleTimeEvent(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
-            case TIME_EVENT_START:
-                return startTimeEvent(args, cbCtx);
-            case TIME_EVENT_STOP:
-                return stopTimeEvent(args, cbCtx);
             case PEOPLE_IDENTIFY:
                 return handlePeopleIdentify(args, cbCtx);
             case PEOPLE_INCREMENT:
@@ -211,6 +208,14 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
+    private boolean handleTimeEvent(JSONArray args, final CallbackContext cbCtx) {
+        String event = args.optString(0, "");
+        mixpanel.timeEvent(event);
+        cbCtx.success();
+        return true;
+    }
+
+
     private boolean handleTrack(JSONArray args, final CallbackContext cbCtx) {
         String event = args.optString(0, "");
         JSONObject properties = args.optJSONObject(1);
@@ -218,20 +223,6 @@ public class MixpanelPlugin extends CordovaPlugin {
             properties = new JSONObject();
         }
         mixpanel.track(event, properties);
-        cbCtx.success();
-        return true;
-    }
-
-    private boolean startTimeEvent(JSONArray args, final CallbackContext cbCtx) {
-        String event = args.optString(0, "");
-        mixpanel.timeEvent(event);
-        cbCtx.success();
-        return true;
-    }
-    
-    private boolean stopTimeEvent(JSONArray args, final CallbackContext cbCtx) {
-        String event = args.optString(0, "");
-        mixpanel.track(event);
         cbCtx.success();
         return true;
     }

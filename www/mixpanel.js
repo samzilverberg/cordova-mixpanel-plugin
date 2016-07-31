@@ -62,26 +62,19 @@ mixpanel.showSurvey = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'showSurvey', []);
 };
 
+mixpanel.timeEvent = function(eventName, onSuccess, onFail){
+  if (!eventName || typeof eventName != 'string') {
+    return onFail(errors.invalid('event', eventName));
+  }
+  exec(onSuccess, onFail, 'Mixpanel', 'timeEvent', [eventName]);
+};
+
 mixpanel.track = function(eventName, eventProperties, onSuccess, onFail) {
   if (!eventName || typeof eventName != 'string') {
     return onFail(errors.invalid('event', eventName));
   }
 
   exec(onSuccess, onFail, 'Mixpanel', 'track', [eventName, eventProperties]);
-};
-
-mixpanel.timeEventStart = function(eventName, onSuccess, onFail){
-  if (!eventName || typeof eventName != 'string') {
-    return onFail(errors.invalid('event', eventName));
-  }
-  exec(onSuccess, onFail, 'Mixpanel', 'timeEventStart', [eventName]);
-};
-
-mixpanel.timeEventStop = function(eventName, onSuccess, onFail){
-  if (!eventName || typeof eventName != 'string') {
-    return onFail(errors.invalid('event', eventName));
-  }
-  exec(onSuccess, onFail, 'Mixpanel', 'timeEventStop', [eventName]);
 };
 
 

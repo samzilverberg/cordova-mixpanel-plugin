@@ -135,6 +135,7 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+
 -(void)showSurvey:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;
@@ -152,26 +153,8 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
--(void)track:(CDVInvokedUrlCommand*)command;
-{
-    CDVPluginResult* pluginResult = nil;
-    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSString* eventName = [command argumentAtIndex:0];
-    NSDictionary* eventProperties = [command argumentAtIndex:1 withDefault:@{}];
 
-    if (mixpanelInstance == nil)
-    {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
-    }
-    else
-    {
-        [mixpanelInstance track:eventName properties:eventProperties];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
--(void)timeEventStart:(CDVInvokedUrlCommand*)command;
+-(void)timeEvent:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
@@ -189,12 +172,13 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
--(void)timeEventStop:(CDVInvokedUrlCommand*)command;
+
+-(void)track:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
     NSString* eventName = [command argumentAtIndex:0];
-
+    NSDictionary* eventProperties = [command argumentAtIndex:1 withDefault:@{}];
 
     if (mixpanelInstance == nil)
     {
@@ -202,7 +186,7 @@
     }
     else
     {
-        [mixpanelInstance track:eventName properties:nil];
+        [mixpanelInstance track:eventName properties:eventProperties];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

@@ -23,6 +23,7 @@
 -(void)reset:(CDVInvokedUrlCommand*)command;
 -(void)showSurvey:(CDVInvokedUrlCommand*)command;
 -(void)track:(CDVInvokedUrlCommand*)command;
+-(void)timeEvent:(CDVInvokedUrlCommand*)command;
 
 
 // PEOPLE API
