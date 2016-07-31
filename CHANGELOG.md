@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### Master: pending for release
+- update ios lib from 2.9.1 to 3.0.0 (thanks [Timan Rebel](https://github.com/timanrebel))
+- update android lib from 4.7.0 to 4.9.1 and use maven repo (thanks [Timan Rebel](https://github.com/timanrebel))
+
 ### 2.1.0 2015-12-20
 - fix for distinctId by damienfa
 - browser platform supported (thanks [Damien Fa](https://github.com/damienfa))
