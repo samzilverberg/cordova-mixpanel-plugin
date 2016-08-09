@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### 2.2.1 2016-08-09
+- android play services dependency as wildcard version to avoid conflict with other plugins (thanks [ZiFFeL1992](https://github.com/ZiFFeL1992))
+
+
 ### 2.2.0 2016-07-31
 - update ios lib from 2.9.1 to 3.0.0 (thanks [Timan Rebel](https://github.com/timanrebel))
 - update android lib from 4.7.0 to 4.9.1 and use maven repo (thanks [Timan Rebel](https://github.com/timanrebel))

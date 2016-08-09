@@ -84,7 +84,7 @@ open your xcode proj, goto **build phases -> link binary with libraries**:
 
 #### i get error 'Mixpanel' plugin not found, check config.xml
 
-appears to be some problem of the xcode proj settings.
+appears to be some problem of the xcode proj settings.<br/>
 only working solution i found so far is to
 ```
 cordova platform remove ios
@@ -96,10 +96,17 @@ and setting up the build phase correctly again, as described in last question.
 
 #### hey i'm on iOS>9 and nothing is happening, why?
 
-google for NSAppTransportSecurity.
-since iOS9 they are more strict about what your app is allowed to connect to.
+google for NSAppTransportSecurity.<br/>
+since iOS9 they are more strict about what your app is allowed to connect to.<br/>
 you will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
 
+### Android
+
+#### my build fails, wat? why?
+
+mixpanel lib depends on google play services 3.1 or higher.<br/>
+you can install this through the android sdk under extras category.<br/>
+FYI this plugin registers a dependency on ANY version of play services so it doesnt conflict with other plugins in any way.
 
 ##### Keywords
 mixpanel, plugin cordova, phonegap, ionic, android, ios
