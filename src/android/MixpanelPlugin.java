@@ -286,8 +286,9 @@ public class MixpanelPlugin extends CordovaPlugin {
         return true;
     }
 
+
     private boolean handlePeopleTrackCharge(JSONArray args, final CallbackContext cbCtx) {
-        Double charge = args.optString(0, 0.0);
+        Double charge = args.optDouble(0, 0.0);
         JSONObject properties = args.optJSONObject(1);
         if (properties == null) {
             properties = new JSONObject();
