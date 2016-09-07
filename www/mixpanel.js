@@ -105,6 +105,16 @@ mixpanel.people.setOnce = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set_once', [peopleProperties]);
 };
 
+mixpanel.people.trackCharge = function(charge, eventProperties, onSuccess, onFail) {
+  if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
+    return onFail(errors.invalid('properties', peopleProperties));
+  }
+
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_track_charge', [charge, peopleProperties]);
+};
+
+
 mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
   if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
     return onFail(errors.invalid('properties', peopleProperties));
