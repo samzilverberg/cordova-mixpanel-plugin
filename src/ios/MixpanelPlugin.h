@@ -31,6 +31,7 @@
 
 -(void)people_identify:(CDVInvokedUrlCommand*)command;
 -(void)people_increment:(CDVInvokedUrlCommand*)command;
+-(void)people_track_charge:(CDVInvokedUrlCommand*)command;
 -(void)people_setPushId:(CDVInvokedUrlCommand*)command;
 -(void)people_set:(CDVInvokedUrlCommand*)command;
 -(void)people_set_once:(CDVInvokedUrlCommand*)command;

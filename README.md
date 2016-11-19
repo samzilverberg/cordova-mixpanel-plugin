@@ -50,6 +50,7 @@ older versions:
   ```
 - set(peopleProperties, onSuccess, onFail)
 - setOnce(peopleProperties, onSuccess, onFail)
+- trackCharge(charge, eventProperties, onSuccess, onFail)
 
 
 ## TODOs

@@ -303,6 +303,27 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+
+-(void)people_track_charge:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSNumber* amount = [command argumentAtIndex:0];
+    NSDictionary* chargeProperties = [command argumentAtIndex:1 withDefault:@{}];
+
+    if (mixpanelInstance == nil)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+    }
+    else
+    {
+        [mixpanelInstance.people trackCharge:amount withProperties:chargeProperties];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
 # pragma mark Private functions
 -(BOOL)checkMixpanelInstance:(CDVInvokedUrlCommand*)command
 {
