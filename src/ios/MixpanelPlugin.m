@@ -324,6 +324,25 @@
 }
 
 
+-(void)people_unset:(CDVInvokedUrlCommand*)command;
+{
+    CDVPluginResult* pluginResult = nil;
+    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
+    NSArray* propertiesToUnset = [command.arguments objectAtIndex:0];
+
+    if (mixpanelInstance == nil)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
+    }
+    else
+    {
+        [mixpanelInstance.people unset:propertiesToUnset];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
 # pragma mark Private functions
 -(BOOL)checkMixpanelInstance:(CDVInvokedUrlCommand*)command
 {

@@ -44,7 +44,8 @@ public class MixpanelPlugin extends CordovaPlugin {
         PEOPLE_SET_PUSH_ID("people_setPushId"),
         PEOPLE_SET("people_set"),
         PEOPLE_SET_ONCE("people_set_once"),
-        PEOPLE_TRACK_CHARGE("people_track_charge");
+        PEOPLE_TRACK_CHARGE("people_track_charge"),
+        PEOPLE_UNSET("people_unset");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -115,6 +116,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handlePeopleSetOnce(args, cbCtx);
             case PEOPLE_TRACK_CHARGE:
                 return handlePeopleTrackCharge(args, cbCtx);
+            case PEOPLE_UNSET:
+                return handlePeopleUnset(args, cbCtx);
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -297,4 +300,18 @@ public class MixpanelPlugin extends CordovaPlugin {
         cbCtx.success();
         return true;
     }
+
+
+    private boolean handlePeopleUnset(JSONArray args, final CallbackContext cbCtx) {
+        JSONArray propertiesToUnset = args.optJSONArray(0);
+        for(int i=0;i<propertiesToUnset.length();i++){
+            String propertyToUnset = propertiesToUnset.optString(i);
+            if (propertyToUnset != null){
+                mixpanel.getPeople().unset(propertyToUnset);
+            }
+        }
+        cbCtx.success();
+        return true;
+    }
+
 }

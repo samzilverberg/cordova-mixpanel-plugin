@@ -89,6 +89,14 @@ mixpanel.people.identify = function(distinctId, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_identify', [distinctId]);
 };
 
+mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
+  if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
+    return onFail(errors.invalid('properties', peopleProperties));
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_increment', [peopleProperties]);
+};
+
 mixpanel.people.set = function(peopleProperties, onSuccess, onFail) {
   if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
     return onFail(errors.invalid('properties', peopleProperties));
@@ -105,6 +113,19 @@ mixpanel.people.setOnce = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set_once', [peopleProperties]);
 };
 
+/**
+ * @param pushId is the token/id you get back when registering the device with the notification service
+ *        for android - this is the GCM token
+ *        for ios - this is the APN token
+ */
+mixpanel.people.setPushId = function(pushId, onSuccess, onFail) {
+  if (!pushId || typeof pushId !== 'string') {
+    return onFail(errors.invalid('pushId', pushId));
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_setPushId', [pushId]);
+};
+
 mixpanel.people.trackCharge = function(amount, chargeProperties, onSuccess, onFail) {
   if (typeof amount !== 'number' || !isFinite(amount)) {
     return onFail(errors.invalid('amount', amount));
@@ -117,25 +138,12 @@ mixpanel.people.trackCharge = function(amount, chargeProperties, onSuccess, onFa
   exec(onSuccess, onFail, 'Mixpanel', 'people_track_charge', [amount, chargeProperties]);
 };
 
-mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
-  if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
-    return onFail(errors.invalid('properties', peopleProperties));
+mixpanel.people.unset = function(propertiesArray, onSuccess, onFail) {
+  if (!Array.isArray(propertiesArray)) {
+    return onFail(errors.invalid('propertiesArray', propertiesArray));
   }
 
-  exec(onSuccess, onFail, 'Mixpanel', 'people_increment', [peopleProperties]);
-};
-
-/**
- * @param pushId is the token/id you get back when registering the device with the notification service
- *        for android - this is the GCM token
- *        for ios - this is the APN token
- */
-mixpanel.people.setPushId = function(pushId, onSuccess, onFail) {
-  if (!pushId || typeof pushId !== 'string') {
-    return onFail(errors.invalid('pushId', pushId));
-  }
-
-  exec(onSuccess, onFail, 'Mixpanel', 'people_setPushId', [pushId]);
+  exec(onSuccess, onFail, 'Mixpanel', 'people_unset', [propertiesArray]);
 };
 
 
