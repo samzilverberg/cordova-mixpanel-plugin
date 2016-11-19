@@ -168,6 +168,29 @@ function on_mixpanel_loaded() {
 
   };
 
+
+  // TRACK CHARGE
+  mixpanel.people.original_track_charge = mixpanel.people.track_charge;
+  mixpanel.people.track_charge = function(charge, eventProperties, onSuccess, onFail) {
+
+    if (!charge || typeof charge != 'number') {
+      if (onFail && typeof onFail === 'function')
+        return onFail(errors.invalid('charge', charge));
+    }
+
+    mixpanel.people.original_track_charge(charge, eventProperties, function(r) {
+      if (!r) {
+        if (onFail && typeof onFail === 'function')
+          return onFail(errors.invalid('people.track_charge', charge));
+      } else {
+        if (onSuccess && typeof onSuccess === 'function')
+          return onSuccess();
+      }
+    });
+
+  };
+
+
   mixpanel.people.original_increment = mixpanel.people.increment;
   mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
     if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
