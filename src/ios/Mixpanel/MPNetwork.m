@@ -12,6 +12,8 @@
 #import "Mixpanel.h"
 #import <UIKit/UIKit.h>
 
+#define MIXPANEL_NO_NETWORK_ACTIVITY_INDICATOR (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
+
 static const NSUInteger kBatchSize = 50;
 
 @implementation MPNetwork
@@ -28,16 +30,16 @@ static const NSUInteger kBatchSize = 50;
 
 #pragma mark - Flush
 - (void)flushEventQueue:(NSMutableArray *)events {
-    [self flushQueue:events endpoint:@"/track/"];
+    [self flushQueue:events endpoint:MPNetworkEndpointTrack];
 }
 
 - (void)flushPeopleQueue:(NSMutableArray *)people {
-    [self flushQueue:people endpoint:@"/engage/"];
+    [self flushQueue:people endpoint:MPNetworkEndpointEngage];
 }
 
-- (void)flushQueue:(NSMutableArray *)queue endpoint:(NSString *)endpoint {
+- (void)flushQueue:(NSMutableArray *)queue endpoint:(MPNetworkEndpoint)endpoint {
     if ([[NSDate date] timeIntervalSince1970] < self.requestsDisabledUntilTime) {
-        MixpanelDebug(@"Attempted to flush to %@, when we still have a timeout. Ignoring flush.", endpoint);
+        MPLogDebug(@"Attempted to flush to %lu, when we still have a timeout. Ignoring flush.", endpoint);
         return;
     }
     
@@ -47,8 +49,8 @@ static const NSUInteger kBatchSize = 50;
         
         NSString *requestData = [MPNetwork encodeArrayForAPI:batch];
         NSString *postBody = [NSString stringWithFormat:@"ip=%d&data=%@", self.useIPAddressForGeoLocation, requestData];
-        MixpanelDebug(@"%@ flushing %lu of %lu to %@: %@", self, (unsigned long)batch.count, (unsigned long)queue.count, endpoint, queue);
-        NSURLRequest *request = [self requestForEndpoint:endpoint withBody:postBody];
+        MPLogDebug(@"%@ flushing %lu of %lu to %lu: %@", self, (unsigned long)batch.count, (unsigned long)queue.count, endpoint, queue);
+        NSURLRequest *request = [self buildPostRequestForEndpoint:endpoint andBody:postBody];
         
         [self updateNetworkActivityIndicator:YES];
         
@@ -62,13 +64,13 @@ static const NSUInteger kBatchSize = 50;
             
             BOOL success = [self handleNetworkResponse:(NSHTTPURLResponse *)urlResponse withError:error];
             if (error || !success) {
-                MixpanelError(@"%@ network failure: %@", self, error);
+                MPLogError(@"%@ network failure: %@", self, error);
                 didFail = YES;
             } else {
                 NSString *response = [[NSString alloc] initWithData:responseData
                                                            encoding:NSUTF8StringEncoding];
                 if ([response intValue] == 0) {
-                    MixpanelError(@"%@ %@ api rejected some items", self, endpoint);
+                    MPLogInfo(@"%@ %lu api rejected some items", self, endpoint);
                 }
             }
             
@@ -86,15 +88,15 @@ static const NSUInteger kBatchSize = 50;
 }
 
 - (BOOL)handleNetworkResponse:(NSHTTPURLResponse *)response withError:(NSError *)error {
-    MixpanelDebug(@"HTTP Response: %@", response.allHeaderFields);
-    MixpanelDebug(@"HTTP Error: %@", error.localizedDescription);
+    MPLogDebug(@"HTTP Response: %@", response.allHeaderFields);
+    MPLogDebug(@"HTTP Error: %@", error.localizedDescription);
     
     BOOL failed = [MPNetwork parseHTTPFailure:response withError:error];
     if (failed) {
-        MixpanelDebug(@"Consecutive network failures: %lu", self.consecutiveFailures);
+        MPLogDebug(@"Consecutive network failures: %lu", self.consecutiveFailures);
         self.consecutiveFailures++;
     } else {
-        MixpanelDebug(@"Consecutive network failures reset to 0");
+        MPLogDebug(@"Consecutive network failures reset to 0");
         self.consecutiveFailures = 0;
     }
     
@@ -109,22 +111,78 @@ static const NSUInteger kBatchSize = 50;
     NSDate *retryDate = [NSDate dateWithTimeIntervalSinceNow:retryTime];
     self.requestsDisabledUntilTime = [retryDate timeIntervalSince1970];
     
-    MixpanelDebug(@"Retry backoff time: %.2f - %@", retryTime, retryDate);
+    MPLogDebug(@"Retry backoff time: %.2f - %@", retryTime, retryDate);
     
     return !failed;
 }
 
 #pragma mark - Helpers
-- (NSURLRequest *)requestForEndpoint:(NSString *)endpoint withBody:(NSString *)body {
-    NSURL *URL = [self.serverURL URLByAppendingPathComponent:endpoint];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
++ (NSArray<NSURLQueryItem *> *)buildDecideQueryForProperties:(NSDictionary *)properties
+                                              withDistinctID:(NSString *)distinctID
+                                                    andToken:(NSString *)token {
+    NSURLQueryItem *itemVersion = [NSURLQueryItem queryItemWithName:@"version" value:@"1"];
+    NSURLQueryItem *itemLib = [NSURLQueryItem queryItemWithName:@"lib" value:@"iphone"];
+    NSURLQueryItem *itemToken = [NSURLQueryItem queryItemWithName:@"token" value:token];
+    NSURLQueryItem *itemDistinctID = [NSURLQueryItem queryItemWithName:@"distinct_id" value:distinctID];
+    
+    // Convert properties dictionary to a string
+    NSData *propertiesData = [NSJSONSerialization dataWithJSONObject:properties
+                                                             options:0
+                                                               error:NULL];
+    NSString *propertiesString = [[NSString alloc] initWithData:propertiesData
+                                                       encoding:NSUTF8StringEncoding];
+    NSURLQueryItem *itemProperties = [NSURLQueryItem queryItemWithName:@"properties" value:propertiesString];
+    
+    return @[ itemVersion, itemLib, itemToken, itemDistinctID, itemProperties ];
+}
+
++ (NSString *)pathForEndpoint:(MPNetworkEndpoint)endpoint {
+    static NSDictionary *endPointToPath = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        endPointToPath = @{ @(MPNetworkEndpointTrack): @"/track/",
+                            @(MPNetworkEndpointEngage): @"/engage/",
+                            @(MPNetworkEndpointDecide): @"/decide" };
+    });
+    NSNumber *key = @(endpoint);
+    return endPointToPath[key];
+}
+
+- (NSURLRequest *)buildGetRequestForEndpoint:(MPNetworkEndpoint)endpoint
+                              withQueryItems:(NSArray <NSURLQueryItem *> *)queryItems {
+    return [self buildRequestForEndpoint:[MPNetwork pathForEndpoint:endpoint]
+                            byHTTPMethod:@"GET"
+                          withQueryItems:queryItems
+                                 andBody:nil];
+}
+
+- (NSURLRequest *)buildPostRequestForEndpoint:(MPNetworkEndpoint)endpoint
+                                      andBody:(NSString *)body {
+    return [self buildRequestForEndpoint:[MPNetwork pathForEndpoint:endpoint]
+                            byHTTPMethod:@"POST"
+                          withQueryItems:nil
+                                 andBody:body];
+}
+
+- (NSURLRequest *)buildRequestForEndpoint:(NSString *)endpoint
+                             byHTTPMethod:(NSString *)method
+                           withQueryItems:(NSArray <NSURLQueryItem *> *)queryItems
+                                  andBody:(NSString *)body {
+    // Build URL from path and query items
+    NSURL *urlWithEndpoint = [self.serverURL URLByAppendingPathComponent:endpoint];
+    NSURLComponents *components = [NSURLComponents componentsWithURL:urlWithEndpoint
+                                             resolvingAgainstBaseURL:YES];
+    components.queryItems = queryItems;
+
+    // Build request from URL
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:components.URL];
     [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
-    [request setHTTPMethod:@"POST"];
+    [request setHTTPMethod:method];
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
     
-    MixpanelDebug(@"%@ http request: %@?%@", self, URL, body);
+    MPLogDebug(@"%@ http request: %@?%@", self, request, body);
     
-    return request;
+    return [request copy];
 }
 
 + (NSString *)encodeArrayForAPI:(NSArray *)array {
@@ -141,11 +199,11 @@ static const NSUInteger kBatchSize = 50;
                                                  error:&error];
     }
     @catch (NSException *exception) {
-        MixpanelError(@"exception encoding api data: %@", exception);
+        MPLogError(@"exception encoding api data: %@", exception);
     }
     
     if (error) {
-        MixpanelError(@"error encoding api data: %@", error);
+        MPLogError(@"error encoding api data: %@", error);
     }
     
     return data;
@@ -182,7 +240,7 @@ static const NSUInteger kBatchSize = 50;
             NSString *stringKey = key;
             if (![key isKindOfClass:[NSString class]]) {
                 stringKey = [key description];
-                MixpanelDebug(@"%@ warning: property keys should be strings. got: %@. coercing to: %@", self, [key class], stringKey);
+                MPLogWarning(@"%@ property keys should be strings. got: %@. coercing to: %@", self, [key class], stringKey);
             }
             id v = [self convertFoundationTypesToJSON:obj[key]];
             d[stringKey] = v;
@@ -192,7 +250,7 @@ static const NSUInteger kBatchSize = 50;
     
     // default to sending the object's description
     NSString *s = [obj description];
-    MixpanelDebug(@"%@ warning: property values should be valid json types. got: %@. coercing to: %@", self, [obj class], s);
+    MPLogWarning(@"%@ property values should be valid json types. got: %@. coercing to: %@", self, [obj class], s);
     return s;
 }
 
@@ -222,7 +280,7 @@ static const NSUInteger kBatchSize = 50;
 }
 
 - (void)updateNetworkActivityIndicator:(BOOL)enabled {
-#if !MIXPANEL_LIMITED_SUPPORT
+#if !MIXPANEL_NO_NETWORK_ACTIVITY_INDICATOR
     if (self.shouldManageNetworkActivityIndicator) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = enabled;
     }

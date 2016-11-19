@@ -12,6 +12,10 @@
 #import "MixpanelPrivate.h"
 #import "MPLogger.h"
 
+#if defined(MIXPANEL_WATCH_EXTENSION)
+#import "MixpanelWatchProperties.h"
+#endif
+
 @implementation MixpanelPeople
 
 - (instancetype)initWithMixpanel:(Mixpanel *)mixpanel
@@ -30,9 +34,18 @@
     return [NSString stringWithFormat:@"<MixpanelPeople: %p %@>", (void *)self, (strongMixpanel ? strongMixpanel.apiToken : @"")];
 }
 
+- (NSString *)deviceSystemVersion {
+#if defined(MIXPANEL_WATCH_EXTENSION)
+    return [MixpanelWatchProperties systemVersion];
+#else
+    return [UIDevice currentDevice].systemVersion;
+#endif
+}
+
 - (NSDictionary *)collectAutomaticPeopleProperties
 {
-    NSMutableDictionary *p = [NSMutableDictionary dictionaryWithDictionary:@{@"$ios_version": [UIDevice currentDevice].systemVersion,
+    NSMutableDictionary *p = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                             @"$ios_version": [self deviceSystemVersion],
                                                                              @"$ios_lib_version": [Mixpanel libVersion],
                                                                              }];
     NSDictionary *infoDictionary = [NSBundle mainBundle].infoDictionary;
@@ -61,7 +74,7 @@
     if (strongMixpanel) {
         properties = [properties copy];
         BOOL ignore_time = self.ignoreTime;
-        
+
         dispatch_async(strongMixpanel.serialQueue, ^{
             NSMutableDictionary *r = [NSMutableDictionary dictionary];
             NSMutableDictionary *p = [NSMutableDictionary dictionary];
@@ -73,7 +86,7 @@
             if (ignore_time) {
                 r[@"$ignore_time"] = @YES;
             }
-            
+
             if ([action isEqualToString:@"$unset"]) {
                 // $unset takes an array of property names which is supplied to this method
                 // in the properties parameter under the key "$properties"
@@ -85,51 +98,61 @@
                 [p addEntriesFromDictionary:properties];
                 r[action] = [NSDictionary dictionaryWithDictionary:p];
             }
-            
+
             if (self.distinctId) {
                 r[@"$distinct_id"] = self.distinctId;
-                MixpanelDebug(@"%@ queueing people record: %@", self.mixpanel, r);
+                MPLogInfo(@"%@ queueing people record: %@", self.mixpanel, r);
                 [strongMixpanel.peopleQueue addObject:r];
                 if (strongMixpanel.peopleQueue.count > 500) {
                     [strongMixpanel.peopleQueue removeObjectAtIndex:0];
                 }
             } else {
-                MixpanelDebug(@"%@ queueing unidentified people record: %@", self.mixpanel, r);
+                MPLogInfo(@"%@ queueing unidentified people record: %@", self.mixpanel, r);
                 [self.unidentifiedQueue addObject:r];
                 if (self.unidentifiedQueue.count > 500) {
                     [self.unidentifiedQueue removeObjectAtIndex:0];
                 }
             }
-            
+
             [strongMixpanel archivePeople];
         });
-#if defined(MIXPANEL_APP_EXTENSION)
+#if MIXPANEL_FLUSH_IMMEDIATELY
         [strongMixpanel flush];
 #endif
     }
+}
+
++ (NSString *)pushDeviceTokenToString:(NSData *)deviceToken
+{
+    const unsigned char *buffer = (const unsigned char *)deviceToken.bytes;
+    if (!buffer) {
+        return nil;
+    }
+    NSMutableString *hex = [NSMutableString stringWithCapacity:(deviceToken.length * 2)];
+    for (NSUInteger i = 0; i < deviceToken.length; i++) {
+        [hex appendString:[NSString stringWithFormat:@"%02lx", (unsigned long)buffer[i]]];
+    }
+    return [hex copy];
 }
 
 #pragma mark - Public API
 
 - (void)addPushDeviceToken:(NSData *)deviceToken
 {
-    const unsigned char *buffer = (const unsigned char *)deviceToken.bytes;
-    if (!buffer) {
-        return;
-    }
-    NSMutableString *hex = [NSMutableString stringWithCapacity:(deviceToken.length * 2)];
-    for (NSUInteger i = 0; i < deviceToken.length; i++) {
-        [hex appendString:[NSString stringWithFormat:@"%02lx", (unsigned long)buffer[i]]];
-    }
-    NSArray *tokens = @[[NSString stringWithString:hex]];
-    NSDictionary *properties = @{@"$ios_devices": tokens};
+    NSDictionary *properties = @{@"$ios_devices": @[[MixpanelPeople pushDeviceTokenToString:deviceToken]]};
     [self addPeopleRecordToQueueWithAction:@"$union" andProperties:properties];
 }
 
-- (void)removePushDeviceToken
+- (void)removeAllPushDeviceTokens
 {
     NSDictionary *properties = @{ @"$properties": @[@"$ios_devices"] };
     [self addPeopleRecordToQueueWithAction:@"$unset" andProperties:properties];
+}
+
+- (void)removePushDeviceToken:(NSData *)deviceToken
+{
+    NSDictionary *properties = @{@"$ios_devices": [MixpanelPeople pushDeviceTokenToString:deviceToken]};
+    [self addPeopleRecordToQueueWithAction:@"$remove" andProperties:properties];
 }
 
 - (void)set:(NSDictionary *)properties
@@ -203,6 +226,13 @@
                  @"%@ union property values should be NSArray. found: %@", self, v);
     }
     [self addPeopleRecordToQueueWithAction:@"$union" andProperties:properties];
+}
+
+- (void)remove:(NSDictionary *)properties
+{
+    NSAssert(properties != nil, @"properties must not be nil");
+    [Mixpanel assertPropertyTypes:properties];
+    [self addPeopleRecordToQueueWithAction:@"$remove" andProperties:properties];
 }
 
 - (void)merge:(NSDictionary *)properties
