@@ -20,11 +20,12 @@ interface IMixpanel {
 declare namespace Mixpanel {
   interface IPeople {
     identify(distinctId: string, onSuccess: () => void, onFail: (errors: string) => void): void;
+    increment(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     set(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     setOnce(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
-    trackCharge(amount: number, eventProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
-    increment(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     setPushId(pushId: string, onSuccess: () => void, onFail: (errors: string) => void): void;
+    trackCharge(amount: number, eventProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
+    unset(propertiesArray: Array<string>, onSuccess: () => void, onFail: (errors: string) => void): void;
   }
 }
 
