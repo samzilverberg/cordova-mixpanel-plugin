@@ -1,5 +1,11 @@
 Changelog
 =========
+### 2.3.0 2016-11-19
+- update android lib from 4.9.1 to 4.9.2
+  - NOTICE: 4.9.2 requires Google Play Services > 7.5.0
+- update ios lib from 3.0.0 to 3.0.6
+  - ios 10 should now be supported in case anyone had problems with it
+
 
 ### 2.2.1 2016-08-09
 - android play services dependency as wildcard version to avoid conflict with other plugins (thanks [ZiFFeL1992](https://github.com/ZiFFeL1992))
