@@ -90,7 +90,7 @@
             if (image) {
                 self.imageView.image = image;
             } else {
-                MixpanelError(@"image failed to load from data: %@", self.notification.image);
+                MPLogError(@"image failed to load from data: %@", self.notification.image);
             }
         }
 
@@ -116,11 +116,6 @@
     }
     
     self.backgroundImageView.image = self.backgroundImage;
-    
-    self.imageView.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-    self.imageView.layer.shadowOpacity = 1.0f;
-    self.imageView.layer.shadowRadius = 5.0f;
-    self.imageView.layer.shadowColor = [UIColor blackColor].CGColor;
     self.viewMask.clipsToBounds = YES;
     self.viewMask.layer.cornerRadius = 6.f;
 }

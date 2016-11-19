@@ -9,22 +9,24 @@
 #import "Mixpanel.h"
 #import "MPNetwork.h"
 
-#if !defined(MIXPANEL_APP_EXTENSION)
+#if !MIXPANEL_NO_EXCEPTION_HANDLING
 #import "MixpanelExceptionHandler.h"
 #endif
 
-#if !MIXPANEL_LIMITED_SUPPORT
-#import <CommonCrypto/CommonDigest.h>
-
 #if TARGET_OS_IPHONE
+#if !MIXPANEL_NO_REACHABILITY_SUPPORT
 #import <CoreTelephony/CTCarrier.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <SystemConfiguration/SystemConfiguration.h>
+#endif
 
+#if !MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT
 #import "Mixpanel+AutomaticEvents.h"
 #import "AutomaticEventsConstants.h"
 #endif
+#endif
 
+#if !MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
 #import "MPResources.h"
 #import "MPABTestDesignerConnection.h"
 #import "UIView+MPHelpers.h"
@@ -39,24 +41,35 @@
 #import "MPWebSocket.h"
 #endif
 
-#if !MIXPANEL_LIMITED_SUPPORT
+#if !MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
 @interface Mixpanel () <MPSurveyNavigationControllerDelegate, MPNotificationViewControllerDelegate>
 #else
 @interface Mixpanel ()
 #endif
 {
     NSUInteger _flushInterval;
-    BOOL _enableABTestDesigner;
+    BOOL _enableVisualABTestAndCodeless;
 }
 
-#if !MIXPANEL_LIMITED_SUPPORT
+#if !MIXPANEL_NO_REACHABILITY_SUPPORT
 @property (nonatomic, assign) SCNetworkReachabilityRef reachability;
 @property (nonatomic, strong) CTTelephonyNetworkInfo *telephonyInfo;
+#endif
+
+#if !MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
 @property (nonatomic, strong) UILongPressGestureRecognizer *testDesignerGestureRecognizer;
 @property (nonatomic, strong) MPABTestDesignerConnection *abtestDesignerConnection;
+#endif
+
+#if !MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT
 @property (nonatomic) AutomaticEventMode validationMode;
 @property (nonatomic) NSUInteger validationEventCount;
 @property (nonatomic, getter=isValidationEnabled) BOOL validationEnabled;
+#endif
+
+#if !defined(MIXPANEL_WATCH_EXTENSION)
+@property (nonatomic, assign) UIBackgroundTaskIdentifier taskId;
+@property (nonatomic, strong) UIViewController *notificationViewController;
 #endif
 
 // re-declare internally as readwrite
@@ -70,7 +83,6 @@
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, strong) NSMutableArray *eventsQueue;
 @property (nonatomic, strong) NSMutableArray *peopleQueue;
-@property (nonatomic, assign) UIBackgroundTaskIdentifier taskId;
 @property (nonatomic) dispatch_queue_t serialQueue;
 @property (nonatomic, strong) NSMutableDictionary *timedEvents;
 
@@ -81,13 +93,11 @@
 
 @property (nonatomic, strong) NSArray *notifications;
 @property (nonatomic, strong) id currentlyShowingNotification;
-@property (nonatomic, strong) UIViewController *notificationViewController;
 @property (nonatomic, strong) NSMutableSet *shownNotifications;
 
 @property (nonatomic, strong) NSSet *variants;
 @property (nonatomic, strong) NSSet *eventBindings;
 
-@property (atomic, copy) NSString *decideURL;
 @property (atomic, copy) NSString *switchboardURL;
 
 + (void)assertPropertyTypes:(NSDictionary *)properties;
@@ -102,7 +112,7 @@
 - (NSString *)peopleFilePath;
 - (NSString *)propertiesFilePath;
 
-#if !MIXPANEL_LIMITED_SUPPORT
+#if !MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
 - (void)presentSurveyWithRootViewController:(MPSurvey *)survey;
 - (void)showNotificationWithObject:(MPNotification *)notification;
 - (void)markVariantRun:(MPVariant *)variant;

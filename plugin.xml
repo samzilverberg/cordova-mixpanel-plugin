@@ -121,13 +121,12 @@
         <header-file src="src/ios/Mixpanel/MPVariant.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPWebSocket.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/Mixpanel+AutomaticEvents.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/Mixpanel+HostWatchOS.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/Mixpanel.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelExceptionHandler.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPeople.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPeoplePrivate.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPrivate.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MixpanelWatchOS.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MixpanelWatchProperties.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticEvents.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/UIApplication+AutomaticEvents.h" target-dir="Mixpanel"/>
@@ -197,11 +196,10 @@
         <source-file src="src/ios/Mixpanel/MPVariant.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPWebSocket.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/Mixpanel+AutomaticEvents.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/Mixpanel+HostWatchOS.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/Mixpanel.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelExceptionHandler.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelPeople.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MixpanelWatchOS.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MixpanelWatchProperties.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticEvents.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/UIApplication+AutomaticEvents.m" target-dir="Mixpanel"/>

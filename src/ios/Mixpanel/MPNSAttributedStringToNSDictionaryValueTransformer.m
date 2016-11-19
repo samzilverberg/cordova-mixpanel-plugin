@@ -19,7 +19,21 @@
 - (id)transformedValue:(id)value
 {
     if ([value isKindOfClass:[NSAttributedString class]]) {
-        NSAttributedString *attributedString = value;
+        NSMutableAttributedString *attributedString = [value mutableCopy];
+        [attributedString beginEditing];
+        __block BOOL safe = NO;
+        [attributedString enumerateAttribute:NSParagraphStyleAttributeName inRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+            if (value) {
+                NSParagraphStyle *paragraphStyle = value;
+                if([paragraphStyle respondsToSelector:@selector(headIndent)]) {
+                    safe = YES;
+                }
+            }
+        }];
+        if (!safe) {
+            [attributedString removeAttribute:NSParagraphStyleAttributeName range:NSMakeRange(0, attributedString.length)];
+        }
+        [attributedString endEditing];
 
         NSError *error = nil;
         NSData *data = [attributedString dataFromRange:NSMakeRange(0, attributedString.length)
@@ -31,7 +45,7 @@
                     @"data": [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]
             };
         } else {
-            MixpanelError(@"Failed to convert NSAttributedString to HTML: %@", error);
+            MPLogError(@"Failed to convert NSAttributedString to HTML: %@", error);
         }
     }
 
@@ -53,7 +67,7 @@
                                                                          documentAttributes:NULL
                                                                                       error:&error];
             if (attributedString == nil) {
-                MixpanelError(@"Failed to convert HTML to NSAttributed string: %@", error);
+                MPLogError(@"Failed to convert HTML to NSAttributed string: %@", error);
             }
 
             return attributedString;

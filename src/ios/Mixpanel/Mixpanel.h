@@ -1,12 +1,21 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
 #import "MixpanelPeople.h"
 
 #if TARGET_OS_TV
     #define MIXPANEL_TVOS_EXTENSION 1
 #endif
 
-#define MIXPANEL_LIMITED_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION))
+#if TARGET_OS_WATCH
+    #define MIXPANEL_WATCH_EXTENSION 1
+#endif
+
+#define MIXPANEL_NO_EXCEPTION_HANDLING (defined(MIXPANEL_APP_EXTENSION))
+#define MIXPANEL_FLUSH_IMMEDIATELY (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
+#define MIXPANEL_NO_REACHABILITY_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
+#define MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
+#define MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
 
 @class    MixpanelPeople, MPSurvey;
 @protocol MixpanelDelegate;
@@ -64,19 +73,13 @@ NS_ASSUME_NONNULL_BEGIN
 
  @discussion
  A distinct ID is a string that uniquely identifies one of your users.
- Typically, this is the user ID from your database. By default, we'll use a
- hash of the MAC address of the device. To change the current distinct ID,
- use the <code>identify:</code> method.
+ Typically, this is the user ID from your database. By default, we'll use
+ the device's advertisingIdentifier UUIDString, if that is not available
+ we'll use the device's identifierForVendor UUIDString, and finally if that
+ is not available we will generate a new random UUIDString. To change the
+ current distinct ID, use the <code>identify:</code> method.
  */
 @property (atomic, readonly, copy) NSString *distinctId;
-
-/*!
- @property
-
- @abstract
- Current user's name in Mixpanel Streams.
- */
-@property (nullable, atomic, copy) NSString *nameTag;
 
 /*!
  @property
@@ -124,7 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  Defaults to YES.
  */
-@property (atomic) BOOL showNetworkActivityIndicator;
+@property (atomic) BOOL shouldManageNetworkActivityIndicator;
 
 /*!
  @property
@@ -157,10 +160,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @property
-
+ 
  @abstract
  Determines whether a valid survey is available to show to the user.
-
+ 
  @discussion
  If we haven't fetched the surveys yet, this will return NO. Otherwise
  it will return yes if there is at least one survey available.
@@ -169,11 +172,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @property
-
+ 
  @abstract
  Returns a list of available surveys. You can then call <code>showSurveyWithID:</code>
  and pass in <code>survey.ID</code>
-
+ 
  @discussion
  If we haven't fetched the surveys yet, this will return nil.
  */
@@ -221,14 +224,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @property
-
+ 
  @abstract
- Controls whether to automatically send the client IP Address as part of
+ Controls whether to automatically send the client IP Address as part of 
  event tracking. With an IP address, geo-location is possible down to neighborhoods
  within a city, although the Mixpanel Dashboard will just show you city level location
  specificity. For privacy reasons, you may be in a situation where you need to forego
  effectively having access to such granular location information via the IP Address.
-
+ 
  @discussion
  Defaults to YES.
  */
@@ -236,16 +239,36 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @property
-
+ 
  @abstract
- Controls whether to enable the visual A/B test designer on mixpanel.com, you will
- be unable to edit A/B tests with this disabled, however previously created A/B
- tests and their variants will still be delivered.
-
+ Controls whether to enable the visual test designer for A/B testing and codeless on mixpanel.com. 
+ You will be unable to edit A/B tests and codeless events with this disabled, however *previously*
+ created A/B tests and codeless events will still be delivered.
+ 
  @discussion
  Defaults to YES.
  */
-@property (atomic) BOOL enableABTestDesigner;
+@property (atomic) BOOL enableVisualABTestAndCodeless;
+
+/*!
+ @property
+ 
+ @abstract
+ Controls whether to enable the run time debug logging at all levels. Note that the
+ Mixpanel SDK uses Apple System Logging to forward log messages to `STDERR`, this also
+ means that mixpanel logs are segmented by log level. Settings this to `YES` will enable 
+ Mixpanel logging at the following levels:
+ 
+   * Error - Something has failed 
+   * Warning - Something is amiss and might fail if not corrected
+   * Info - The lowest priority that is normally logged, purely informational in nature
+   * Debug - Information useful only to developers, and normally not logged.
+ 
+ 
+ @discussion
+ Defaults to NO.
+ */
+@property (atomic) BOOL enableLogging;
 
 /*!
  @property
@@ -261,13 +284,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @property
-
+ 
  @abstract
  If set, determines the background color of mini notifications.
 
  @discussion
- If this isn't set, we default to either the color of the UINavigationBar of the top
- UINavigationController that is showing when the notification is presented, the
+ If this isn't set, we default to either the color of the UINavigationBar of the top 
+ UINavigationController that is showing when the notification is presented, the 
  UINavigationBar default color for the app or the UITabBar default color.
  */
 @property (atomic, strong, nullable) UIColor *miniNotificationBackgroundColor;
@@ -291,14 +314,13 @@ NS_ASSUME_NONNULL_BEGIN
  @method
 
  @abstract
- Initializes and returns a singleton instance of the API.
+ Returns (and creates, if needed) a singleton instance of the API.
 
  @discussion
- If you are only going to send data to a single Mixpanel project from your app,
- as is the common case, then this is the easiest way to use the API. This
- method will set up a singleton instance of the <code>Mixpanel</code> class for
- you using the given project token. When you want to make calls to Mixpanel
- elsewhere in your code, you can use <code>sharedInstance</code>.
+ This method will return a singleton instance of the <code>Mixpanel</code> class for
+ you using the given project token. If an instance does not exist, this method will create
+ one using <code>initWithToken:launchOptions:andFlushInterval:</code>. If you only have one
+ instance in your project, you can use <code>sharedInstance</code> to retrieve it.
 
  <pre>
  [Mixpanel sharedInstance] track:@"Something Happened"]];
@@ -335,11 +357,14 @@ NS_ASSUME_NONNULL_BEGIN
  @method
 
  @abstract
- Returns the previously instantiated singleton instance of the API.
+ Returns a previously instantiated singleton instance of the API.
 
  @discussion
- The API must be initialized with <code>sharedInstanceWithToken:</code> before
- calling this class method.
+ The API must be initialized with <code>sharedInstanceWithToken:</code> or
+ <code>initWithToken:launchOptions:andFlushInterval</code> before calling this class method.
+ This method will return <code>nil</code> if there are no instances created. If there is more than 
+ one instace, it will return the first one that was created by using <code>sharedInstanceWithToken:</code> 
+ or <code>initWithToken:launchOptions:andFlushInterval:</code>.
  */
 + (Mixpanel *)sharedInstance;
 
@@ -350,10 +375,7 @@ NS_ASSUME_NONNULL_BEGIN
  Initializes an instance of the API with the given project token.
 
  @discussion
- Returns the a new API object. This allows you to create more than one instance
- of the API object, which is convenient if you'd like to send data to more than
- one Mixpanel project from a single app. If you only need to send data to one
- project, consider using <code>sharedInstanceWithToken:</code>.
+ Creates and initializes a new API object. See also <code>sharedInstanceWithToken:</code>.
 
  @param apiToken        your project token
  @param launchOptions   optional app delegate launchOptions
@@ -616,10 +638,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @method
-
+ 
  @abstract
  Calls flush, then optionally archives and calls a handler when finished.
-
+ 
  @discussion
  When calling <code>flush</code> manually, it is sometimes important to verify
  that the flush has finished before further action is taken. This is
@@ -681,7 +703,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)libVersion;
 
 
-#if !MIXPANEL_LIMITED_SUPPORT
+#if !MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
 #pragma mark - Mixpanel Surveys
 
 /*!
@@ -777,7 +799,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)joinExperimentsWithCallback:(nullable void (^)())experimentsLoadedCallback;
 
-#endif
+#endif // MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
+
+#pragma mark - Deprecated
+/*!
+ @property
+ 
+ @abstract
+ Current user's name in Mixpanel Streams.
+ */
+@property (nullable, atomic, copy) NSString *nameTag __deprecated; // Deprecated in v3.0.1
 
 @end
 
