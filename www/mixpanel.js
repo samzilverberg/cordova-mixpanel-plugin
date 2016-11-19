@@ -62,7 +62,7 @@ mixpanel.showSurvey = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'showSurvey', []);
 };
 
-mixpanel.timeEvent = function(eventName, onSuccess, onFail){
+mixpanel.timeEvent = function(eventName, onSuccess, onFail) {
   if (!eventName || typeof eventName != 'string') {
     return onFail(errors.invalid('event', eventName));
   }
@@ -105,15 +105,17 @@ mixpanel.people.setOnce = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set_once', [peopleProperties]);
 };
 
-mixpanel.people.trackCharge = function(charge, eventProperties, onSuccess, onFail) {
-  if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
-    return onFail(errors.invalid('properties', peopleProperties));
+mixpanel.people.trackCharge = function(amount, chargeProperties, onSuccess, onFail) {
+  if (typeof amount !== 'number' || !isFinite(amount)) {
+    return onFail(errors.invalid('amount', amount));
+  }
+  if (chargeProperties && typeof chargeProperties !== 'object') {
+    return onFail(errors.invalid('chargeProperties', chargeProperties));
   }
 
 
-  exec(onSuccess, onFail, 'Mixpanel', 'people_track_charge', [charge, peopleProperties]);
+  exec(onSuccess, onFail, 'Mixpanel', 'people_track_charge', [amount, chargeProperties]);
 };
-
 
 mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
   if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
