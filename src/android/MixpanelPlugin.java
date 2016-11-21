@@ -39,7 +39,6 @@ public class MixpanelPlugin extends CordovaPlugin {
         // PEOPLE API
 
 
-        PEOPLE_IDENTIFY("people_identify"),
         PEOPLE_INCREMENT("people_increment"),
         PEOPLE_SET_PUSH_ID("people_setPushId"),
         PEOPLE_SET("people_set"),
@@ -104,8 +103,6 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleTimeEvent(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
-            case PEOPLE_IDENTIFY:
-                return handlePeopleIdentify(args, cbCtx);
             case PEOPLE_INCREMENT:
                 return handlePeopleIncrement(args, cbCtx);
             case PEOPLE_SET_PUSH_ID:
@@ -174,8 +171,9 @@ public class MixpanelPlugin extends CordovaPlugin {
 
 
     private boolean handleIdentify(JSONArray args, final CallbackContext cbCtx) {
-        String uniqueId = args.optString(0, "");
-        mixpanel.identify(uniqueId);
+        String distinctId = args.optString(0, "");
+        mixpanel.identify(distinctId);
+        mixpanel.getPeople().identify(distinctId);
         cbCtx.success();
         return true;
     }
@@ -229,14 +227,6 @@ public class MixpanelPlugin extends CordovaPlugin {
             properties = new JSONObject();
         }
         mixpanel.track(event, properties);
-        cbCtx.success();
-        return true;
-    }
-
-
-    private boolean handlePeopleIdentify(JSONArray args, final CallbackContext cbCtx) {
-        String distinctId = args.optString(0, "");
-        mixpanel.getPeople().identify(distinctId);
         cbCtx.success();
         return true;
     }

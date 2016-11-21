@@ -29,7 +29,6 @@
 // PEOPLE API
 
 
--(void)people_identify:(CDVInvokedUrlCommand*)command;
 -(void)people_increment:(CDVInvokedUrlCommand*)command;
 -(void)people_setPushId:(CDVInvokedUrlCommand*)command;
 -(void)people_set:(CDVInvokedUrlCommand*)command;

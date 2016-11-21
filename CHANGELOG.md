@@ -1,6 +1,11 @@
 Changelog
 =========
 
+### 2.3.3 2016-11-21
+- deprecated mixpanel.people.identify
+  - mixpanel.identify will already set the id for use in tracking events and people api
+
+
 ### 2.3.2 2016-11-19
 - mixpanel.people.trackCharge (thanks [Emmanuel Prochasson](https://github.com/eprochasson) for providing the base)
 - mixpanel.people.unset

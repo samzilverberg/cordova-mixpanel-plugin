@@ -32,7 +32,6 @@ older versions:
 
 **window.mixpanel.people:**
 
-- identify(distinctId, onSuccess, onFail)
 - increment(peopleProperties, onSuccess, onFail)
 - setPushId(pushId, onSuccess, onFail)
   - More info about push notifications at:

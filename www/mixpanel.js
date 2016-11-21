@@ -81,12 +81,13 @@ mixpanel.track = function(eventName, eventProperties, onSuccess, onFail) {
 // PEOPLE API
 
 
+/** @deprecated 2016-11-21 mixpanel.identify will set id for both events and people */
 mixpanel.people.identify = function(distinctId, onSuccess, onFail) {
   if (!distinctId) {
     return onFail(errors.invalid('distinctId', distinctId));
   }
 
-  exec(onSuccess, onFail, 'Mixpanel', 'people_identify', [distinctId]);
+  exec(onSuccess, onFail, 'Mixpanel', 'identify', [distinctId]);
 };
 
 mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {

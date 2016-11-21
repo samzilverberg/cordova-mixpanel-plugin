@@ -196,14 +196,6 @@
 // PEOPLE API
 
 
--(void)people_identify:(CDVInvokedUrlCommand*)command;
-{
-    // ios sdk doesnt have separate people identify method
-    // just call the normal identify call
-    [self identify:command];
-}
-
-
 // Helper function to convert NSString to NSData
 -(NSData*) convertToData:(NSString *)devToken;
 {
