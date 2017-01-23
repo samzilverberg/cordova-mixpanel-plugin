@@ -13,7 +13,7 @@ var errors = {
     return 'invalid ' + paramName + ': ' + value;
   },
   notsupported: function(methodName) {
-    if (typeof paramName !== 'string') { 
+    if (typeof methodName !== 'string') { 
       methodName = "[invalid methodName]";
     }
     return 'Cordova-Plugin-Mixpanel :  ' + methodName + ' is not supported...';
