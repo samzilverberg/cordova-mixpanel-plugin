@@ -1,10 +1,21 @@
 var MIXPANEL_LIB_URL = 'plugins/cordova-plugin-mixpanel/src/browser/mixpanel-js-lib.js';
 
+
 var errors = {
   invalid: function(paramName, value) {
+    if (typeof paramName !== 'string') { 
+      (console && console.error) && console.error(paramName, value); 
+      return "invalid"; 
+    }
+    if (typeof value !== 'string') {
+      (JSON && JSON.stringify) && (value = JSON.stringify(value));
+    }
     return 'invalid ' + paramName + ': ' + value;
   },
   notsupported: function(methodName) {
+    if (typeof methodName !== 'string') { 
+      methodName = "[invalid methodName]";
+    }
     return 'Cordova-Plugin-Mixpanel :  ' + methodName + ' is not supported...';
   }
 };
