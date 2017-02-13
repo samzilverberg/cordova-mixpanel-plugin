@@ -3,9 +3,9 @@ var MIXPANEL_LIB_URL = 'plugins/cordova-plugin-mixpanel/src/browser/mixpanel-js-
 
 var errors = {
   invalid: function(paramName, value) {
-    if (typeof paramName !== 'string') { 
-      (console && console.error) && console.error(paramName, value); 
-      return "invalid"; 
+    if (typeof paramName !== 'string') {
+      (console && console.error) && console.error(paramName, value);
+      return "invalid";
     }
     if (typeof value !== 'string') {
       (JSON && JSON.stringify) && (value = JSON.stringify(value));
@@ -13,7 +13,7 @@ var errors = {
     return 'invalid ' + paramName + ': ' + value;
   },
   notsupported: function(methodName) {
-    if (typeof methodName !== 'string') { 
+    if (typeof methodName !== 'string') {
       methodName = "[invalid methodName]";
     }
     return 'Cordova-Plugin-Mixpanel :  ' + methodName + ' is not supported...';
@@ -219,8 +219,23 @@ function on_mixpanel_loaded() {
       }
     });
 
+  };
+
+
+  mixpanel.people.original_deleteUser = mixpanel.people.delete_user;
+  mixpanel.people.deleteUser = function(onSuccess, onFail) {
+    return mixpanel.people.original_deleteUser(function(r) {
+      if (typeof r !== "object") {
+        if (onFail && typeof onFail === 'function')
+          return onFail(errors.invalid('people.deleteUser'));
+      } else {
+        if (onSuccess && typeof onSuccess === 'function')
+          return onSuccess();
+      }
+    });
 
   };
+
 
   // SetPushId
   mixpanel.people.setPushId = function(pushId, onSuccess, onFail) { // No push in browser, noooo ?

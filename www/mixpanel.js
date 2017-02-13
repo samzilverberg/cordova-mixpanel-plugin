@@ -147,6 +147,10 @@ mixpanel.people.unset = function(propertiesArray, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_unset', [propertiesArray]);
 };
 
+mixpanel.people.deleteUser = function(propertiesArray, onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'people_deleteUser', []);
+};
+
 
 // Exports
 
