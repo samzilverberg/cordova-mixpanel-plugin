@@ -51,7 +51,7 @@ older versions:
 - setOnce(peopleProperties, onSuccess, onFail)
 - trackCharge(amount, chargeProperties, onSuccess, onFail)
 - unset(propertiesArray, onSuccess, onFail)
-- deleteUser()
+- deleteUser(onSuccess, onFail)
 
 
 ## TODOs
