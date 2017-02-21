@@ -35,5 +35,6 @@
 -(void)people_set_once:(CDVInvokedUrlCommand*)command;
 -(void)people_track_charge:(CDVInvokedUrlCommand*)command;
 -(void)people_unset:(CDVInvokedUrlCommand*)command;
+-(void)people_deleteUser:(CDVInvokedUrlCommand*)command;
 
 @end

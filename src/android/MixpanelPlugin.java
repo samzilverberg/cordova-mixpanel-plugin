@@ -44,7 +44,8 @@ public class MixpanelPlugin extends CordovaPlugin {
         PEOPLE_SET("people_set"),
         PEOPLE_SET_ONCE("people_set_once"),
         PEOPLE_TRACK_CHARGE("people_track_charge"),
-        PEOPLE_UNSET("people_unset");
+        PEOPLE_UNSET("people_unset"),
+        PEOPLE_DELETE_USER("people_deleteUser");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -115,6 +116,8 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handlePeopleTrackCharge(args, cbCtx);
             case PEOPLE_UNSET:
                 return handlePeopleUnset(args, cbCtx);
+            case PEOPLE_DELETE_USER:
+                return handlePeopleDeleteUser(args, cbCtx);
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -300,6 +303,13 @@ public class MixpanelPlugin extends CordovaPlugin {
                 mixpanel.getPeople().unset(propertyToUnset);
             }
         }
+        cbCtx.success();
+        return true;
+    }
+
+
+    private boolean handlePeopleDeleteUser(JSONArray args, final CallbackContext cbCtx) {
+        mixpanel.getPeople().deleteUser();
         cbCtx.success();
         return true;
     }

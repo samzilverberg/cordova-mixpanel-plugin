@@ -51,11 +51,11 @@ older versions:
 - setOnce(peopleProperties, onSuccess, onFail)
 - trackCharge(amount, chargeProperties, onSuccess, onFail)
 - unset(propertiesArray, onSuccess, onFail)
+- deleteUser(onSuccess, onFail)
 
 
 ## TODOs
 - add more Mixpanel People operations
-  - unset, delete (more?)
 - make sure ios/android use same error messages
 - refactor ios code
   - remove code duplication of checking that mixpanel was init
