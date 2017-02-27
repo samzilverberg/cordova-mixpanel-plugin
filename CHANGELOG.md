@@ -1,6 +1,12 @@
 Changelog
 =========
 
+### 2.3.4 2017-02-27
+- update android lib from 4.9.2 to 4.9.6
+- mixpanel.people.deleteUser (thanks [Julien Roubieu](https://github.com/julienroubieu))
+- browser platform: small improvement to error handling on MixpanelProxy.js (thanks [Damien Fa](https://github.com/damienfa))
+
+
 ### 2.3.3 2016-11-21
 - deprecated mixpanel.people.identify
   - mixpanel.identify will already set the id for use in tracking events and people api

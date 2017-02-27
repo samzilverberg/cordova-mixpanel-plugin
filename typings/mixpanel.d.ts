@@ -19,7 +19,7 @@ interface IMixpanel {
 
 declare namespace Mixpanel {
   interface IPeople {
-    identify(distinctId: string, onSuccess: () => void, onFail: (errors: string) => void): void;
+    deleteUser(onSuccess: () => void, onFail: (errors: string) => void): void;
     increment(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     set(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     setOnce(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
