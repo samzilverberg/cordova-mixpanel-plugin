@@ -39,6 +39,8 @@ mixpanel.identify = function(id, onSuccess, onFail) {
 };
 
 mixpanel.init = function(token, onSuccess, onFail) {
+  this['__loaded'] = true;
+
   if (!token || typeof token != 'string') {
     return onFail(errors.invalid('token', token));
   }
