@@ -32,7 +32,7 @@
 
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
-        <framework src="com.mixpanel.android:mixpanel-android:4.9.6"/>
+        <framework src="com.mixpanel.android:mixpanel-android:4.9.8"/>
         <framework src="com.google.android.gms:play-services-base:+"/>
         <framework src="com.google.android.gms:play-services-gcm:+"/>
 
