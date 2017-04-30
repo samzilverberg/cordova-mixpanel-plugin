@@ -32,7 +32,7 @@
 
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
-        <framework src="com.mixpanel.android:mixpanel-android:4.9.8"/>
+        <framework src="com.mixpanel.android:mixpanel-android:5.0.2"/>
         <framework src="com.google.android.gms:play-services-base:+"/>
         <framework src="com.google.android.gms:play-services-gcm:+"/>
 
@@ -232,6 +232,7 @@
         <resource-file src="src/ios/Mixpanel/test_variant.json" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/tvos.modulemap" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/watchos.modulemap" target-dir="Mixpanel"/>
+
 
         <!-- Mixpanel sdk requires frameworks -->
         <!--see https://github.com/mixpanel/mixpanel-iphone/blob/master/Mixpanel.podspec-->
