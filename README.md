@@ -74,6 +74,13 @@ https://www.npmjs.com/package/cordova-mixpanel-plugin-testapp
 
 ### IOS
 
+#### installation of plugin fails with `Error: CocoaPods was not found. ...`
+
+the plugin uses cocoapods to install the mixpanel iphone sdk.<br/>
+you can install it via brew: `brew install cocoapods`<br/>
+after first install you should: `pod setup`<br/>
+
+
 #### hey i installed the plugin and now build fails, why?
 
 open your xcode proj, goto **build phases -> link binary with libraries**:
@@ -85,8 +92,8 @@ open your xcode proj, goto **build phases -> link binary with libraries**:
 
 #### my build still fails, got a compile error at UIImage+MPAverageColor.m
 
-if your got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.
-this is caused by compiler using a wrong C dialect (C99 for example).
+if your got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.<br/>
+this is caused by compiler using a wrong C dialect (C99 for example).<br/>
 to fix:
 - open your project in xcode
 - goto build settings tab
