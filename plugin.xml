@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-mixpanel"
-        version="2.3.5">
+        version="3.0.0">
 
     <name>Mixpanel</name>
 
@@ -11,10 +11,6 @@
     <repo>https://github.com/samzilverberg/mixpanel-cordova.git</repo>
     <author>Sam Zilverberg</author>
     <keywords>mixpanel, cordova, phonegap, ionic, plugin, ios, android</keywords>
-
-    <engines>
-        <engine name="cordova" version=">=3.5.0"/>
-    </engines>
 
     <js-module src="www/mixpanel.js" name="Mixpanel">
         <clobbers target="mixpanel"/>
@@ -65,7 +61,9 @@
         <header-file src="src/ios/MixpanelPlugin.h"/>
         <source-file src="src/ios/MixpanelPlugin.m"/>
 
+        <!-- Mixpanel sdk required using cocoapods -->
         <framework src="Mixpanel-AppExtension" type="podspec" spec="3.1.3" />
+
         <!-- Mixpanel sdk requires frameworks -->
         <!--see https://github.com/mixpanel/mixpanel-iphone/blob/master/Mixpanel.podspec-->
         <framework src="UIKit.framework"/>
@@ -80,7 +78,6 @@
         <!-- Additional for simulator -->
         <framework src="CFNetwork.framework"/>
         <framework src="Security.framework"/>
-
     </platform>
 
 
@@ -97,8 +94,6 @@
         </js-module>
 
         <asset src="src/browser/mixpanel-js-lib.js" target="plugins/cordova-plugin-mixpanel/src/browser/mixpanel-js-lib.js"/>
-
-
     </platform>
 
 </plugin>

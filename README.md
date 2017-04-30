@@ -4,6 +4,15 @@
 - [android sdk version 5.0.2](https://github.com/mixpanel/mixpanel-android/tree/v5.0.2)
 - [ios sdk version 3.1.3](https://github.com/mixpanel/mixpanel-iphone/tree/v3.1.3)
 
+
+### NOTICE !!
+
+3.0.0 is brand new and introduces some changes in requirements which might lead to some bugs.<br/>  
+I've only tested that basic functionality works.<br/>
+if you have probs please open an issue and use the latest stable version 2.3.5.
+
+
+
 #### Install
 
 ```
@@ -54,10 +63,9 @@ older versions:
 
 
 ## TODOs
-- add more Mixpanel People operations
 - make sure ios/android use same error messages
 - refactor ios code
-  - remove code duplication of checking that mixpanel was init
+  - try to remove code duplication of checking that mixpanel was init
 
 
 ## Contributing and Testing
@@ -77,6 +85,7 @@ https://www.npmjs.com/package/cordova-mixpanel-plugin-testapp
 #### installation of plugin fails with `Error: CocoaPods was not found. ...`
 
 the plugin uses cocoapods to install the mixpanel iphone sdk.<br/>
+you will also need `cordova-cli >= 6.4.0` and `cordova-ios >= 4.3.0`.<br/>
 you can install it via brew: `brew install cocoapods`<br/>
 after first install you should: `pod setup`<br/>
 
