@@ -39,13 +39,16 @@ mixpanel.identify = function(id, onSuccess, onFail) {
 };
 
 mixpanel.init = function(token, onSuccess, onFail) {
-  this['__loaded'] = true;
-
   if (!token || typeof token != 'string') {
     return onFail(errors.invalid('token', token));
   }
 
-  exec(onSuccess, onFail, 'Mixpanel', 'init', [token]);
+  var onSuccessWrapper = function(){
+    mixpanel['__loaded'] = true;
+    onSuccess.apply(onSuccess, arguments);
+  }
+
+  exec(onSuccessWrapper, onFail, 'Mixpanel', 'init', [token]);
 };
 
 mixpanel.registerSuperProperties = function(superProperties, onSuccess, onFail) {
