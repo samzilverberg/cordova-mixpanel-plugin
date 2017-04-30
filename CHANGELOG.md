@@ -1,6 +1,13 @@
 Changelog
 =========
 
+### 2.3.5 2017-04-30
+- C99 dialect build probs in UIImage+MPAverageColor.m:  
+  manual code fix for it until next mixpanel-iphone version is released   
+- support for angulartics by setting __loaded after init (thanks [mgregier](https://github.com/mgregier))
+- update android lib from 4.9.6 to 4.9.8
+
+
 ### 2.3.4 2017-02-27
 - update android lib from 4.9.2 to 4.9.6
 - mixpanel.people.deleteUser (thanks [Julien Roubieu](https://github.com/julienroubieu))
