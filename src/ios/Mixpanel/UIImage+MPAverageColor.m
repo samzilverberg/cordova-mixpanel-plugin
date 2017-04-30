@@ -39,8 +39,9 @@
     CFDataRef imageData = CGDataProviderCopyData(CGImageGetDataProvider(self.CGImage));
     const uint8_t *imageDataBuffer = CFDataGetBytePtr(imageData);
     
-    char colorIndices[kNumberOfHexColors] = {0};
-    
+    char colorIndices[kNumberOfHexColors];
+    memset(colorIndices, 0, sizeof(char) * kNumberOfHexColors);
+
     for (size_t rowIndex = kImageStartRow; rowIndex < kImageStartRow + kNumberOfRows; rowIndex++) {
         const uint8_t *row = imageDataBuffer + kBytesPerRow * rowIndex;
         for (size_t column = 0; column < kImageWidth; column++) {
