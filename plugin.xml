@@ -47,9 +47,6 @@
             <meta-data
                     android:name="com.mixpanel.android.MPConfig.EnableDebugLogging"
                     android:value="true"/>
-
-            <activity android:name="com.mixpanel.android.surveys.SurveyActivity"
-                      android:theme="@style/com_mixpanel_android_SurveyActivityTheme"/>
         </config-file>
     </platform>
 

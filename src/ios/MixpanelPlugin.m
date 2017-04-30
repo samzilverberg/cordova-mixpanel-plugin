@@ -136,24 +136,6 @@
 }
 
 
--(void)showSurvey:(CDVInvokedUrlCommand*)command;
-{
-    CDVPluginResult* pluginResult = nil;
-    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-
-    if (mixpanelInstance == nil)
-    {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
-    }
-    else
-    {
-        [mixpanelInstance showSurvey];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-
 -(void)timeEvent:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;

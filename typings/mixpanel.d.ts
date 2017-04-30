@@ -11,7 +11,6 @@ interface IMixpanel {
   identify(id: string, onSuccess: () => void, onFail: (errors: string) => void): void;
   registerSuperProperties(superProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
   reset(onSuccess: () => void, onFail: (errors: string) => void): void;
-  showSurvey(onSuccess: () => void, onFail: (errors: string) => void): void;
   timeEvent(eventName: string, onSuccess: () => void, onFail: (errors: string) => void): void;
   track(eventName: string, eventProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
 }

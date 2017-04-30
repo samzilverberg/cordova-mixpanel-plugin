@@ -21,7 +21,6 @@
 -(void)init:(CDVInvokedUrlCommand*)command;
 -(void)registerSuperProperties:(CDVInvokedUrlCommand*)command;
 -(void)reset:(CDVInvokedUrlCommand*)command;
--(void)showSurvey:(CDVInvokedUrlCommand*)command;
 -(void)track:(CDVInvokedUrlCommand*)command;
 -(void)timeEvent:(CDVInvokedUrlCommand*)command;
 

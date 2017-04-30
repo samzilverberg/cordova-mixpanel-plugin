@@ -28,8 +28,6 @@ older versions:
 - reset(onSuccess, onFail)
 - timeEvent(eventName, onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
-- showSurvey(onSuccess, onFail) **currently only iOS**
-  -  by default the SDK attempts to show any available survey at app launch.  If you'd like to trigger a survey after a particular action though use this.
 
 **window.mixpanel.people:**
 
