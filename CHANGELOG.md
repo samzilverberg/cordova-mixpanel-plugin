@@ -1,6 +1,12 @@
 Changelog
 =========
 
+### 3.0.1 2017-05-31
+- update ios lib from 3.1.3 to 3.1.4
+  - 3.1.4 is supposed to solve the C99 dialect problems by replacing any dialect related code with more "vanilla" code
+- drop support for cordova version less than 5.x
+
+
 ### 3.0.0 2017-04-30
 - update android lib from 4.9.8 to 5.0.2
 - update ios lib from 3.0.6 to 3.1.3

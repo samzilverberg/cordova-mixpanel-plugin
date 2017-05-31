@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-mixpanel"
-        version="3.0.0">
+        version="3.0.1">
 
     <name>Mixpanel</name>
 
@@ -62,7 +62,7 @@
         <source-file src="src/ios/MixpanelPlugin.m"/>
 
         <!-- Mixpanel sdk required using cocoapods -->
-        <framework src="Mixpanel-AppExtension" type="podspec" spec="3.1.3" />
+        <framework src="Mixpanel-AppExtension" type="podspec" spec="3.1.4" />
 
         <!-- Mixpanel sdk requires frameworks -->
         <!--see https://github.com/mixpanel/mixpanel-iphone/blob/master/Mixpanel.podspec-->

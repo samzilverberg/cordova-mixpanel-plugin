@@ -2,25 +2,15 @@
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
 - [android sdk version 5.0.2](https://github.com/mixpanel/mixpanel-android/tree/v5.0.2)
-- [ios sdk version 3.1.3](https://github.com/mixpanel/mixpanel-iphone/tree/v3.1.3)
-
-
-### NOTICE !!
-
-3.0.0 is brand new and introduces some changes in requirements which might lead to some bugs.<br/>  
-I've only tested that basic functionality works.<br/>
-if you have probs please open an issue and use the latest stable version 2.3.5.
-
+- [ios sdk version 3.1.4](https://github.com/mixpanel/mixpanel-iphone/tree/v3.1.4)
 
 
 #### Install
 
-```
-for cordova version > 5.x.x:
-  cordova plugin add cordova-plugin-mixpanel
+requires cordova >5.x.x
 
-older versions:
-  cordova plugin add https://github.com/samzilverberg/cordova-mixpanel-plugin.git
+```
+  cordova plugin add cordova-plugin-mixpanel
 ```
 
 #### Usage
