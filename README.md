@@ -1,8 +1,8 @@
 
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- [android sdk version 5.0.2](https://github.com/mixpanel/mixpanel-android/tree/v5.0.2)
-- [ios sdk version 3.1.4](https://github.com/mixpanel/mixpanel-iphone/tree/v3.1.4)
+- [android sdk version 5.1.4](https://github.com/mixpanel/mixpanel-android/tree/v5.1.4)
+- [ios sdk version 3.1.9](https://github.com/mixpanel/mixpanel-iphone/tree/v3.1.9)
 
 
 #### Install
@@ -117,6 +117,18 @@ and setting up the build phase correctly again, as described in last question.
 google for NSAppTransportSecurity.<br/>
 since iOS9 they are more strict about what your app is allowed to connect to.<br/>
 you will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
+
+
+#### problems with pod? 
+
+got some weird pod errors while adding plugin or adding platform?   
+
+try executing `pod install` in the platform/ios folder
+```
+cd platforms/ios 
+pod install
+```
+
 
 ### Android
 

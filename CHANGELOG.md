@@ -1,6 +1,13 @@
 Changelog
 =========
 
+### 3.1.0 2017-07-25
+- update android lib from 5.0.2 to 5.1.4
+- update ios lib from 3.1.4 to 3.1.9
+- remove the deprecated showSurvey fn
+- add faq entry for pod problems (thanks [Daniel López](https://github.com/dlopezp))
+
+
 ### 3.0.1 2017-05-31
 - update ios lib from 3.1.3 to 3.1.4
   - 3.1.4 is supposed to solve the C99 dialect problems by replacing any dialect related code with more "vanilla" code
@@ -8,6 +15,9 @@ Changelog
 
 
 ### 3.0.0 2017-04-30
+
+major version upgrade from 2.x->3.x: now using cocoapods for ios lib installation.
+
 - update android lib from 4.9.8 to 5.0.2
 - update ios lib from 3.0.6 to 3.1.3
   - use cocoapods to install the ios lib

@@ -63,11 +63,6 @@ mixpanel.reset = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'reset', []);
 };
 
-/** @deprecated **/
-mixpanel.showSurvey = function(onSuccess, onFail) {
-  onFail(new Error("deprecated"))
-};
-
 mixpanel.timeEvent = function(eventName, onSuccess, onFail) {
   if (!eventName || typeof eventName != 'string') {
     return onFail(errors.invalid('event', eventName));
