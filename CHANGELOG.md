@@ -1,6 +1,17 @@
 Changelog
 =========
 
+### 4.0.0 2017-09-15
+
+major version upgrade from 3.x->4.x:   
+reverted usage of cocoapods for ios lib installation, mixpanel source is included in repo.
+
+- update ios lib from 3.1.9 to 3.2.0
+- mixpanel.unregisterSuperProperty
+- mixpanel.getSuperProperties
+- mixpanel.registerSuperPropertiesOnce
+
+
 ### 3.1.0 2017-07-25
 - update android lib from 5.0.2 to 5.1.4
 - update ios lib from 3.1.4 to 3.1.9
