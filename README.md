@@ -21,12 +21,15 @@ requires cordova >5.x.x
   - also available as ```createAlias```
 - distinctId(function onSuccess(distinctId), onFail)
 - flush(onSuccess, onFail)
+- getSuperProperties(onSuccess, onFail)
 - identify(distinctId, onSuccess, onFail)
 - init(token, onSuccess, onFail)
 - registerSuperProperties(superProperties, onSuccess, onFail)
+- registerSuperPropertiesOnce(superProperties, onSuccess, onFail)
 - reset(onSuccess, onFail)
 - timeEvent(eventName, onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
+- unregisterSuperProperty(superPropertyName, onSuccess, onFail)
 
 **window.mixpanel.people:**
 

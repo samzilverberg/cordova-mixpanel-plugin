@@ -30,6 +30,10 @@ mixpanel.flush = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'flush', []);
 };
 
+mixpanel.getSuperProperties = function(onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'getSuperProperties', []);
+};
+
 mixpanel.identify = function(id, onSuccess, onFail) {
   if (!id || typeof id !== 'string') {
     return onFail(errors.invalid('id', id));
@@ -59,6 +63,14 @@ mixpanel.registerSuperProperties = function(superProperties, onSuccess, onFail) 
   exec(onSuccess, onFail, 'Mixpanel', 'registerSuperProperties', [superProperties]);
 };
 
+mixpanel.registerSuperPropertiesOnce = function(superProperties, onSuccess, onFail) {
+  if (!superProperties || typeof superProperties !== 'object') {
+    return onFail(errors.invalid('superProperties', superProperties));
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'registerSuperPropertiesOnce', [superProperties]);
+};
+
 mixpanel.reset = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'reset', []);
 };
@@ -76,6 +88,13 @@ mixpanel.track = function(eventName, eventProperties, onSuccess, onFail) {
   }
 
   exec(onSuccess, onFail, 'Mixpanel', 'track', [eventName, eventProperties]);
+};
+
+mixpanel.unregisterSuperProperty = function(superPropertyName, onSuccess, onFail) {
+  if (!superPropertyName || typeof superPropertyName != 'string') {
+    return onFail(errors.invalid('superPropertyName', superPropertyName));
+  }
+  exec(onSuccess, onFail, 'Mixpanel', 'unregisterSuperProperty', [superPropertyName]);
 };
 
 

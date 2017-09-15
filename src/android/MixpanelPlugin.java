@@ -28,23 +28,26 @@ public class MixpanelPlugin extends CordovaPlugin {
         ALIAS("alias"),
         DISTINCT_ID("distinctId"),
         FLUSH("flush"),
+        GET_SUPER_PROPERTIES("getSuperProperties"),
         IDENTIFY("identify"),
         INIT("init"),
         REGISTER_SUPER_PROPERTIES("registerSuperProperties"),
+        REGISTER_SUPER_PROPERTIES_ONCE("registerSuperPropertiesOnce"),
         RESET("reset"),
         TIME_EVENT("timeEvent"),
         TRACK("track"),
+        UNREGISTER_SUPER_PROPERTY("unregisterSuperProperty"),
 
         // PEOPLE API
 
 
+        PEOPLE_DELETE_USER("people_deleteUser"),
         PEOPLE_INCREMENT("people_increment"),
         PEOPLE_SET_PUSH_ID("people_setPushId"),
         PEOPLE_SET("people_set"),
         PEOPLE_SET_ONCE("people_set_once"),
         PEOPLE_TRACK_CHARGE("people_track_charge"),
-        PEOPLE_UNSET("people_unset"),
-        PEOPLE_DELETE_USER("people_deleteUser");
+        PEOPLE_UNSET("people_unset");
 
         private final String name;
         private static final Map<String, Action> lookup = new HashMap<String, Action>();
@@ -89,18 +92,24 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handleDistinctId(args, cbCtx);
             case FLUSH:
                 return handleFlush(args, cbCtx);
+            case GET_SUPER_PROPERTIES:
+                return handleGetSuperProperties(args, cbCtx);
             case IDENTIFY:
                 return handleIdentify(args, cbCtx);
             case INIT:
                 return handleInit(args, cbCtx);
             case REGISTER_SUPER_PROPERTIES:
                 return handleRegisterSuperProperties(args, cbCtx);
+            case REGISTER_SUPER_PROPERTIES_ONCE:
+                return handleRegisterSuperPropertiesOnce(args, cbCtx);
             case RESET:
                 return handleReset(args, cbCtx);
             case TIME_EVENT:
                 return handleTimeEvent(args, cbCtx);
             case TRACK:
                 return handleTrack(args, cbCtx);
+            case UNREGISTER_SUPER_PROPERTY:
+                return handleUnregisterSuperProperty(args, cbCtx);
             case PEOPLE_INCREMENT:
                 return handlePeopleIncrement(args, cbCtx);
             case PEOPLE_SET_PUSH_ID:
@@ -170,6 +179,12 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
+    private boolean handleGetSuperProperties(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject superProps = mixpanel.getSuperProperties();
+        cbCtx.success(superProps);
+        return true;
+    }
+
     private boolean handleIdentify(JSONArray args, final CallbackContext cbCtx) {
         String distinctId = args.optString(0, "");
         mixpanel.identify(distinctId);
@@ -199,6 +214,17 @@ public class MixpanelPlugin extends CordovaPlugin {
     }
 
 
+    private boolean handleRegisterSuperPropertiesOnce(JSONArray args, final CallbackContext cbCtx) {
+        JSONObject superProperties = args.optJSONObject(0);
+        if (superProperties == null) {
+            superProperties = new JSONObject();
+        }
+        mixpanel.registerSuperPropertiesOnce(superProperties);
+        cbCtx.success();
+        return true;
+    }
+
+
     private boolean handleReset(JSONArray args, final CallbackContext cbCtx) {
         mixpanel.reset();
         cbCtx.success();
@@ -221,6 +247,23 @@ public class MixpanelPlugin extends CordovaPlugin {
             properties = new JSONObject();
         }
         mixpanel.track(event, properties);
+        cbCtx.success();
+        return true;
+    }
+
+
+    private boolean handleUnregisterSuperProperty(JSONArray args, final CallbackContext cbCtx) {
+        String superPropertyName = args.optString(0, "");
+        if (superPropertyName != "") {
+            mixpanel.unregisterSuperProperty(superPropertyName);
+        }
+        cbCtx.success();
+        return true;
+    }
+
+
+    private boolean handlePeopleDeleteUser(JSONArray args, final CallbackContext cbCtx) {
+        mixpanel.getPeople().deleteUser();
         cbCtx.success();
         return true;
     }
@@ -294,13 +337,6 @@ public class MixpanelPlugin extends CordovaPlugin {
                 mixpanel.getPeople().unset(propertyToUnset);
             }
         }
-        cbCtx.success();
-        return true;
-    }
-
-
-    private boolean handlePeopleDeleteUser(JSONArray args, final CallbackContext cbCtx) {
-        mixpanel.getPeople().deleteUser();
         cbCtx.success();
         return true;
     }

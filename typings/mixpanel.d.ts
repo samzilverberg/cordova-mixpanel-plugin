@@ -8,11 +8,14 @@ interface IMixpanel {
   createAlias(alias: string, originalId: string, onSuccess: () => void, onFail: (errors: string) => void): void;
   distinctId(onSuccess: () => void, onFail: (errors: string) => void): void;
   flush(onSuccess: () => void, onFail: (errors: string) => void): void;
+  getSuperProperties(onSuccess: () => void, onFail: (errors: string) => void): void;
   identify(id: string, onSuccess: () => void, onFail: (errors: string) => void): void;
   registerSuperProperties(superProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
+  registerSuperPropertiesOnce(superProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
   reset(onSuccess: () => void, onFail: (errors: string) => void): void;
   timeEvent(eventName: string, onSuccess: () => void, onFail: (errors: string) => void): void;
   track(eventName: string, eventProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
+  unregisterSuperProperty(superPropertyName: string, onSuccess: () => void, onFail: (errors: string) => void): void;
 }
 
 
