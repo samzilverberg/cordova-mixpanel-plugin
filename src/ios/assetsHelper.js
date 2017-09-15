@@ -13,7 +13,7 @@ var path = require('path'),
   others = [],
   i;
 
-function getAllMixpanelFiles(base, extra) {
+function getAllMixpanelFiles(base) {
   var files = fs.readdirSync(base);
   for (var i = 0; i < files.length; i++) {
     if (fs.statSync(path.join(base, files[i])).isDirectory()) {
@@ -57,5 +57,5 @@ for (i = 0; i < libs.length; i++) {
   console.log('<source-file src="src/ios/' + libs[i].path + '" target-dir="'+ libs[i].dir+'"/>');
 }
 for (i = 0; i < others.length; i++) {
-  console.log('<source-file src="src/ios/' + others[i].path + '" target-dir="'+ others[i].dir+'"/>');
+  console.log('<resource-file src="src/ios/' + others[i].path + '" target-dir="'+ others[i].dir+'"/>');
 }

@@ -2,7 +2,7 @@
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
 - [android sdk version 5.1.4](https://github.com/mixpanel/mixpanel-android/tree/v5.1.4)
-- [ios sdk version 3.1.9](https://github.com/mixpanel/mixpanel-iphone/tree/v3.1.9)
+- [ios sdk version 3.2.0](https://github.com/mixpanel/mixpanel-iphone/tree/v3.2.0)
 
 
 #### Install
@@ -68,17 +68,17 @@ You may use mine which i've published to NPM:
 https://www.npmjs.com/package/cordova-mixpanel-plugin-testapp
 
 
+## License Notice
+
+All Mixpanel ios sdk source files under `src/ios/Mixpanel` are licensed under the apache license.<br/>  
+A copy of the license is located at `src/ios/Mixpanel/LICENSE`.<br/>
+
+The rest of the code is MIT license, located at `/LICENSE`.
+
+
 ## Troubleshooting
 
 ### IOS
-
-#### installation of plugin fails with `Error: CocoaPods was not found. ...`
-
-the plugin uses cocoapods to install the mixpanel iphone sdk.<br/>
-you will also need `cordova-cli >= 6.4.0` and `cordova-ios >= 4.3.0`.<br/>
-you can install it via brew: `brew install cocoapods`<br/>
-after first install you should: `pod setup`<br/>
-
 
 #### hey i installed the plugin and now build fails, why?
 
@@ -117,17 +117,6 @@ and setting up the build phase correctly again, as described in last question.
 google for NSAppTransportSecurity.<br/>
 since iOS9 they are more strict about what your app is allowed to connect to.<br/>
 you will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
-
-
-#### problems with pod? 
-
-got some weird pod errors while adding plugin or adding platform?   
-
-try executing `pod install` in the platform/ios folder
-```
-cd platforms/ios 
-pod install
-```
 
 
 ### Android
