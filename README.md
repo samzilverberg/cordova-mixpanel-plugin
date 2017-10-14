@@ -13,6 +13,21 @@ requires cordova >5.x.x
   cordova plugin add cordova-plugin-mixpanel
 ```
 
+#### Initialization and quick start
+
+init the plugin with your mixpanel project token with
+```
+  mixpanel.init(your-token, 
+    function(){ /* successful init */ }, 
+    function(){ /* fail *.})
+```
+and then followup with all your favorite mixpanel functionality. 
+`mixpanel.track` to track events.  
+`alias` or `identify` (depending on use case) to set the id for people events (after login or register).  
+`people.set` to set properties on the people entity identified before.  
+you can read more about mixpanel api in their reference: https://mixpanel.com/help/reference
+
+
 #### Usage
 
 **window.mixpanel:**
