@@ -21,11 +21,11 @@ init the plugin with your mixpanel project token with
     function(){ /* successful init */ }, 
     function(){ /* fail *.})
 ```
-and then followup with all your favorite mixpanel functionality. 
-`mixpanel.track` to track events.  
-`alias` or `identify` (depending on use case) to set the id for people events (after login or register).  
-`people.set` to set properties on the people entity identified before.  
-you can read more about mixpanel api in their reference: https://mixpanel.com/help/reference
+and then followup with all your favorite mixpanel functionality.<br/>
+`mixpanel.track` to track events.<br/>
+`alias` or `identify` (depending on use case) to set the id for people events (after login or register).<br/>  
+`people.set` to set properties on the people entity identified before.<br/> 
+you can read more about mixpanel api in their reference: https://mixpanel.com/help/reference <br/>
 
 
 #### Usage
