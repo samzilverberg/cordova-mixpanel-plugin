@@ -8,7 +8,7 @@
 
     <description>Mixpanel Cordova Plugin for iOS and Android (and Browser)</description>
 
-    <repo>https://github.com/samzilverberg/mixpanel-cordova.git</repo>
+    <repo>https://github.com/samzilverberg/cordova-mixpanel-plugin.git</repo>
     <author>Sam Zilverberg</author>
     <keywords>mixpanel, cordova, phonegap, ionic, plugin, ios, android</keywords>
 
