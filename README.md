@@ -19,7 +19,7 @@ init the plugin with your mixpanel project token with
 ```
   mixpanel.init(your-token, 
     function(){ /* successful init */ }, 
-    function(){ /* fail *.})
+    function(){ /* fail */})
 ```
 and then followup with all your favorite mixpanel functionality.<br/>
 `mixpanel.track` to track events.<br/>
