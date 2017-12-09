@@ -1,15 +1,15 @@
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
-#import "UIView+MPHelpers.h"
+#import "MixpanelPrivate.h"
+#import "MPFoundation.h"
 #import "MPLogger.h"
 #import "MPNotification.h"
 #import "MPNotificationViewController.h"
+#import "MPResources.h"
 #import "UIColor+MPColor.h"
 #import "UIImage+MPAverageColor.h"
 #import "UIImage+MPImageEffects.h"
-#import "MPFoundation.h"
-#import "UIColor+MPColor.h"
-#import "MPResources.h"
+#import "UIView+MPHelpers.h"
 
 #define MPNotifHeight 65.0f
 
@@ -236,7 +236,12 @@
 
 @implementation MPMiniNotificationViewController
 
-static const NSUInteger MPMiniNotificationSpacingFromBottom = 10;
+- (NSUInteger)MPMiniNotificationSpacingFromBottom {
+    if (((int)[[UIScreen mainScreen] nativeBounds].size.height) == 2436) {
+        return 44.f;
+    }
+    return 10.f;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -290,10 +295,10 @@ static const NSUInteger MPMiniNotificationSpacingFromBottom = 10;
     UIView *parentView = self.view.superview;
     CGRect parentFrame = parentView.frame;
 
-    if (UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation) && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        self.view.frame = CGRectMake(15, parentFrame.size.height - MPNotifHeight - MPMiniNotificationSpacingFromBottom, parentFrame.size.width - 30, MPNotifHeight);
+    if (UIInterfaceOrientationIsPortrait([Mixpanel sharedUIApplication].statusBarOrientation) && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        self.view.frame = CGRectMake(15, parentFrame.size.height - MPNotifHeight - [self MPMiniNotificationSpacingFromBottom], parentFrame.size.width - 30, MPNotifHeight);
     } else {
-        self.view.frame = CGRectMake(parentFrame.size.width/4, parentFrame.size.height - MPNotifHeight - MPMiniNotificationSpacingFromBottom, parentFrame.size.width/2, MPNotifHeight);
+        self.view.frame = CGRectMake(parentFrame.size.width/4, parentFrame.size.height - MPNotifHeight - [self MPMiniNotificationSpacingFromBottom], parentFrame.size.width/2, MPNotifHeight);
     }
     self.view.clipsToBounds = YES;
     self.view.layer.cornerRadius = 6.f;
@@ -317,7 +322,7 @@ static const NSUInteger MPMiniNotificationSpacingFromBottom = 10;
 
 - (UIView *)getTopView {
     UIView *topView = nil;
-    for (UIView *subview in [UIApplication sharedApplication].keyWindow.subviews) {
+    for (UIView *subview in [Mixpanel sharedUIApplication].keyWindow.subviews) {
         if (!subview.hidden && subview.alpha > 0 && subview.frame.size.width > 0 && subview.frame.size.height > 0) {
             topView = subview;
         }

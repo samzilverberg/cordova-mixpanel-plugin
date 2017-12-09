@@ -1,6 +1,12 @@
 Changelog
 =========
 
+### 4.1.0 2017-12-09
+- update android lib from 5.1.4 to 5.2.1
+- update ios lib from 3.2.0 to 3.2.3
+- small correction to README and to repo url (thanks [Jørgen Svennevik Notland](https://github.com/jQrgen) and [Bruno Freitas](https://github.com/brunosfreitas))
+
+
 ### 4.0.0 2017-09-15
 
 major version upgrade from 3.x->4.x:   
