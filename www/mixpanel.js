@@ -14,12 +14,32 @@ var exec = require('cordova/exec'),
 // MIXPANEL API
 
 
+/**
+ * can be called in two ways:
+ * - with 4 args, as function signature
+ * - with 3 args `mixpanel.alias(alias, onSuccess, onFail)`
+ */
 mixpanel.alias = mixpanel.createAlias = function(alias, originalId, onSuccess, onFail) {
   if (!alias || typeof alias !== 'string') {
     return onFail(errors.invalid('alias', alias));
   }
 
-  exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, originalId]);
+  if (arguments.length === 3 && typeof originalId === 'function'){
+    onFail = onSuccess;
+    onSuccess = originalId;
+    originalId = null;
+  }
+
+  if (!originalId || typeof originalId !== 'string'){
+    mixpanel.distinctId(
+      function(distinctId){
+        exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, distinctId]);
+      }, 
+      onFail
+    );
+  } else {
+    exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, originalId]);  
+  }
 };
 
 mixpanel.distinctId = function(onSuccess, onFail) {
