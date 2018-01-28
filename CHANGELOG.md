@@ -1,6 +1,13 @@
 Changelog
 =========
 
+
+### 4.2.0 2018-01-28
+- update android lib from 5.2.1 to 5.2.4
+- `mixpanel.alias` will use `mixpanel.distinctId` if originalId is invalid
+- `mixpanel.alias` can be called with just alias and callback functions
+  - this variant of alias will call and use `mixpanel.distinctId` as the originalId
+
 ### 4.1.0 2017-12-09
 - update android lib from 5.1.4 to 5.2.1
 - update ios lib from 3.2.0 to 3.2.3

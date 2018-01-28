@@ -1,7 +1,7 @@
 
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- [android sdk version 5.2.1](https://github.com/mixpanel/mixpanel-android/tree/v5.2.1)
+- [android sdk version 5.2.4](https://github.com/mixpanel/mixpanel-android/tree/v5.2.4)
 - [ios sdk version 3.2.3](https://github.com/mixpanel/mixpanel-iphone/tree/v3.2.3)
 
 
@@ -34,6 +34,8 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
 
 - alias(aliasId, originalId, onSuccess, onFail)
   - also available as ```createAlias```
+- alias(aliasId, onSuccess, onFail)
+  - will use `distinctId` from mixpanel sdk as originalId
 - distinctId(function onSuccess(distinctId), onFail)
 - flush(onSuccess, onFail)
 - getSuperProperties(onSuccess, onFail)
