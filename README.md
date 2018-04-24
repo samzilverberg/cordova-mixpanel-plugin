@@ -13,18 +13,24 @@ requires cordova >5.x.x
   cordova plugin add cordova-plugin-mixpanel
 ```
 
+*Optional*: If you want to explicitly specify a google play services version to work with other existing plugins in your project, you can specify a flag `PLAY_SERVICES_VERSION` during installation. e.g. 11.8.0. If you don't provide this flag, it will assume the default '+' wildcard version
+
+```
+cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="11.8.0"
+```
+
 #### Initialization and quick start
 
 init the plugin with your mixpanel project token with
 ```
-  mixpanel.init(your-token, 
-    function(){ /* successful init */ }, 
+  mixpanel.init(your-token,
+    function(){ /* successful init */ },
     function(){ /* fail */})
 ```
 and then followup with all your favorite mixpanel functionality.<br/>
 `mixpanel.track` to track events.<br/>
-`alias` or `identify` (depending on use case) to set the id for people events (after login or register).<br/>  
-`people.set` to set properties on the people entity identified before.<br/> 
+`alias` or `identify` (depending on use case) to set the id for people events (after login or register).<br/>
+`people.set` to set properties on the people entity identified before.<br/>
 you can read more about mixpanel api in their reference: https://mixpanel.com/help/reference <br/>
 
 
@@ -90,7 +96,7 @@ https://www.npmjs.com/package/cordova-mixpanel-plugin-testapp
 
 ## License Notice
 
-All Mixpanel ios sdk source files under `src/ios/Mixpanel` are licensed under the apache license.<br/>  
+All Mixpanel ios sdk source files under `src/ios/Mixpanel` are licensed under the apache license.<br/>
 A copy of the license is located at `src/ios/Mixpanel/LICENSE`.<br/>
 
 The rest of the code is MIT license, located at `/LICENSE`.

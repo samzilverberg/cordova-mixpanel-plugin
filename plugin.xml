@@ -29,8 +29,16 @@
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
         <framework src="com.mixpanel.android:mixpanel-android:5.2.4"/>
-        <framework src="com.google.android.gms:play-services-base:+"/>
-        <framework src="com.google.android.gms:play-services-gcm:+"/>
+
+        <!--
+        Minimum required version of Google Play Services SDK for this plugin is + (as per current version).
+        You can optionally specify a version number to align the version with other plugins that utilize gcm.
+        https://developers.google.com/android/guides/releases
+        -->
+        <preference name="PLAY_SERVICES_VERSION" default="+" />
+
+        <framework src="com.google.android.gms:play-services-base:$PLAY_SERVICES_VERSION"/>
+        <framework src="com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"/>
 
         <!-- AndroidManifest.xml -->
         <!-- see https://github.com/mixpanel/mixpanel-android/blob/master/src/main/AndroidManifest.xml -->
