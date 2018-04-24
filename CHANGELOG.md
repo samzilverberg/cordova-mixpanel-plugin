@@ -2,11 +2,18 @@ Changelog
 =========
 
 
+### 4.3.0 2018-04-24
+- play-services version can be pinned via variable when adding the plugin (thanks [akhatri](https://github.com/akhatri)).
+  - example: cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="11.8.0"
+  - when not specifying variable default is '+' (as it was before)
+
+
 ### 4.2.0 2018-01-28
 - update android lib from 5.2.1 to 5.2.4
 - `mixpanel.alias` will use `mixpanel.distinctId` if originalId is invalid
 - `mixpanel.alias` can be called with just alias and callback functions
   - this variant of alias will call and use `mixpanel.distinctId` as the originalId
+
 
 ### 4.1.0 2017-12-09
 - update android lib from 5.1.4 to 5.2.1
