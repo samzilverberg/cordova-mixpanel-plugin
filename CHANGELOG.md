@@ -1,6 +1,14 @@
 Changelog
 =========
 
+### 4.3.2 2018-05-29
+- ios: support identify with usePeople flag 
+  - ty [Ödön Örzsik](https://github.com/orzsikodon) for [suggestion](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/89) and hotfix
+
+
+### 4.3.1 2018-05-28 (DEPRECATED)
+- unpublished from npm due to bug
+
 
 ### 4.3.0 2018-04-24
 - play-services version can be pinned via variable when adding the plugin (thanks [akhatri](https://github.com/akhatri)).
