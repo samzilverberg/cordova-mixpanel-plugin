@@ -85,6 +85,7 @@
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
     NSArray* arguments = command.arguments;
     NSString* distinctId = [arguments objectAtIndex:0];
+    BOOL usePeople = [arguments objectAtIndex:1];
 
     if (mixpanelInstance == nil)
     {
@@ -96,7 +97,7 @@
         {
             distinctId = mixpanelInstance.distinctId;
         }
-        [mixpanelInstance identify:distinctId];
+        [mixpanelInstance identify:distinctId usePeople:usePeople];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

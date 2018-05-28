@@ -46,6 +46,8 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
 - flush(onSuccess, onFail)
 - getSuperProperties(onSuccess, onFail)
 - identify(distinctId, onSuccess, onFail)
+- identify(distinctId, usePeople, onSuccess, onFail)
+  - only affects ios: will pass `usePeople` to the ios mixpanel sdk identify method
 - init(token, onSuccess, onFail)
 - registerSuperProperties(superProperties, onSuccess, onFail)
 - registerSuperPropertiesOnce(superProperties, onSuccess, onFail)

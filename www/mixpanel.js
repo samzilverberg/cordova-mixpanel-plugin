@@ -54,12 +54,27 @@ mixpanel.getSuperProperties = function(onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'getSuperProperties', []);
 };
 
-mixpanel.identify = function(id, onSuccess, onFail) {
+
+/**
+ * can be called in two ways:
+ * - with 3 args `mixpanel.alias(alias, onSuccess, onFail)`
+ * - with 4 args, as function signature
+ *     in this case, "usePeople" boolean will be passed to ios mixpanel sdk, as documented here:
+ *     https://github.com/mixpanel/mixpanel-iphone/releases/tag/v3.2.0
+ *     NOTE: usePeople has no effect on android
+ */
+mixpanel.identify = function(id, usePeople, onSuccess, onFail) {
   if (!id || typeof id !== 'string') {
     return onFail(errors.invalid('id', id));
   }
 
-  exec(onSuccess, onFail, 'Mixpanel', 'identify', [id]);
+  if (arguments.length === 3 && typeof usePeople === 'function'){
+    onFail = onSuccess;
+    onSuccess = usePeople;
+    usePeople = true;
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'identify', [id, !!usePeople]);
 };
 
 mixpanel.init = function(token, onSuccess, onFail) {
