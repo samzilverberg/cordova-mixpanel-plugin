@@ -1,6 +1,11 @@
 Changelog
 =========
 
+### 4.4.0 2018-05-28
+- update android lib from 5.2.4 to 5.2.4
+- update ios lib from 3.2.3 to 3.3.2
+
+
 ### 4.3.1 2018-05-28
 - ios: support identify with usePeople flag
 
