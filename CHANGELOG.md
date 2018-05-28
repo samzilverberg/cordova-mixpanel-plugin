@@ -1,6 +1,9 @@
 Changelog
 =========
 
+### 4.3.1 2018-05-28
+- ios: support identify with usePeople flag
+
 
 ### 4.3.0 2018-04-24
 - play-services version can be pinned via variable when adding the plugin (thanks [akhatri](https://github.com/akhatri)).
