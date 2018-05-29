@@ -85,7 +85,7 @@
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
     NSArray* arguments = command.arguments;
     NSString* distinctId = [arguments objectAtIndex:0];
-    BOOL usePeople = [arguments objectAtIndex:1];
+    BOOL usePeople = [[arguments objectAtIndex:1] boolValue];
 
     if (mixpanelInstance == nil)
     {
