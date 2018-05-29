@@ -1,6 +1,14 @@
 Changelog
 =========
 
+### 4.4.1 2018-05-29
+ - update android lib from 5.2.4 to 5.4.0
+ - update ios lib from 3.2.3 to 3.3.2
+
+### 4.4.0 2018-05-28 (DEPRECATED)
+- unpublished from npm due to bug
+
+
 ### 4.3.2 2018-05-29
 - ios: support identify with usePeople flag 
   - ty [Ödön Örzsik](https://github.com/orzsikodon) for [suggestion](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/89) and hotfix

@@ -6,17 +6,35 @@
 #endif
 #import "MixpanelPeople.h"
 
-#define MIXPANEL_FLUSH_IMMEDIATELY defined(MIXPANEL_WATCHOS)
-#define MIXPANEL_NO_REACHABILITY_SUPPORT (defined(MIXPANEL_TVOS) || defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
-#define MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT (defined(MIXPANEL_TVOS) || defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
-#define MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT (defined(MIXPANEL_TVOS) || defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
-#define MIXPANEL_NO_APP_LIFECYCLE_SUPPORT defined(MIXPANEL_WATCHOS)
-#define MIXPANEL_NO_UIAPPLICATION_ACCESS (defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
+#if defined(MIXPANEL_WATCHOS)
+#define MIXPANEL_FLUSH_IMMEDIATELY 1
+#define MIXPANEL_NO_APP_LIFECYCLE_SUPPORT 1
+#endif
+
+#if (defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
+#define MIXPANEL_NO_UIAPPLICATION_ACCESS 1
+#endif
+
+#if (defined(MIXPANEL_TVOS) || defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
+#define MIXPANEL_NO_REACHABILITY_SUPPORT 1
+#define MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT 1
+#define MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT 1
+#define MIXPANEL_NO_CONNECT_INTEGRATION_SUPPORT 1
+#endif
 
 @class    MixpanelPeople;
 @protocol MixpanelDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
+
+/*!
+ A string constant "mini" that respresent Mini Notification
+ */
+extern NSString *const MPNotificationTypeMini;
+/*!
+ A string constant "takeover" that respresent Takeover Notification
+ */
+extern NSString *const MPNotificationTypeTakeover;
 
 /*!
  Mixpanel API.
@@ -228,6 +246,19 @@ NS_ASSUME_NONNULL_BEGIN
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken;
 
 /*!
+ Initializes a singleton instance of the API, uses it to set whether or not to opt out tracking for
+ GDPR compliance, and then returns it.
+ 
+ This is the preferred method for creating a sharedInstance with a mixpanel
+ like above. With the optOutTrackingByDefault parameter, Mixpanel tracking can be opted out by default.
+ 
+ @param apiToken        your project token
+ @param optOutTrackingByDefault  whether or not to be opted out from tracking by default
+ 
+ */
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken optOutTrackingByDefault:(BOOL)optOutTrackingByDefault;
+
+/*!
  Initializes a singleton instance of the API, uses it to track launchOptions information,
  and then returns it.
 
@@ -240,6 +271,37 @@ NS_ASSUME_NONNULL_BEGIN
 
  */
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions;
+
+/*!
+ Initializes a singleton instance of the API, uses it to track launchOptions information,
+ and then returns it.
+ 
+ This is the preferred method for creating a sharedInstance with a mixpanel
+ like above. With the trackCrashes and automaticPushTracking parameter, Mixpanel can track crashes and automatic push.
+ 
+ @param apiToken        your project token
+ @param launchOptions   your application delegate's launchOptions
+ @param trackCrashes    whether or not to track crashes in Mixpanel. may want to disable if you're seeing
+ issues with your crash reporting for either signals or exceptions
+ @param automaticPushTracking    whether or not to automatically track pushes sent from Mixpanel
+ */
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions trackCrashes:(BOOL)trackCrashes automaticPushTracking:(BOOL)automaticPushTracking;
+
+/*!
+ Initializes a singleton instance of the API, uses it to track launchOptions information,
+ and then returns it.
+ 
+ This is the preferred method for creating a sharedInstance with a mixpanel
+ like above. With the optOutTrackingByDefault parameter, Mixpanel tracking can be opted out by default.
+ 
+ @param apiToken        your project token
+ @param launchOptions   your application delegate's launchOptions
+ @param trackCrashes    whether or not to track crashes in Mixpanel. may want to disable if you're seeing
+ issues with your crash reporting for either signals or exceptions
+ @param automaticPushTracking    whether or not to automatically track pushes sent from Mixpanel
+ @param optOutTrackingByDefault  whether or not to be opted out from tracking by default
+ */
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions trackCrashes:(BOOL)trackCrashes automaticPushTracking:(BOOL)automaticPushTracking optOutTrackingByDefault:(BOOL)optOutTrackingByDefault;
 
 /*!
  Returns a previously instantiated singleton instance of the API.
@@ -269,6 +331,26 @@ NS_ASSUME_NONNULL_BEGIN
                 launchOptions:(nullable NSDictionary *)launchOptions
                 flushInterval:(NSUInteger)flushInterval
                  trackCrashes:(BOOL)trackCrashes;
+
+/*!
+ Initializes an instance of the API with the given project token. This also sets
+ it as a shared instance so you can use <code>sharedInstance</code> or
+ <code>sharedInstanceWithToken:</code> to retrieve this object later.
+
+ Creates and initializes a new API object. See also <code>sharedInstanceWithToken:</code>.
+
+ @param apiToken        your project token
+ @param launchOptions   optional app delegate launchOptions
+ @param flushInterval   interval to run background flushing
+ @param trackCrashes    whether or not to track crashes in Mixpanel. may want to disable if you're seeing
+ issues with your crash reporting for either signals or exceptions
+ @param automaticPushTracking    whether or not to automatically track pushes sent from Mixpanel
+ */
+- (instancetype)initWithToken:(NSString *)apiToken
+                launchOptions:(nullable NSDictionary *)launchOptions
+                flushInterval:(NSUInteger)flushInterval
+                 trackCrashes:(BOOL)trackCrashes
+        automaticPushTracking:(BOOL)automaticPushTracking;
 
 /*!
  Initializes an instance of the API with the given project token.
@@ -558,6 +640,61 @@ NS_ASSUME_NONNULL_BEGIN
  Returns the Mixpanel library version number as a string, e.g. "3.2.3".
  */
 - (NSString *)libVersion;
+
+/*!
+ Opt out tracking.
+ 
+ This method is used to opt out tracking. This causes all events and people request no longer
+ to be sent back to the Mixpanel server.
+ */
+- (void)optOutTracking;
+
+/*!
+ Opt in tracking.
+ 
+ Use this method to opt in an already opted out user from tracking. People updates and track calls will be
+ sent to Mixpanel after using this method.
+ 
+ This method will internally track an opt in event to your project. If you want to identify the opt-in
+ event and/or pass properties to the event, See also <code>optInTrackingForDistinctId:</code> and
+ <code>optInTrackingForDistinctId:withEventProperties:</code>.
+ */
+- (void)optInTracking;
+
+/*!
+ Opt in tracking.
+ 
+ Use this method to opt in an already opted out user from tracking. People updates and track calls will be
+ sent to Mixpanel after using this method.
+ 
+ This method will internally track an opt in event to your project. If you want to pass properties to the event, see also
+ <code>optInTrackingForDistinctId:withEventProperties:</code>.
+ 
+ @param distinctID     optional string to use as the distinct ID for events. This will call <code>identify:</code>.
+ If you use people profiles make sure you manually call <code>identify:</code> after this method.
+ */
+- (void)optInTrackingForDistinctID:(nullable NSString *)distinctID;
+
+/*!
+ Opt in tracking.
+ 
+ Use this method to opt in an already opted out user from tracking. People updates and track calls will be
+ sent to Mixpanel after using this method.
+ 
+ This method will internally track an opt in event to your project.See also <code>optInTracking</code> or
+ <code>optInTrackingForDistinctId:</code>.
+ 
+ @param distinctID     optional string to use as the distinct ID for events. This will call <code>identify:</code>.
+ If you use people profiles make sure you manually call <code>identify:</code> after this method.
+ @param properties     optional properties dictionary that could be passed to add properties to the opt-in event that is sent to
+ Mixpanel.
+ */
+- (void)optInTrackingForDistinctID:(nullable NSString *)distinctID withEventProperties:(nullable NSDictionary *)properties;
+
+/*!
+ Returns YES if the current user has opted out tracking, NO if the current user has opted in tracking.
+ */
+- (BOOL)hasOptedOutTracking;
 
 /*!
  Returns the Mixpanel library version number as a string, e.g. "3.2.3".

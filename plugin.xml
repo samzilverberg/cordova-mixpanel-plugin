@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-mixpanel"
-        version="4.3.2">
+        version="4.4.1">
 
     <name>Mixpanel</name>
 
@@ -28,7 +28,7 @@
 
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
-        <framework src="com.mixpanel.android:mixpanel-android:5.2.4"/>
+        <framework src="com.mixpanel.android:mixpanel-android:5.4.0"/>
 
         <!--
         Minimum required version of Google Play Services SDK for this plugin is + (as per current version).
@@ -88,6 +88,7 @@
         <header-file src="src/ios/Mixpanel/MPAbstractABTestDesignerMessage.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPApplicationStateSerializer.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPClassDescription.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MPConnectIntegrations.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPDesignerEventBindingMessage.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPDesignerSessionCollection.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPEnumDescription.h" target-dir="Mixpanel"/>
@@ -132,6 +133,7 @@
         <header-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSThread+MPHelpers.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/SessionMetadata.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/UIApplication+AutomaticTracks.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/UIColor+MPColor.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/UIImage+MPAverageColor.h" target-dir="Mixpanel"/>
@@ -162,6 +164,7 @@
         <source-file src="src/ios/Mixpanel/MPCGRectToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPCGSizeToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPClassDescription.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MPConnectIntegrations.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPDesignerEventBindingRequestMesssage.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPDesignerEventBindingResponseMesssage.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPDesignerTrackMessage.m" target-dir="Mixpanel"/>
@@ -206,6 +209,7 @@
         <source-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSThread+MPHelpers.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/SessionMetadata.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/UIApplication+AutomaticTracks.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/UIColor+MPColor.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/UIImage+MPAverageColor.m" target-dir="Mixpanel"/>

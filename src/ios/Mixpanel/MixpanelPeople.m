@@ -34,7 +34,8 @@
     return [NSString stringWithFormat:@"<MixpanelPeople: %p %@>", (void *)self, (strongMixpanel ? strongMixpanel.apiToken : @"")];
 }
 
-- (NSString *)deviceSystemVersion {
+- (NSString *)deviceSystemVersion
+{
 #if defined(MIXPANEL_WATCHOS)
     return [MixpanelWatchProperties systemVersion];
 #elif defined(MIXPANEL_MACOS)
@@ -74,6 +75,9 @@
 
 - (void)addPeopleRecordToQueueWithAction:(NSString *)action andProperties:(NSDictionary *)properties
 {
+    if ([self.mixpanel hasOptedOutTracking]) {
+        return;
+    }
     NSNumber *epochMilliseconds = @(round([[NSDate date] timeIntervalSince1970] * 1000));
     __strong Mixpanel *strongMixpanel = self.mixpanel;
     if (strongMixpanel) {
@@ -103,6 +107,8 @@
                 [p addEntriesFromDictionary:properties];
                 r[action] = [NSDictionary dictionaryWithDictionary:p];
             }
+
+            [r addEntriesFromDictionary:[self.mixpanel.sessionMetadata toDictionaryForEvent:NO]];
 
             if (self.distinctId) {
                 r[@"$distinct_id"] = self.distinctId;
@@ -150,8 +156,11 @@
 
 - (void)addPushDeviceToken:(NSData *)deviceToken
 {
-    NSDictionary *properties = @{@"$ios_devices": @[[MixpanelPeople pushDeviceTokenToString:deviceToken]]};
-    [self addPeopleRecordToQueueWithAction:@"$union" andProperties:properties];
+    NSString *tokenString = [MixpanelPeople pushDeviceTokenToString:deviceToken];
+    if (tokenString) {
+        NSDictionary *properties = @{@"$ios_devices": @[tokenString]};
+        [self addPeopleRecordToQueueWithAction:@"$union" andProperties:properties];
+    }
 }
 
 - (void)removeAllPushDeviceTokens
