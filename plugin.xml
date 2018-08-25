@@ -28,7 +28,7 @@
 
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
-        <framework src="com.mixpanel.android:mixpanel-android:5.4.0"/>
+        <framework src="com.mixpanel.android:mixpanel-android:5.4.1"/>
 
         <!--
         Minimum required version of Google Play Services SDK for this plugin is + (as per current version).
