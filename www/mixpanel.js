@@ -136,6 +136,31 @@ mixpanel.unregisterSuperProperty = function(superPropertyName, onSuccess, onFail
 // PEOPLE API
 
 
+/**
+ * @param {*} appendObject example:
+ *      {
+ *        'key1': [values to append to key1],
+ *        'key2': [values to append to key2]
+ *      }
+ */
+mixpanel.people.append = function(appendObject, onSuccess, onFail) {
+  if (!appendObject || typeof appendObject !== 'object') {
+    return onFail(errors.invalid('appendObject', appendObject));
+  }
+  var keys = Object.keys(appendObject);
+  for (var i=0; i < keys.length; i++) {
+    if (!Array.isArray(appendObject[keys[i]])) {
+      return onFail(errors.invalid('appendObject', appendObject));
+    }
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_append', [appendObject]);
+};
+
+mixpanel.people.deleteUser = function(onSuccess, onFail) {
+  exec(onSuccess, onFail, 'Mixpanel', 'people_deleteUser', []);
+};
+
 /** @deprecated 2016-11-21 mixpanel.identify will set id for both events and people */
 mixpanel.people.identify = function(distinctId, onSuccess, onFail) {
   if (!distinctId) {
@@ -194,16 +219,33 @@ mixpanel.people.trackCharge = function(amount, chargeProperties, onSuccess, onFa
   exec(onSuccess, onFail, 'Mixpanel', 'people_track_charge', [amount, chargeProperties]);
 };
 
+/**
+ * @param {*} unionObject example:
+ *      {
+ *        'key1': [values to union into key1],
+ *        'key2': [values to union into key2]
+ *      }
+ */
+mixpanel.people.union = function(unionObject, onSuccess, onFail) {
+  if (!unionObject || typeof unionObject !== 'object') {
+    return onFail(errors.invalid('unionObject', unionObject));
+  }
+  var keys = Object.keys(unionObject);
+  for (var i=0; i < keys.length; i++) {
+    if (!Array.isArray(unionObject[keys[i]])) {
+      return onFail(errors.invalid('unionObject', unionObject));
+    }
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_union', [unionObject]);
+};
+
 mixpanel.people.unset = function(propertiesArray, onSuccess, onFail) {
   if (!Array.isArray(propertiesArray)) {
     return onFail(errors.invalid('propertiesArray', propertiesArray));
   }
 
   exec(onSuccess, onFail, 'Mixpanel', 'people_unset', [propertiesArray]);
-};
-
-mixpanel.people.deleteUser = function(onSuccess, onFail) {
-  exec(onSuccess, onFail, 'Mixpanel', 'people_deleteUser', []);
 };
 
 
