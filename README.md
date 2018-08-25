@@ -1,8 +1,8 @@
 
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- [android sdk version 5.4.0](https://github.com/mixpanel/mixpanel-android/tree/v5.4.0)
-- [ios sdk version 3.3.2](https://github.com/mixpanel/mixpanel-iphone/tree/v3.3.2)
+- [android sdk version 5.4.1](https://github.com/mixpanel/mixpanel-android/tree/v5.4.1)
+- [ios sdk version 3.3.3](https://github.com/mixpanel/mixpanel-iphone/tree/v3.3.3)
 
 
 #### Install
@@ -58,6 +58,8 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
 
 **window.mixpanel.people:**
 
+- append(appendObject, onSuccess, onFail)
+- deleteUser(onSuccess, onFail)
 - increment(peopleProperties, onSuccess, onFail)
 - setPushId(pushId, onSuccess, onFail)
   - More info about push notifications at:
@@ -77,13 +79,7 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
 - setOnce(peopleProperties, onSuccess, onFail)
 - trackCharge(amount, chargeProperties, onSuccess, onFail)
 - unset(propertiesArray, onSuccess, onFail)
-- deleteUser(onSuccess, onFail)
-
-
-## TODOs
-- make sure ios/android use same error messages
-- refactor ios code
-  - try to remove code duplication of checking that mixpanel was init
+- union(unionObject, onSuccess, onFail)
 
 
 ## Contributing and Testing

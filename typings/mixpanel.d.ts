@@ -21,6 +21,7 @@ interface IMixpanel {
 
 declare namespace Mixpanel {
   interface IPeople {
+    append(unionObject: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     deleteUser(onSuccess: () => void, onFail: (errors: string) => void): void;
     increment(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     set(peopleProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
@@ -28,6 +29,7 @@ declare namespace Mixpanel {
     setPushId(pushId: string, onSuccess: () => void, onFail: (errors: string) => void): void;
     trackCharge(amount: number, eventProperties: any, onSuccess: () => void, onFail: (errors: string) => void): void;
     unset(propertiesArray: Array<string>, onSuccess: () => void, onFail: (errors: string) => void): void;
+    union(unionObject: any, onSuccess: () => void, onFail: (errors: string) => void): void;
   }
 }
 
