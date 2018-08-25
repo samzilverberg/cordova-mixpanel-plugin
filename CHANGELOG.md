@@ -1,9 +1,17 @@
 Changelog
 =========
 
+### 4.5.0 2018-08-25
+ - mixpanel.people.append
+ - mixpanel.people.union
+ - update android lib from 5.4.0 to 5.4.1
+ - update ios lib from 3.3.2 to 3.3.3
+
+
 ### 4.4.1 2018-05-29
  - update android lib from 5.2.4 to 5.4.0
  - update ios lib from 3.2.3 to 3.3.2
+
 
 ### 4.4.0 2018-05-28 (DEPRECATED)
 - unpublished from npm due to bug
