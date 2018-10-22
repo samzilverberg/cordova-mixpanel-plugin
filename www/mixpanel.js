@@ -178,6 +178,14 @@ mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_increment', [peopleProperties]);
 };
 
+mixpanel.people.initPushHandling = function(senderId, onSuccess, onFail) {
+  if (!senderId) {
+    return onFail(errors.invalid('senderId', senderId));
+  }
+
+  exec(onSuccess, onFail, 'Mixpanel', 'people_initPushHandling', [senderId]);
+}
+
 mixpanel.people.set = function(peopleProperties, onSuccess, onFail) {
   if (!peopleProperties || (typeof peopleProperties === 'object' && Object.keys(peopleProperties).length === 0)) {
     return onFail(errors.invalid('properties', peopleProperties));
