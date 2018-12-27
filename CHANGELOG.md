@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### 4.5.2 2018-12-27
+ - update android lib from 5.4.1 to 5.4.4
+ - update ios lib from 3.3.3 to 3.3.7
+
 ### 4.5.1 2018-12-27
  - mixpanel.people.initPushHandling : android only (thanks [Todd Vrba](https://github.com/SpellChucker)) 
 
