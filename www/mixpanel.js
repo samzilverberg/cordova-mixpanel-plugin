@@ -179,7 +179,7 @@ mixpanel.people.increment = function(peopleProperties, onSuccess, onFail) {
 };
 
 mixpanel.people.initPushHandling = function(senderId, onSuccess, onFail) {
-  if (!senderId) {
+  if (!senderId || typeof senderId !== 'string') {
     return onFail(errors.invalid('senderId', senderId));
   }
 

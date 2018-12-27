@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### 4.5.1 2018-12-27
+ - mixpanel.people.initPushHandling : android only (thanks [Todd Vrba](https://github.com/SpellChucker)) 
+
+
 ### 4.5.0 2018-08-25
  - mixpanel.people.append
  - mixpanel.people.union

@@ -61,6 +61,8 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
 - append(appendObject, onSuccess, onFail)
 - deleteUser(onSuccess, onFail)
 - increment(peopleProperties, onSuccess, onFail)
+- initPushHandling(senderId, onSuccess, onFail) -- Android Only
+  - **NOTE:** Only use this if you are not using another third party plugin (such as [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push)). This will create the GCM receiver for you and your push notifications will be fully handled within Mixpanel. For more information on this, take a look [here](https://developer.mixpanel.com/docs/android-push-notifications#section-setting-up-your-app-to-receive-messages).
 - setPushId(pushId, onSuccess, onFail)
   - More info about push notifications at:
     - [android](https://mixpanel.com/site_media/doctyl/uploads/Android-spec/com/mixpanel/android/mpmetrics/MixpanelAPI.People.html#initPushHandling(java.lang.String))
@@ -75,8 +77,6 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
       mixpanel.people.setPushId(data.registrationId, function onSuccess(){}, function onFail(){});
     });
   ```
-- initPushHandling(onSuccess, onFail) -- Android Only
-  - **NOTE:** Only use this if you are not using another third party plugin (such as [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push)). This will create the GCM receiver for you and your push notifications will be fully handled within Mixpanel. For more information on this, take a look [here](https://developer.mixpanel.com/docs/android-push-notifications#section-setting-up-your-app-to-receive-messages).
 - set(peopleProperties, onSuccess, onFail)
 - setOnce(peopleProperties, onSuccess, onFail)
 - trackCharge(amount, chargeProperties, onSuccess, onFail)
