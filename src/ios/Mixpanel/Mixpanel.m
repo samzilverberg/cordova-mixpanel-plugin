@@ -13,6 +13,7 @@
 #import "MPLogger.h"
 #import "MPNetworkPrivate.h"
 
+
 #import <UserNotifications/UserNotifications.h>
 #if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
 #import "NSThread+MPHelpers.h"
@@ -28,7 +29,7 @@
 #error The Mixpanel library must be compiled with ARC enabled
 #endif
 
-#define VERSION @"3.3.7"
+#define VERSION @"3.4.1"
 
 NSString *const MPNotificationTypeMini = @"mini";
 NSString *const MPNotificationTypeTakeover = @"takeover";
@@ -434,6 +435,10 @@ static NSString *defaultProjectToken;
     }
 
     dispatch_async(self.serialQueue, ^{
+        if(!self.anonymousId) {
+            self.anonymousId = self.distinctId;
+            self.hadPersistedDistinctId = YES;
+        }
         // identify only changes the distinct id if it doesn't match either the existing or the alias;
         // if it's new, blow away the alias as well.
         if (![distinctId isEqualToString:self.alias]) {
@@ -548,6 +553,9 @@ static NSString *defaultProjectToken;
         if (self.userId) {
           p[@"$user_id"] = self.userId;
         }
+        if (self.hadPersistedDistinctId) {
+            p[@"$had_persisted_distinct_id"] = [NSNumber numberWithBool:self.hadPersistedDistinctId];
+        }
         [p addEntriesFromDictionary:self.superProperties];
         if (properties) {
             [p addEntriesFromDictionary:properties];
@@ -580,7 +588,16 @@ static NSString *defaultProjectToken;
                 [self.eventsQueue removeObjectAtIndex:0];
             }
         }
-
+#if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
+#if !TARGET_OS_WATCH
+        for (MPNotification *notif in self.triggeredNotifications) {
+            if ([notif matchesEvent:e]) {
+                [self showNotificationWithObject:notif];
+                break;
+            }
+        }
+#endif
+#endif //MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
         // Always archive
         [self archiveEvents];
     });
@@ -794,6 +811,7 @@ static NSString *defaultProjectToken;
             self.userId = nil;
             self.people.distinctId = nil;
             self.alias = nil;
+            self.hadPersistedDistinctId = NO;
             self.people.unidentifiedQueue = [NSMutableArray array];
             self.eventsQueue = [NSMutableArray array];
             self.peopleQueue = [NSMutableArray array];
@@ -842,6 +860,7 @@ static NSString *defaultProjectToken;
         self.userId = nil;
         self.anonymousId = [self defaultDistinctId];
         self.distinctId = self.anonymousId;
+        self.hadPersistedDistinctId = NO;
         self.superProperties = [NSDictionary new];
         [self.people.unidentifiedQueue removeAllObjects];
         [self.timedEvents removeAllObjects];
@@ -1038,6 +1057,7 @@ static NSString *defaultProjectToken;
     [p setValue:self.distinctId forKey:@"distinctId"];
     [p setValue:self.userId forKey:@"userId"];
     [p setValue:self.alias forKey:@"alias"];
+    [p setValue:[NSNumber numberWithBool:self.hadPersistedDistinctId] forKey:@"hadPersistedDistinctId"];
     [p setValue:self.superProperties forKey:@"superProperties"];
     [p setValue:self.people.distinctId forKey:@"peopleDistinctId"];
     [p setValue:[self.people.unidentifiedQueue copy] forKey:@"peopleUnidentifiedQueue"];
@@ -1160,10 +1180,12 @@ static NSString *defaultProjectToken;
         self.distinctId = properties[@"distinctId"];
         self.userId     = properties[@"userId"];
         self.anonymousId = properties[@"anonymousId"];
+        self.hadPersistedDistinctId = [properties[@"hadPersistedDistinctId"] boolValue];
         if (!self.distinctId) {
           self.anonymousId = [self defaultDistinctId];
           self.distinctId = self.anonymousId;
           self.userId = nil;
+          self.hadPersistedDistinctId = NO;
         }
         self.alias = properties[@"alias"];
         self.superProperties = properties[@"superProperties"] ?: [NSDictionary dictionary];
@@ -1546,7 +1568,9 @@ static void MixpanelReachabilityCallback(SCNetworkReachabilityRef target, SCNetw
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
     MPLogInfo(@"%@ application will terminate", self);
-    [self archive];
+    dispatch_async(self.serialQueue, ^{
+        [self archive];
+    });
 }
 
 #if !defined(MIXPANEL_MACOS)
@@ -1762,7 +1786,7 @@ static void MixpanelReachabilityCallback(SCNetworkReachabilityRef target, SCNetw
                     }
                 }
 #endif
-
+                
                 id rawNotifications = object[@"notifications"];
                 NSMutableArray *parsedNotifications = [NSMutableArray array];
                 if ([rawNotifications isKindOfClass:[NSArray class]]) {
@@ -1857,7 +1881,19 @@ static void MixpanelReachabilityCallback(SCNetworkReachabilityRef target, SCNetw
                 NSMutableSet *allEventBindings = [self.eventBindings mutableCopy];
                 [allEventBindings unionSet:newEventBindings];
 
-                self.notifications = [NSArray arrayWithArray:parsedNotifications];
+                NSMutableArray *notifications = [NSMutableArray array];
+                NSMutableArray *triggeredNotifications = [NSMutableArray array];
+                
+                for (MPNotification *notif in parsedNotifications) {
+                    if ([notif hasDisplayTriggers]) {
+                        [triggeredNotifications addObject:notif];
+                    } else {
+                        [notifications addObject:notif];
+                    }
+                }
+                
+                self.notifications = [NSArray arrayWithArray:notifications];
+                self.triggeredNotifications = [NSArray arrayWithArray:triggeredNotifications];
                 self.variants = [allVariants copy];
                 self.eventBindings = [allEventBindings copy];
 
@@ -1885,6 +1921,8 @@ static void MixpanelReachabilityCallback(SCNetworkReachabilityRef target, SCNetw
 
             MPLogInfo(@"%@ decide check found %lu available notifs out of %lu total: %@", self, (unsigned long)unseenNotifications.count,
                       (unsigned long)self.notifications.count, unseenNotifications);
+            MPLogInfo(@"%@ decide check found %lu total triggered notifications %@", self, (unsigned long)self.triggeredNotifications.count,
+                      self.triggeredNotifications);
             MPLogInfo(@"%@ decide check found %lu variants: %@", self, (unsigned long)self.variants.count, self.variants);
             MPLogInfo(@"%@ decide check found %lu tracking events: %@", self, (unsigned long)self.eventBindings.count, self.eventBindings);
 
@@ -1956,9 +1994,15 @@ static void MixpanelReachabilityCallback(SCNetworkReachabilityRef target, SCNetw
 
     // if images fail to load, remove the notification from the queue
     if (!image) {
-        NSMutableArray *notifications = [NSMutableArray arrayWithArray:_notifications];
-        [notifications removeObject:notification];
-        self.notifications = [NSArray arrayWithArray:notifications];
+        if ([notification hasDisplayTriggers]) {
+            NSMutableArray *notifications = [NSMutableArray arrayWithArray:_triggeredNotifications];
+            [notifications removeObject:notification];
+            self.triggeredNotifications = [NSArray arrayWithArray:notifications];
+        } else {
+            NSMutableArray *notifications = [NSMutableArray arrayWithArray:_notifications];
+            [notifications removeObject:notification];
+            self.notifications = [NSArray arrayWithArray:notifications];
+        }        
         return;
     }
 
