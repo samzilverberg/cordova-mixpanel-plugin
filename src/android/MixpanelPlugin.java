@@ -45,7 +45,6 @@ public class MixpanelPlugin extends CordovaPlugin {
         PEOPLE_APPEND("people_append"),
         PEOPLE_DELETE_USER("people_deleteUser"),
         PEOPLE_INCREMENT("people_increment"),
-        PEOPLE_INIT_PUSH_HANDLING("people_initPushHandling"),
         PEOPLE_SET_PUSH_ID("people_setPushId"),
         PEOPLE_SET("people_set"),
         PEOPLE_SET_ONCE("people_set_once"),
@@ -120,8 +119,6 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handlePeopleDeleteUser(args, cbCtx);
             case PEOPLE_INCREMENT:
                 return handlePeopleIncrement(args, cbCtx);
-            case PEOPLE_INIT_PUSH_HANDLING:
-                return handlePeopleInitPushHandling(args, cbCtx);
             case PEOPLE_SET_PUSH_ID:
                 return handlePeopleSetPushId(args, cbCtx);
             case PEOPLE_SET:
@@ -314,14 +311,6 @@ public class MixpanelPlugin extends CordovaPlugin {
         cbCtx.success();
         return true;
     }
-
-    private boolean handlePeopleInitPushHandling(JSONArray args, final CallbackContext cbCtx) {
-        String senderId = args.optString(0, "");
-        mixpanel.getPeople().initPushHandling(senderId);
-        cbCtx.success();
-        return true;
-    }
-
 
     private boolean handlePeopleSet(JSONArray args, final CallbackContext cbCtx) {
         JSONObject properties = args.optJSONObject(0);

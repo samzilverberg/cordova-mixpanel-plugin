@@ -1,8 +1,8 @@
 
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- [android sdk version 5.4.5](https://github.com/mixpanel/mixpanel-android/tree/v5.4.5)
-- [ios sdk version 3.4.1](https://github.com/mixpanel/mixpanel-iphone/tree/v3.4.1)
+- [android sdk version 5.6.0](https://github.com/mixpanel/mixpanel-android/tree/v5.6.0)
+- [ios sdk version 3.4.4](https://github.com/mixpanel/mixpanel-iphone/tree/v3.4.4)
 
 
 #### Install
@@ -13,8 +13,14 @@ requires cordova >5.x.x
   cordova plugin add cordova-plugin-mixpanel
 ```
 
-*Optional*: If you want to explicitly specify a google play services version to work with other existing plugins in your project, you can specify a flag `PLAY_SERVICES_VERSION` during installation. e.g. 11.8.0. If you don't provide this flag, it will assume the default '+' wildcard version
+*Optional Preferences*: 
 
+- `PLAY_SERVICES_VERSION`: default value `+`
+- `FIREBASE_VERSION`: default value `+`
+
+You can use the above plugin preferences to explicitly specify a google play services or firebase messages version (to avoid version conflicts with other existing plugins)
+
+example:
 ```
 cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="11.8.0"
 ```
@@ -61,16 +67,14 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
 - append(appendObject, onSuccess, onFail)
 - deleteUser(onSuccess, onFail)
 - increment(peopleProperties, onSuccess, onFail)
-- initPushHandling(senderId, onSuccess, onFail) -- Android Only
-  - **NOTE:** Only use this if you are not using another third party plugin (such as [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push)). This will create the GCM receiver for you and your push notifications will be fully handled within Mixpanel. For more information on this, take a look [here](https://developer.mixpanel.com/docs/android-push-notifications#section-setting-up-your-app-to-receive-messages).
 - setPushId(pushId, onSuccess, onFail)
-  - More info about push notifications at:
-    - [android](https://mixpanel.com/site_media/doctyl/uploads/Android-spec/com/mixpanel/android/mpmetrics/MixpanelAPI.People.html#initPushHandling(java.lang.String))
+  - use to manually send a push notifications token to mixpanel
+    - [android](http://mixpanel.github.io/mixpanel-android/com/mixpanel/android/mpmetrics/MixpanelAPI.People.html#setPushRegistrationId-java.lang.String)
     - [ios](https://mixpanel.com/help/reference/ios-push-notifications)
   - Usage example using the [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push):
   ```
     var push = PushNotification.init({
-        'android': {'senderID': '<GCM Sender ID>'},
+        'android': {},
         'ios': {'alert': 'true', 'badge': 'true', 'sound': 'true'}
     });
     push.on('registration', function(data) {

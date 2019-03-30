@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-mixpanel"
-        version="4.5.4">
+        version="4.6.0">
 
     <name>Mixpanel</name>
 
@@ -28,17 +28,25 @@
 
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
-        <framework src="com.mixpanel.android:mixpanel-android:5.4.5"/>
+        <framework src="com.mixpanel.android:mixpanel-android:5.6.0"/>
 
         <!--
-        Minimum required version of Google Play Services SDK for this plugin is + (as per current version).
-        You can optionally specify a version number to align the version with other plugins that utilize gcm.
+        This Mixpanel plugin doesn't force a specifics versions for 
+        - Google Play Services SDK
+        - Firebase Messaging
+        it simply requires it as '+' meaning the libs should be present.
+        this is done to avoid version conflicts with other plugins and/or your code.
+
+        You can specify a version number via the cordova preferences
+        
+        versions for these libs can be found on android releases page:
         https://developers.google.com/android/guides/releases
         -->
         <preference name="PLAY_SERVICES_VERSION" default="+" />
+        <preference name="FIREBASE_VERSION" default="+" />
 
         <framework src="com.google.android.gms:play-services-base:$PLAY_SERVICES_VERSION"/>
-        <framework src="com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"/>
+        <framework src="com.google.firebase:firebase-messaging:$FIREBASE_VERSION"/>
 
         <!-- AndroidManifest.xml -->
         <!-- see https://github.com/mixpanel/mixpanel-android/blob/master/src/main/AndroidManifest.xml -->
@@ -127,9 +135,12 @@
         <header-file src="src/ios/Mixpanel/Mixpanel+AutomaticTracks.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/Mixpanel.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelExceptionHandler.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MixpanelGroup.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MixpanelGroupPrivate.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPeople.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPeoplePrivate.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPrivate.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MixpanelType.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelWatchProperties.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.h" target-dir="Mixpanel"/>
@@ -207,7 +218,9 @@
         <source-file src="src/ios/Mixpanel/Mixpanel+AutomaticTracks.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/Mixpanel.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelExceptionHandler.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MixpanelGroup.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelPeople.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MixpanelType.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelWatchProperties.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.m" target-dir="Mixpanel"/>

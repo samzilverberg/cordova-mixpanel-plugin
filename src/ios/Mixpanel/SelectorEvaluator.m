@@ -276,6 +276,9 @@ static NSInteger const kRIGHT = 1;
         return nil;
     }
     
+    if ([child isKindOfClass:[NSString class]]) {
+        return (NSString *)child;
+    }
     if ([child isKindOfClass:[MPBoolean class]]) {
         return [NSString stringWithFormat:@"%@", [(MPBoolean *)child value] ? @"YES" : @"NO"];
     }
@@ -489,6 +492,9 @@ static NSInteger const kRIGHT = 1;
     BOOL b = NO;
     if (l == nil && r == nil) {
         b = YES;
+    } else if ([(MPBoolean *)l isKindOfClass:[MPBoolean class]]) {
+        // left operand should be from the evaluation of a non literal type
+        b = [(MPBoolean *)l value] == [self toBoolean:r];
     } else {
         b = [l isEqual:r];
     }

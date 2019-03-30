@@ -313,24 +313,6 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
--(void)people_initPushHandling:(CDVInvokedUrlCommand*)command;
-{
-    CDVPluginResult* pluginResult = nil;
-    Mixpanel* mixpanelInstance = [Mixpanel sharedInstance];
-    NSArray* arguments = command.arguments;
-    NSDictionary* senderId = [command.arguments objectAtIndex:0];
-
-    if (mixpanelInstance == nil)
-    {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Mixpanel not initialized"];
-    }
-    else
-    {
-        // iOS does not require initPushHandling to be called, so just send success.
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    }
-}
-
 -(void)people_setPushId:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = nil;

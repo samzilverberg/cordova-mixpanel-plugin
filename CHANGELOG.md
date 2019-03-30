@@ -1,6 +1,13 @@
 Changelog
 =========
 
+### 4.6.0 2019-03-30
+ - update android lib from 5.4.5 to 5.6.0
+   - push notifs: FCM now replaces GCM
+     see: https://github.com/mixpanel/mixpanel-android/releases/tag/v5.5.0
+ - update ios lib from 3.4.1 to 3.4.4
+ - BREAKING CHANGE: removed the android only `initPushHandling` fn
+
 ### 4.5.3 2019-03-30
  - update android lib from 5.4.4 to 5.4.5
  - update ios lib from 3.3.7 to 3.4.1

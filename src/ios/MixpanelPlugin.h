@@ -34,7 +34,6 @@
 -(void)people_append:(CDVInvokedUrlCommand*)command;
 -(void)people_deleteUser:(CDVInvokedUrlCommand*)command;
 -(void)people_increment:(CDVInvokedUrlCommand*)command;
--(void)people_initPushHandling:(CDVInvokedUrlCommand*)command;
 -(void)people_setPushId:(CDVInvokedUrlCommand*)command;
 -(void)people_set:(CDVInvokedUrlCommand*)command;
 -(void)people_set_once:(CDVInvokedUrlCommand*)command;
