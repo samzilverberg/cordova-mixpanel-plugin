@@ -221,7 +221,6 @@
         <source-file src="src/ios/Mixpanel/UIView+MPHelpers.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/UIViewController+AutomaticTracks.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/_MPTweakBindObserver.m" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/.DS_Store" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/Images/MPArrowLeft.png" target-dir="Mixpanel/Images"/>
         <resource-file src="src/ios/Mixpanel/Images/MPArrowLeft@2x.png" target-dir="Mixpanel/Images"/>
         <resource-file src="src/ios/Mixpanel/Images/MPArrowRight.png" target-dir="Mixpanel/Images"/>
