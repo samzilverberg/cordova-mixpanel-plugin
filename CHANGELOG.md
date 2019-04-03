@@ -1,6 +1,11 @@
 Changelog
 =========
 
+### 2019-04-03
+4.6.0 and 4.5.3 were broken versions because of accidental commit of ref to .DS_store file from plugin.xml.
+released 4.6.1 and 4.5.4 with the fix (removing the ref)
+
+
 ### 4.6.0 2019-03-30
  - update android lib from 5.4.5 to 5.6.0
    - push notifs: FCM now replaces GCM
