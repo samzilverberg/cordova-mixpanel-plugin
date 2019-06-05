@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-mixpanel",
-  "version": "4.6.1",
+  "version": "4.6.2",
   "description": "Mixpanel Cordova Plugin for iOS, Android and Browser Platforms",
   "author": "Sam Zilverberg <samzilverberg@gmail.com>",
   "license": "MIT",

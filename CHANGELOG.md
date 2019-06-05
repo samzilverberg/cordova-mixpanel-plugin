@@ -1,7 +1,12 @@
 Changelog
 =========
 
-### 2019-04-03
+### 4.6.2 2019-06-05
+- update android lib from 5.6.0 to 5.6.2
+- update ios lib from 3.4.4 to 3.4.6
+ 
+
+### 4.6.1 2019-04-03
 4.6.0 and 4.5.3 were broken versions because of accidental commit of ref to .DS_store file from plugin.xml.
 released 4.6.1 and 4.5.4 with the fix (removing the ref)
 

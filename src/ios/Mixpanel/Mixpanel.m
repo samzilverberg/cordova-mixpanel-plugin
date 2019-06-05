@@ -31,7 +31,7 @@
 #error The Mixpanel library must be compiled with ARC enabled
 #endif
 
-#define VERSION @"3.4.4"
+#define VERSION @"3.4.6"
 
 NSString *const MPNotificationTypeMini = @"mini";
 NSString *const MPNotificationTypeTakeover = @"takeover";
@@ -425,12 +425,12 @@ static NSString *defaultProjectToken;
 }
 
 
-- (void)identify:(NSString *)distinctId;
+- (void)identify:(NSString *)distinctId
 {
     [self identify:distinctId usePeople:YES];
 }
 
-- (void)identify:(NSString *)distinctId usePeople:(BOOL)usePeople;
+- (void)identify:(NSString *)distinctId usePeople:(BOOL)usePeople
 {
     if ([self hasOptedOutTracking]) {
         return;
@@ -486,7 +486,7 @@ static NSString *defaultProjectToken;
     [self createAlias:alias forDistinctID:distinctID usePeople:YES];
 }
 
-- (void)createAlias:(NSString *)alias forDistinctID:(NSString *)distinctID usePeople:(BOOL)usePeople;
+- (void)createAlias:(NSString *)alias forDistinctID:(NSString *)distinctID usePeople:(BOOL)usePeople
 {
     if ([self hasOptedOutTracking]) {
         return;
@@ -655,7 +655,7 @@ static NSString *defaultProjectToken;
         NSMutableArray<id<MixpanelType>> *values =
         [NSMutableArray arrayWithArray:mutableSuperProps[groupKey]];
         BOOL exist = NO;
-        for (int i = 0; i < [values count]; ++i) {
+        for (NSUInteger i = 0; i < [values count]; ++i) {
             if ([values[i] equalToMixpanelType:groupID]) {
                 exist = YES;
                 break;
@@ -687,7 +687,7 @@ static NSString *defaultProjectToken;
         NSMutableArray *vals =
         [NSMutableArray arrayWithArray:mutableSuperProps[groupKey]];
 
-        for (int i = 0; i < [vals count]; ++i) {
+        for (NSUInteger i = 0; i < [vals count]; ++i) {
             if ([vals[i] equalToMixpanelType:groupID]) {
                 [vals removeObjectAtIndex:i];
                 break;
@@ -1397,30 +1397,6 @@ typedef NSDictionary*(^PropertyUpdate)(NSDictionary*);
         MPLogError(@"Failed fetch hw.machine from sysctl.");
     }
     return results;
-}
-
-- (NSString *)watchModel
-{
-    NSString *model = nil;
-    Class WKInterfaceDeviceClass = NSClassFromString(@"WKInterfaceDevice");
-    if (WKInterfaceDeviceClass) {
-        SEL currentDeviceSelector = NSSelectorFromString(@"currentDevice");
-        id device = ((id (*)(id, SEL))[WKInterfaceDeviceClass methodForSelector:currentDeviceSelector])(WKInterfaceDeviceClass, currentDeviceSelector);
-        SEL screenBoundsSelector = NSSelectorFromString(@"screenBounds");
-        if (device && [device respondsToSelector:screenBoundsSelector]) {
-            NSInvocation *screenBoundsInvocation = [NSInvocation invocationWithMethodSignature:[device methodSignatureForSelector:screenBoundsSelector]];
-            [screenBoundsInvocation setSelector:screenBoundsSelector];
-            [screenBoundsInvocation invokeWithTarget:device];
-            CGRect screenBounds;
-            [screenBoundsInvocation getReturnValue:(void *)&screenBounds];
-            if (screenBounds.size.width == 136.0f) {
-                model = @"Apple Watch 38mm";
-            } else if (screenBounds.size.width == 156.0f) {
-                model = @"Apple Watch 42mm";
-            }
-        }
-    }
-    return model;
 }
 
 - (NSString *)IFA
@@ -2291,7 +2267,7 @@ static void MixpanelReachabilityCallback(SCNetworkReachabilityRef target, SCNetw
     dispatch_async(self.serialQueue, ^{
         [self.shownNotifications addObject:@(notification.ID)];
         if ([notification hasDisplayTriggers]) {
-            NSMutableArray *notifications = [NSMutableArray arrayWithArray:_triggeredNotifications];
+            NSMutableArray *notifications = [NSMutableArray arrayWithArray: self.triggeredNotifications];
             [notifications removeObject:notification];
             self.triggeredNotifications = [NSArray arrayWithArray:notifications];
         }
