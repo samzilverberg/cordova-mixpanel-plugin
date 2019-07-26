@@ -1,13 +1,13 @@
 
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- [android sdk version 5.6.2](https://github.com/mixpanel/mixpanel-android/tree/v5.6.2)
-- [ios sdk version 3.4.6](https://github.com/mixpanel/mixpanel-iphone/tree/v3.4.6)
+- [Android SDK version 5.6.2](https://github.com/mixpanel/mixpanel-android/tree/v5.6.2)
+- [iOS SDL version 3.4.6](https://github.com/mixpanel/mixpanel-iphone/tree/v3.4.6)
 
 
 #### Install
 
-requires cordova >5.x.x
+Requires Cordova > 5.x.x
 
 ```
   cordova plugin add cordova-plugin-mixpanel
@@ -27,7 +27,7 @@ cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="11.
 
 #### Initialization and quick start
 
-init the plugin with your mixpanel project token with
+Init the plugin with your mixpanel project token with
 ```
   mixpanel.init(your-token,
     function(){ /* successful init */ },
@@ -37,7 +37,7 @@ and then followup with all your favorite mixpanel functionality.<br/>
 `mixpanel.track` to track events.<br/>
 `alias` or `identify` (depending on use case) to set the id for people events (after login or register).<br/>
 `people.set` to set properties on the people entity identified before.<br/>
-you can read more about mixpanel api in their reference: https://mixpanel.com/help/reference <br/>
+You can read more about mixpanel api in their reference: https://mixpanel.com/help/reference <br/>
 
 
 #### Usage
@@ -90,8 +90,8 @@ you can read more about mixpanel api in their reference: https://mixpanel.com/he
 
 ## Contributing and Testing
 
-contributions of all sorts to the source code are more than welcome.
-any contribution will be noted in the changeslog (for FAME! :-D ).
+Contributions of all sorts to the source code are more than welcome.
+Any contribution will be noted in the changelog (for FAME! :-D ).
 
 Please try to test your contributions using your cordova project or a dummy test project.
 You may use mine which i've published to NPM:
@@ -110,30 +110,30 @@ The rest of the code is MIT license, located at `/LICENSE`.
 
 ### IOS
 
-#### hey i installed the plugin and now build fails, why?
+#### Hey I installed the plugin and now build fails, why?
 
-open your xcode proj, goto **build phases -> link binary with libraries**:
+Open your xcode proj, goto **build phases -> link binary with libraries**:
   - drag all files under folder 'frameworks' (on the left) to here
   - add the following if missing:
       - libicucore
       - cfnetwork
 
 
-#### my build still fails, got a compile error at UIImage+MPAverageColor.m
+#### My build still fails, got a compile error at UIImage+MPAverageColor.m
 
-if your got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.<br/>
-this is caused by compiler using a wrong C dialect (C99 for example).<br/>
-to fix:
+If your got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.<br/>
+This is caused by compiler using a wrong C dialect (C99 for example).<br/>
+To fix:
 - open your project in xcode
 - goto build settings tab
 - scroll down to "apple llvm 8.0 - language"
 - set "C language dialect" to be default
 
 
-#### i get error 'Mixpanel' plugin not found, check config.xml
+#### I get error 'Mixpanel' plugin not found, check config.xml
 
-appears to be some problem of the xcode proj settings.<br/>
-only working solution i found so far is to
+Appears to be some problem of the Xcode project settings.<br/>
+Only working solution I found so far is to
 ```
 cordova platform remove ios
 cordova platform add ios
@@ -142,20 +142,49 @@ cordova build ios
 and setting up the build phase correctly again, as described in last question.
 
 
-#### hey i'm on iOS>9 and nothing is happening, why?
+#### Hey I'm on iOS>9 and nothing is happening, why?
 
-google for NSAppTransportSecurity.<br/>
-since iOS9 they are more strict about what your app is allowed to connect to.<br/>
-you will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
+Google for NSAppTransportSecurity.<br/>
+Since iOS 9 they are more strict about what your app is allowed to connect to.<br/>
+You will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
 
 
 ### Android
 
-#### my build fails, wat? why?
+#### My build fails, wat? why?
 
-mixpanel lib depends on google play services 3.1 or higher.<br/>
-you can install this through the android sdk under extras category.<br/>
+Mixpanel lib depends on google play services 3.1 or higher.<br/>
+You can install this through the android sdk under extras category.<br/>
 FYI this plugin registers a dependency on ANY version of play services so it doesnt conflict with other plugins in any way.
+
+
+### Ionic Capacitor & Android
+
+#### Manifest merger failed
+
+If you get a similar message to this
+```
+ERROR: Manifest merger failed : Attribute application@appComponentFactory value=(android.support.v4.app.CoreComponentFactory) from [com.android.support:support-compat:28.0.0] AndroidManifest.xml:22:18-91
+	is also present at [androidx.core:core:1.0.0] AndroidManifest.xml:22:18-86 value=(androidx.core.app.CoreComponentFactory).
+	Suggestion: add 'tools:replace="android:appComponentFactory"' to <application> element at AndroidManifest.xml:5:5-43:19 to override.
+```
+
+Open the build gradle for android, and in the section of `allprojects` add the following:
+```
+allprojects {
+    ...
+
+    configurations.all {
+        resolutionStrategy {
+            force "com.google.android.gms:play-services-base:16.0.1"
+            force "com.google.firebase:firebase-messaging:18.0.0"
+        }
+    }
+}
+```
+
+This will force to use those packages to use those specified versions (adapt the versions to the ones you use/wish). Capacitor is not compatible with androidx yet.
+
 
 ##### Keywords
 mixpanel, plugin cordova, phonegap, ionic, android, ios
