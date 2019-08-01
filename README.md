@@ -22,7 +22,7 @@ You can use the above plugin preferences to explicitly specify a google play ser
 
 example:
 ```
-cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="11.8.0"
+cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="17.0.0"
 ```
 
 #### Initialization and quick start
@@ -156,6 +156,21 @@ You will have to manually add some entries to your app plist file to allow netwo
 Mixpanel lib depends on google play services 3.1 or higher.<br/>
 You can install this through the android sdk under extras category.<br/>
 FYI this plugin registers a dependency on ANY version of play services so it doesnt conflict with other plugins in any way.
+
+
+#### Firebase error: No virtual method getInstanceId() 
+
+If your'e getting some sort of error like this:
+
+```
+java.lang.NoSuchMethodError: No virtual method getInstanceId()Lcom/google/android/gms/tasks/Task; 
+in class Lcom/google/firebase/iid/FirebaseInstanceId
+```
+
+make sure your project is using fire base version > 16.2.x.
+
+see following issue for more info:
+https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/105
 
 
 ### Ionic Capacitor & Android
