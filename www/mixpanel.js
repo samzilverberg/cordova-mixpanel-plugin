@@ -34,11 +34,11 @@ mixpanel.alias = mixpanel.createAlias = function(alias, originalId, onSuccess, o
     mixpanel.distinctId(
       function(distinctId){
         exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, distinctId]);
-      }, 
+      },
       onFail
     );
   } else {
-    exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, originalId]);  
+    exec(onSuccess, onFail, 'Mixpanel', 'alias', [alias, originalId]);
   }
 };
 
@@ -64,14 +64,14 @@ mixpanel.getSuperProperties = function(onSuccess, onFail) {
  *     NOTE: usePeople has no effect on android
  */
 mixpanel.identify = function(id, usePeople, onSuccess, onFail) {
-  if (!id || typeof id !== 'string') {
-    return onFail(errors.invalid('id', id));
-  }
-
   if (arguments.length === 3 && typeof usePeople === 'function'){
     onFail = onSuccess;
     onSuccess = usePeople;
     usePeople = true;
+  }
+
+  if (!id || typeof id !== 'string') {
+    return onFail(errors.invalid('id', id));
   }
 
   exec(onSuccess, onFail, 'Mixpanel', 'identify', [id, !!usePeople]);
