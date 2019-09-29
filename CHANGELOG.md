@@ -1,8 +1,11 @@
 Changelog
 =========
 
-### 4.6.3 2019-09-29
+### 4.7.0 2019-09-29
+attempt to fix [issue #108](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/108) with building via xcode 11 by removing watchkit related files and references
 
+
+### 4.6.3 2019-09-29
 - readme linting + add some troublshooting info (thanks [Miguel Nunes Correia](https://github.com/sircon))
 - raise and fix [issue #110](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/110): mixpanel.identify Runtime error when id is not a string (thanks [Alexey Bondarenko](https://github.com/alexeybondarenko))
 - update android lib from 5.6.2 to 5.6.5
