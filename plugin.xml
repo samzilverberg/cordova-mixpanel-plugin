@@ -141,7 +141,6 @@
         <header-file src="src/ios/Mixpanel/MixpanelPeoplePrivate.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPrivate.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelType.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MixpanelWatchProperties.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/NSThread+MPHelpers.h" target-dir="Mixpanel"/>
@@ -221,7 +220,6 @@
         <source-file src="src/ios/Mixpanel/MixpanelGroup.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelPeople.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelType.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MixpanelWatchProperties.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/NSThread+MPHelpers.m" target-dir="Mixpanel"/>
@@ -258,7 +256,6 @@
         <resource-file src="src/ios/Mixpanel/snapshot_config.json" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/test_variant.json" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/tvos.modulemap" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/watchos.modulemap" target-dir="Mixpanel"/>
 
 
         <!-- Mixpanel sdk requires frameworks -->

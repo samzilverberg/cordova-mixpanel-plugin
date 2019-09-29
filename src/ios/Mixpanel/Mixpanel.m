@@ -20,10 +20,7 @@
 #if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
 #import "NSThread+MPHelpers.h"
 #endif
-#if defined(MIXPANEL_WATCHOS)
-#import "MixpanelWatchProperties.h"
-#import <WatchKit/WatchKit.h>
-#elif defined(MIXPANEL_MACOS)
+#if defined(MIXPANEL_MACOS)
 #import <IOKit/IOKitLib.h>
 #endif
 
@@ -1505,9 +1502,7 @@ typedef NSDictionary*(^PropertyUpdate)(NSDictionary*);
 
 - (NSDictionary *)collectDeviceProperties
 {
-#if defined(MIXPANEL_WATCHOS)
-    return [MixpanelWatchProperties collectDeviceProperties];
-#elif defined(MIXPANEL_MACOS)
+#if defined(MIXPANEL_MACOS)
     CGSize size = [NSScreen mainScreen].frame.size;
     return @{
              @"$os": @"macOS",

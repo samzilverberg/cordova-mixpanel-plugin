@@ -1,0 +1,140 @@
+diff --git a/src/ios/Mixpanel/Mixpanel.m b/src/ios/Mixpanel/Mixpanel.m
+index 7cbdfef..d05d124 100755
+--- a/src/ios/Mixpanel/Mixpanel.m
++++ b/src/ios/Mixpanel/Mixpanel.m
+@@ -20,10 +20,7 @@
+ #if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
+ #import "NSThread+MPHelpers.h"
+ #endif
+-#if defined(MIXPANEL_WATCHOS)
+-#import "MixpanelWatchProperties.h"
+-#import <WatchKit/WatchKit.h>
+-#elif defined(MIXPANEL_MACOS)
++#if defined(MIXPANEL_MACOS)
+ #import <IOKit/IOKitLib.h>
+ #endif
+ 
+@@ -1505,9 +1502,7 @@ typedef NSDictionary*(^PropertyUpdate)(NSDictionary*);
+ 
+ - (NSDictionary *)collectDeviceProperties
+ {
+-#if defined(MIXPANEL_WATCHOS)
+-    return [MixpanelWatchProperties collectDeviceProperties];
+-#elif defined(MIXPANEL_MACOS)
++#if defined(MIXPANEL_MACOS)
+     CGSize size = [NSScreen mainScreen].frame.size;
+     return @{
+              @"$os": @"macOS",
+diff --git a/src/ios/Mixpanel/MixpanelPeople.m b/src/ios/Mixpanel/MixpanelPeople.m
+index 1ac09cb..6b56472 100644
+--- a/src/ios/Mixpanel/MixpanelPeople.m
++++ b/src/ios/Mixpanel/MixpanelPeople.m
+@@ -12,10 +12,6 @@
+ #import "MixpanelPrivate.h"
+ #import "MPLogger.h"
+ 
+-#if defined(MIXPANEL_WATCHOS)
+-#import "MixpanelWatchProperties.h"
+-#endif
+-
+ @implementation MixpanelPeople
+ 
+ - (instancetype)initWithMixpanel:(Mixpanel *)mixpanel
+@@ -36,9 +32,7 @@
+ 
+ - (NSString *)deviceSystemVersion
+ {
+-#if defined(MIXPANEL_WATCHOS)
+-    return [MixpanelWatchProperties systemVersion];
+-#elif defined(MIXPANEL_MACOS)
++#if defined(MIXPANEL_MACOS)
+     return [NSProcessInfo processInfo].operatingSystemVersionString;
+ #else
+     return [UIDevice currentDevice].systemVersion;
+diff --git a/src/ios/Mixpanel/MixpanelWatchProperties.h b/src/ios/Mixpanel/MixpanelWatchProperties.h
+deleted file mode 100644
+index 360c1dc..0000000
+--- a/src/ios/Mixpanel/MixpanelWatchProperties.h
++++ /dev/null
+@@ -1,16 +0,0 @@
+-//
+-//  MixpanelWatchProperties.h
+-//  Mixpanel
+-//
+-//  Created by Peter Chien on 10/14/16.
+-//  Copyright © 2016 Mixpanel. All rights reserved.
+-//
+-
+-#import <Foundation/Foundation.h>
+-
+-@interface MixpanelWatchProperties : NSObject
+-
+-+ (NSDictionary *)collectDeviceProperties;
+-+ (NSString *)systemVersion;
+-
+-@end
+diff --git a/src/ios/Mixpanel/MixpanelWatchProperties.m b/src/ios/Mixpanel/MixpanelWatchProperties.m
+deleted file mode 100644
+index 48ed0c4..0000000
+--- a/src/ios/Mixpanel/MixpanelWatchProperties.m
++++ /dev/null
+@@ -1,47 +0,0 @@
+-//
+-//  MixpanelWatchProperties.m
+-//  Mixpanel
+-//
+-//  Created by Peter Chien on 10/14/16.
+-//  Copyright © 2016 Mixpanel. All rights reserved.
+-//
+-
+-#import "MixpanelWatchProperties.h"
+-#import <WatchKit/WatchKit.h>
+-
+-@implementation MixpanelWatchProperties
+-
+-+ (NSDictionary *)collectDeviceProperties {
+-    NSMutableDictionary *mutableProperties = [NSMutableDictionary dictionaryWithCapacity:5];
+-
+-    WKInterfaceDevice *device = [WKInterfaceDevice currentDevice];
+-    mutableProperties[@"$os"] = [device systemName];
+-    mutableProperties[@"$os_version"] = [device systemVersion];
+-    mutableProperties[@"$watch_model"] = [self watchModel];
+-
+-    CGSize screenSize = device.screenBounds.size;
+-    mutableProperties[@"$screen_width"] = @(screenSize.width);
+-    mutableProperties[@"$screen_height"] = @(screenSize.height);
+-
+-    return [mutableProperties copy];
+-}
+-
+-+ (NSString *)watchModel {
+-    static const CGFloat kAppleWatchScreenWidthSmall = 136.f;
+-    static const CGFloat kAppleWatchScreenWidthLarge = 152.f;
+-
+-    CGFloat screenWidth = [WKInterfaceDevice currentDevice].screenBounds.size.width;
+-    if (screenWidth <= kAppleWatchScreenWidthSmall) {
+-        return @"Apple Watch 38mm";
+-    } else if (screenWidth <= kAppleWatchScreenWidthLarge) {
+-        return @"Apple Watch 42mm";
+-    }
+-
+-    return @"Apple Watch";
+-}
+-
+-+ (NSString *)systemVersion {
+-    return [WKInterfaceDevice currentDevice].systemVersion;
+-}
+-
+-@end
+diff --git a/src/ios/Mixpanel/watchos.modulemap b/src/ios/Mixpanel/watchos.modulemap
+deleted file mode 100644
+index 63d3544..0000000
+--- a/src/ios/Mixpanel/watchos.modulemap
++++ /dev/null
+@@ -1,6 +0,0 @@
+-framework module Mixpanel {
+-    header "Mixpanel.h"
+-    header "MixpanelPeople.h"
+-    header "MixpanelType.h"
+-    export *
+-}
