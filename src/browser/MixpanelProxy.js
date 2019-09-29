@@ -24,7 +24,7 @@ window.mixpanel = null; // clean plugin method
 
 
 // On Mixpanel lib Loaded
-function on_mixpanel_loaded() {
+function on_mixpanel_loaded(callback) {
 
   // ALIAS
   mixpanel.original_alias = mixpanel.alias;
@@ -244,6 +244,7 @@ function on_mixpanel_loaded() {
   }
 
 
+  if (callback && typeof callback === 'function') callback()
 }
 
 
@@ -253,7 +254,7 @@ function on_snippet_loaded() {
   mixpanel.init = function(token, onSuccess, onFail) {
     var r = mixpanel.original_init(token, {
       'loaded': function() {
-        setTimeout(on_mixpanel_loaded, 10); // Let the original_init function be executed after lib loaded
+        setTimeout(function(){ on_mixpanel_loaded(onSuccess) }, 10); // Let the original_init function be executed after lib loaded
       }
     });
   }

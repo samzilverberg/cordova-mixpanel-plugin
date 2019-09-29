@@ -1,9 +1,10 @@
 
 #/bin/bash
 
-set -e
+# set -e
+set -v
 
-VERSION="3.4.6"
+VERSION="3.4.9"
 ZIPFILE="v$VERSION.zip"
 pwd=$(pwd)
 echo $pwd

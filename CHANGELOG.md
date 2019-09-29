@@ -1,6 +1,14 @@
 Changelog
 =========
 
+### 4.6.3 2019-09-29
+
+- readme linting + add some troublshooting info (thanks [Miguel Nunes Correia](https://github.com/sircon))
+- raise and fix [issue #110](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/110): mixpanel.identify Runtime error when id is not a string (thanks [Alexey Bondarenko](https://github.com/alexeybondarenko))
+- update android lib from 5.6.2 to 5.6.5
+- update ios lib from 3.4.6 to 3.4.9
+
+
 ### 4.6.2 2019-06-05
 - update android lib from 5.6.0 to 5.6.2
 - update ios lib from 3.4.4 to 3.4.6
