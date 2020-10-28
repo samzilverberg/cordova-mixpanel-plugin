@@ -36,9 +36,11 @@ function on_mixpanel_loaded(callback) {
       else return false;
     }
 
+    // The original_alias function from MixPanel calls the track and identify functions, which have been changed by this library.
+    // In version 2.39, if the result is smaller than 0, an error occured.
     var r = mixpanel.original_alias(alias, originalId);
 
-    if (typeof r !== "object" || typeof r.properties !== "object") {
+    if (r < 0) {
       if (onFail && typeof onFail === 'function')
         return onFail(errors.invalid('alias', alias));
     } else {
