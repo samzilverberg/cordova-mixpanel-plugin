@@ -145,7 +145,7 @@ function on_mixpanel_loaded(callback) {
     }
 
     mixpanel.people.original_set(peopleProperties, function(r) {
-      if (typeof r !== "object") {
+      if (r !== 1) {
         if (onFail && typeof onFail === 'function')
           return onFail(errors.invalid('people.set', peopleProperties));
       } else {
