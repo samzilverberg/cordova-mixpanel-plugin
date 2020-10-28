@@ -72,9 +72,10 @@ function on_mixpanel_loaded(callback) {
 
 
 
-  // IDENTITY
+  // IDENTIFY
+  // usePeople is not used. people.identify does not exists in mixpanel-js
   mixpanel.original_identify = mixpanel.identify;
-  mixpanel.identify = function(unique_id, onSuccess, onFail) {
+  mixpanel.identify = function(unique_id, usePeople, onSuccess, onFail) {
 
     if (!unique_id || typeof unique_id !== 'string') {
       if (onFail && typeof onFail === 'function')
@@ -82,15 +83,11 @@ function on_mixpanel_loaded(callback) {
       else return false;
     }
 
-    mixpanel.original_identify(unique_id, function(r) {
-      if (typeof r !== "object" || typeof r.properties !== "object") {
-        if (onFail && typeof onFail === 'function')
-          return onFail(errors.invalid('identify', unique_id));
-      } else {
-        if (onSuccess && typeof onSuccess === 'function')
-          return onSuccess();
-      }
-    });
+    mixpanel.original_identify(unique_id);
+    if (onSuccess && typeof onSuccess === 'function')
+      return onSuccess();
+
+    return true;
   };
 
   // registerSuperProperties
@@ -134,7 +131,7 @@ function on_mixpanel_loaded(callback) {
 
   };
 
-  mixpanel.people.original_identify = mixpanel.people.identify;
+  // @deprecated. people.identify does not exists in the mixpanel-js library.
   mixpanel.people.identify = function(distinctId, onSuccess, onFail) {
     return mixpanel.original_identify(distinctId, onSuccess, onFail);
   };
