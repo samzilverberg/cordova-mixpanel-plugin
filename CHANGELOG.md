@@ -1,6 +1,11 @@
 Changelog
 =========
 
+### 4.7.1 2021-03-01
+- update android lib from 5.6.5 to 5.8.6
+- update ios lib from 3.4.9 to 3.6.5
+
+
 ### 4.7.0 2019-09-29
 attempt to fix [issue #108](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/108) with building via xcode 11 by removing watchkit related files and references
 
