@@ -110,7 +110,7 @@ static const NSUInteger kBatchSize = 50;
         
         NSString *requestData = [MPNetwork encodeArrayForAPI:batch];
         NSString *postBody = [NSString stringWithFormat:@"ip=%d&data=%@", self.useIPAddressForGeoLocation, requestData];
-        MPLogDebug(@"%@ flushing %lu of %lu to %lu: %@", self, (unsigned long)batch.count, (unsigned long)queue.count, endpoint, queueCopyForFlushing);
+        MPLogDebug(@"%@ flushing %lu of %lu to %lu: %@", self, (unsigned long)batch.count, (unsigned long)queueCopyForFlushing.count, endpoint, queueCopyForFlushing);
         NSURLRequest *request = [self buildPostRequestForEndpoint:endpoint andBody:postBody];
         
         [self updateNetworkActivityIndicator:YES];
@@ -296,8 +296,19 @@ static const NSUInteger kBatchSize = 50;
 }
 
 + (id)convertFoundationTypesToJSON:(id)obj {
+    // check if the NSString is a valid UTF-8 string
+    if ([obj isKindOfClass:NSString.class]) {
+        obj = (NSString *)obj;
+        if ([obj UTF8String] == nil) {
+            // not a valid UTF-8 string
+            // we will use the replacement char '\uFFFD' to prevent nil and crash
+            obj = @"\ufffd";
+            MPLogWarning(@"property value got invalid UTF-8 string");
+        }
+        return obj;
+    }
     // valid json types
-    if ([obj isKindOfClass:NSString.class] || [obj isKindOfClass:NSNumber.class] || [obj isKindOfClass:NSNull.class]) {
+    if ([obj isKindOfClass:NSNumber.class] || [obj isKindOfClass:NSNull.class]) {
         return obj;
     }
     

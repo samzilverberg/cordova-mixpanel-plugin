@@ -24,7 +24,7 @@ static const atomic_int_fast32_t UncaughtExceptionMaximum = 10;
 
 @property (nonatomic) NSUncaughtExceptionHandler *defaultExceptionHandler;
 @property (nonatomic, unsafe_unretained) struct sigaction *prev_signal_handlers;
-@property (nonatomic, strong) NSHashTable *mixpanelInstances;
+@property (nonatomic, strong) NSMutableArray *mixpanelInstances;
 
 @end
 
@@ -43,7 +43,7 @@ static const atomic_int_fast32_t UncaughtExceptionMaximum = 10;
     self = [super init];
     if (self) {
         // Create a hash table of weak pointers to mixpanel instances
-        _mixpanelInstances = [NSHashTable weakObjectsHashTable];
+        _mixpanelInstances = [NSMutableArray new];
         _prev_signal_handlers = calloc(NSIG, sizeof(struct sigaction));
 
         // Install our handler
@@ -130,11 +130,11 @@ void MPHandleException(NSException *exception) {
 
 - (void) mp_handleUncaughtException:(NSException *)exception {
     // Archive the values for each Mixpanel instance
-    for (Mixpanel *instance in self.mixpanelInstances) {
+    [self.mixpanelInstances enumerateObjectsUsingBlock:^(Mixpanel *instance, NSUInteger idx, BOOL * _Nonnull stop) {
         NSMutableDictionary *properties = [[NSMutableDictionary alloc] init];
         [properties setValue:[exception reason] forKey:@"$ae_crashed_reason"];
         [instance track:@"$ae_crashed" properties:properties];
-    }
+    }];
     MPLogWarning(@"Encountered an uncaught exception. All Mixpanel instances were archived.");
 }
 

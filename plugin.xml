@@ -109,6 +109,7 @@
         <header-file src="src/ios/Mixpanel/MPNetworkPrivate.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPNotification.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPNotificationButton.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MPNotificationServiceExtension.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPNotificationViewController.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPObjectIdentifierProvider.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPObjectIdentityProvider.h" target-dir="Mixpanel"/>
@@ -189,6 +190,7 @@
         <source-file src="src/ios/Mixpanel/MPNetwork.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPNotification.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPNotificationButton.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MPNotificationServiceExtension.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPNotificationViewController.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPObjectIdentityProvider.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPObjectSelector.m" target-dir="Mixpanel"/>
