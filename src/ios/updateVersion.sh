@@ -4,7 +4,7 @@
 # set -e
 set -v
 
-VERSION="3.6.5"
+VERSION="3.9.0"
 ZIPFILE="v$VERSION.zip"
 pwd=$(pwd)
 echo $pwd
@@ -24,3 +24,6 @@ rm -rf mixpanel-iphone-$VERSION
 
 # next steps: git add Mixpanel dir. 
 # if any files are newely added or deleted then run "assetsHelper.js" and copy the output to plugin.xml as needed
+
+# cd ../../
+# git apply src/ios/ios_wathckit_removal.patch 

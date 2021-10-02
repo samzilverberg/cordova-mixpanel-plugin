@@ -28,7 +28,7 @@
 #error The Mixpanel library must be compiled with ARC enabled
 #endif
 
-#define VERSION @"3.6.5"
+#define VERSION @"3.9.0"
 
 NSString *const MPNotificationTypeMini = @"mini";
 NSString *const MPNotificationTypeTakeover = @"takeover";
@@ -68,7 +68,7 @@ static CTTelephonyNetworkInfo *telephonyInfo;
 
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions
 {
-    return [Mixpanel sharedInstanceWithToken:apiToken launchOptions:launchOptions trackCrashes:YES automaticPushTracking:YES];
+    return [Mixpanel sharedInstanceWithToken:apiToken launchOptions:launchOptions trackCrashes:NO automaticPushTracking:NO];
 }
 
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken
@@ -78,7 +78,7 @@ static CTTelephonyNetworkInfo *telephonyInfo;
 
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken optOutTrackingByDefault:(BOOL)optOutTrackingByDefault
 {
-    return [Mixpanel sharedInstanceWithToken:apiToken launchOptions:nil trackCrashes:YES automaticPushTracking:YES optOutTrackingByDefault:optOutTrackingByDefault];
+    return [Mixpanel sharedInstanceWithToken:apiToken launchOptions:nil trackCrashes:NO automaticPushTracking:NO optOutTrackingByDefault:optOutTrackingByDefault];
 }
 
 + (nullable Mixpanel *)sharedInstance
@@ -234,7 +234,7 @@ static CTTelephonyNetworkInfo *telephonyInfo;
     return [self initWithToken:apiToken
                  launchOptions:launchOptions
                  flushInterval:flushInterval
-                  trackCrashes:YES];
+                  trackCrashes:NO];
 }
 
 - (instancetype)initWithToken:(NSString *)apiToken
@@ -246,7 +246,7 @@ static CTTelephonyNetworkInfo *telephonyInfo;
                  launchOptions:launchOptions
                  flushInterval:flushInterval
                   trackCrashes:trackCrashes
-         automaticPushTracking:YES];
+         automaticPushTracking:NO];
 }
 
 - (instancetype)initWithToken:(NSString *)apiToken andFlushInterval:(NSUInteger)flushInterval
@@ -980,12 +980,31 @@ typedef NSDictionary*(^PropertyUpdate)(NSDictionary*);
 
 - (double)eventElapsedTime:(NSString *)event
 {
-    NSNumber *startTime = self.timedEvents[event];
+    __block NSNumber *startTime;
+    
+    dispatch_sync(self.serialQueue, ^{
+        startTime = self.timedEvents[event];
+    });
+    
     if (startTime == nil) {
         return 0;
     } else {
         return [[NSDate date] timeIntervalSince1970] - [startTime doubleValue];
     }
+}
+
+- (void)clearTimedEvent:(NSString *)event
+{
+    if (event.length == 0) {
+        MPLogError(@"Mixpanel cannot clear the timer for an empty event");
+        return;
+    }
+    
+    dispatch_async(self.serialQueue, ^{
+        @synchronized (self) {
+            [self.timedEvents removeObjectForKey:event];
+        }
+    });
 }
 
 - (void)clearTimedEvents
