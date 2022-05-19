@@ -2,8 +2,7 @@
 //  MixpanelPeople.m
 //  Mixpanel
 //
-//  Created by Sam Green on 6/16/16.
-//  Copyright © 2016 Mixpanel. All rights reserved.
+//  Copyright © Mixpanel. All rights reserved.
 //
 
 #import "MixpanelPeople.h"
@@ -12,13 +11,16 @@
 #import "MixpanelPrivate.h"
 #import "MPLogger.h"
 
+#if TARGET_OS_WATCH
+#import "MixpanelWatchProperties.h"
+#endif
+
 @implementation MixpanelPeople
 
 - (instancetype)initWithMixpanel:(Mixpanel *)mixpanel
 {
     if (self = [self init]) {
         self.mixpanel = mixpanel;
-        self.unidentifiedQueue = [NSMutableArray array];
         self.automaticPeopleProperties = [self collectAutomaticPeopleProperties];
     }
     return self;
@@ -32,7 +34,9 @@
 
 - (NSString *)deviceSystemVersion
 {
-#if defined(MIXPANEL_MACOS)
+#if TARGET_OS_WATCH
+    return [MixpanelWatchProperties systemVersion];
+#elif TARGET_OS_OSX
     return [NSProcessInfo processInfo].operatingSystemVersionString;
 #else
     return [UIDevice currentDevice].systemVersion;
@@ -66,6 +70,13 @@
     if ([self.mixpanel hasOptedOutTracking]) {
         return;
     }
+    
+#if defined(DEBUG)
+    if (![[[properties allKeys] firstObject] hasPrefix:@"$ae_"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:MPDebugUsedPeopleKey];
+    }
+#endif
+    
     NSNumber *epochMilliseconds = @(round([[NSDate date] timeIntervalSince1970] * 1000));
     __strong Mixpanel *strongMixpanel = self.mixpanel;
     if (strongMixpanel) {
@@ -110,23 +121,11 @@
             if (self.distinctId) {
                 r[@"$distinct_id"] = self.distinctId;
                 MPLogInfo(@"%@ queueing people record: %@", strongMixpanel, r);
-                @synchronized (strongMixpanel) {
-                    [strongMixpanel.peopleQueue addObject:r];
-                    if (strongMixpanel.peopleQueue.count > 500) {
-                        [strongMixpanel.peopleQueue removeObjectAtIndex:0];
-                    }
-                }
+                [strongMixpanel.persistence saveEntity:r type:PersistenceTypePeople flag:IdentifiedFlag];
             } else {
                 MPLogInfo(@"%@ queueing unidentified people record: %@", strongMixpanel, r);
-                @synchronized (strongMixpanel) {
-                    [self.unidentifiedQueue addObject:r];
-                    if (self.unidentifiedQueue.count > 500) {
-                        [self.unidentifiedQueue removeObjectAtIndex:0];
-                    }
-                }
+                [strongMixpanel.persistence saveEntity:r type:PersistenceTypePeople flag:UnIdentifiedFlag];
             }
-
-            [strongMixpanel archivePeople];
         });
 #if MIXPANEL_FLUSH_IMMEDIATELY
         [strongMixpanel flush];
@@ -136,42 +135,6 @@
         }
 #endif
     }
-}
-
-+ (NSString *)pushDeviceTokenToString:(NSData *)deviceToken
-{
-    const unsigned char *buffer = (const unsigned char *)deviceToken.bytes;
-    if (!buffer) {
-        return nil;
-    }
-    NSMutableString *hex = [NSMutableString stringWithCapacity:(deviceToken.length * 2)];
-    for (NSUInteger i = 0; i < deviceToken.length; i++) {
-        [hex appendString:[NSString stringWithFormat:@"%02lx", (unsigned long)buffer[i]]];
-    }
-    return [hex copy];
-}
-
-#pragma mark - Public API
-
-- (void)addPushDeviceToken:(NSData *)deviceToken
-{
-    NSString *tokenString = [MixpanelPeople pushDeviceTokenToString:deviceToken];
-    if (tokenString) {
-        NSDictionary *properties = @{@"$ios_devices": @[tokenString]};
-        [self addPeopleRecordToQueueWithAction:@"$union" andProperties:properties];
-    }
-}
-
-- (void)removeAllPushDeviceTokens
-{
-    NSDictionary *properties = @{ @"$properties": @[@"$ios_devices"] };
-    [self addPeopleRecordToQueueWithAction:@"$unset" andProperties:properties];
-}
-
-- (void)removePushDeviceToken:(NSData *)deviceToken
-{
-    NSDictionary *properties = @{@"$ios_devices": [MixpanelPeople pushDeviceTokenToString:deviceToken]};
-    [self addPeopleRecordToQueueWithAction:@"$remove" andProperties:properties];
 }
 
 - (void)set:(NSDictionary *)properties

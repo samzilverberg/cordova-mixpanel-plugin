@@ -6,39 +6,29 @@
 #endif
 #import "MixpanelPeople.h"
 #import "MixpanelType.h"
+#import "MixpanelGroup.h"
 
-#import <UserNotifications/UserNotifications.h>
 
-#if defined(MIXPANEL_WATCHOS)
+#if TARGET_OS_WATCH
 #define MIXPANEL_FLUSH_IMMEDIATELY 1
 #define MIXPANEL_NO_APP_LIFECYCLE_SUPPORT 1
 #endif
 
-#if (defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
+#if TARGET_OS_WATCH || TARGET_OS_OSX
 #define MIXPANEL_NO_UIAPPLICATION_ACCESS 1
 #endif
 
-#if (defined(MIXPANEL_TVOS) || defined(MIXPANEL_WATCHOS) || defined(MIXPANEL_MACOS))
+#if TARGET_OS_TV || TARGET_OS_WATCH || TARGET_OS_OSX
 #define MIXPANEL_NO_REACHABILITY_SUPPORT 1
 #define MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT 1
-#define MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT 1
-#define MIXPANEL_NO_CONNECT_INTEGRATION_SUPPORT 1
 #endif
 
+@class    MixpanelPersistence;
 @class    MixpanelPeople;
 @class    MixpanelGroup;
 @protocol MixpanelDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
-
-/*!
- A string constant "mini" that respresent Mini Notification
- */
-extern NSString *const MPNotificationTypeMini;
-/*!
- A string constant "takeover" that respresent Takeover Notification
- */
-extern NSString *const MPNotificationTypeTakeover;
 
 /*!
  Mixpanel API.
@@ -68,6 +58,8 @@ extern NSString *const MPNotificationTypeTakeover;
 @interface Mixpanel : NSObject
 
 #pragma mark Properties
+
+@property (atomic, readonly, strong) MixpanelPersistence *persistence;
 
 /*!
  Accessor to the Mixpanel People API object.
@@ -119,7 +111,7 @@ extern NSString *const MPNotificationTypeTakeover;
  A flag which says if a distinctId is already in peristence from old sdk
   Defaults to NO.
  */
-@property (atomic) BOOL hadPersistedDistinctId;
+@property (nonatomic, assign) BOOL hadPersistedDistinctId;
 
 /*!
  The base URL used for Mixpanel API requests.
@@ -153,33 +145,6 @@ extern NSString *const MPNotificationTypeTakeover;
  */
 @property (atomic) BOOL shouldManageNetworkActivityIndicator;
 
-/*!
- Controls whether to automatically check for notifications for the
- currently identified user when the application becomes active.
-
- Defaults to YES. Will fire a network request on
- <code>applicationDidBecomeActive</code> to retrieve a list of valid notifications
- for the currently identified user.
- */
-@property (atomic) BOOL checkForNotificationsOnActive;
-
-/*!
- Controls whether to automatically check for A/B test variants for the
- currently identified user when the application becomes active.
-
- Defaults to YES. Will fire a network request on
- <code>applicationDidBecomeActive</code> to retrieve a list of valid variants
- for the currently identified user.
- */
-@property (atomic) BOOL checkForVariantsOnActive;
-
-/*!
- Controls whether to automatically check for and show in-app notifications
- for the currently identified user when the application becomes active.
-
- Defaults to YES.
- */
-@property (atomic) BOOL showNotificationOnActive;
 
 /*!
  Controls whether to automatically send the client IP Address as part of
@@ -193,13 +158,17 @@ extern NSString *const MPNotificationTypeTakeover;
 @property (atomic) BOOL useIPAddressForGeoLocation;
 
 /*!
- Controls whether to enable the visual test designer for A/B testing and codeless on mixpanel.com.
- You will be unable to edit A/B tests and codeless events with this disabled, however *previously*
- created A/B tests and codeless events will still be delivered.
-
- Defaults to YES.
+ Controls whether or not to use a unique device identifier for the Mixpanel Distinct ID
+ 
+ Defaults to NO
  */
-@property (atomic) BOOL enableVisualABTestAndCodeless;
+@property (atomic) BOOL useUniqueDistinctId;
+
+/*!
+ This allows enabling or disabling collecting common mobile events
+ If this is not set, it will query the Autotrack settings from the Mixpanel server
+ */
+@property (nonatomic) BOOL trackAutomaticEventsEnabled;
 
 /*!
  Controls whether to enable the run time debug logging at all levels. Note that the
@@ -216,14 +185,6 @@ extern NSString *const MPNotificationTypeTakeover;
  Defaults to NO.
  */
 @property (atomic) BOOL enableLogging;
-
-/*!
- Determines the time, in seconds, that a mini notification will remain on
- the screen before automatically hiding itself.
-
- Defaults to 6.0.
- */
-@property (atomic) CGFloat miniNotificationPresentationTime;
 
 #if !MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT
 /*!
@@ -257,7 +218,7 @@ extern NSString *const MPNotificationTypeTakeover;
 
  This method will return a singleton instance of the <code>Mixpanel</code> class for
  you using the given project token. If an instance does not exist, this method will create
- one using <code>initWithToken:launchOptions:andFlushInterval:</code>. If you only have one
+ one using <code>initWithToken:flushInterval:</code>. If you only have one
  instance in your project, you can use <code>sharedInstance</code> to retrieve it.
 
  <pre>
@@ -277,8 +238,7 @@ extern NSString *const MPNotificationTypeTakeover;
  Initializes a singleton instance of the API, uses it to set whether or not to opt out tracking for
  GDPR compliance, and then returns it.
 
- This is the preferred method for creating a sharedInstance with a mixpanel
- like above. With the optOutTrackingByDefault parameter, Mixpanel tracking can be opted out by default.
+ With the optOutTrackingByDefault parameter, Mixpanel tracking can be opted out by default.
 
  @param apiToken        your project token
  @param optOutTrackingByDefault  whether or not to be opted out from tracking by default
@@ -287,58 +247,48 @@ extern NSString *const MPNotificationTypeTakeover;
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken optOutTrackingByDefault:(BOOL)optOutTrackingByDefault;
 
 /*!
- Initializes a singleton instance of the API, uses it to track launchOptions information,
- and then returns it.
+ Initializes a singleton instance of the API, uses it to track crashes, and then returns it.
 
- This is the preferred method for creating a sharedInstance with a mixpanel
- like above. With the launchOptions parameter, Mixpanel can track referral
- information created by push notifications.
+ With the trackCrashes parameter, Mixpanel can track crashes.
 
  @param apiToken        your project token
- @param launchOptions   your application delegate's launchOptions
-
- */
-+ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions;
-
-/*!
- Initializes a singleton instance of the API, uses it to track launchOptions information,
- and then returns it.
-
- This is the preferred method for creating a sharedInstance with a mixpanel
- like above. With the trackCrashes and automaticPushTracking parameter, Mixpanel can track crashes and automatic push.
-
- @param apiToken        your project token
- @param launchOptions   your application delegate's launchOptions
  @param trackCrashes    whether or not to track crashes in Mixpanel. may want to disable if you're seeing
  issues with your crash reporting for either signals or exceptions
- @param automaticPushTracking    whether or not to automatically track pushes sent from Mixpanel
  */
-+ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions trackCrashes:(BOOL)trackCrashes automaticPushTracking:(BOOL)automaticPushTracking;
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken trackCrashes:(BOOL)trackCrashes;
 
 /*!
- Initializes a singleton instance of the API, uses it to track launchOptions information,
- and then returns it.
+ Initializes a singleton instance of the API, using the unique device identifier for distinct_id and then returns it.
 
- This is the preferred method for creating a sharedInstance with a mixpanel
- like above. With the optOutTrackingByDefault parameter, Mixpanel tracking can be opted out by default.
+ With the useUniqueDistinctId parameter, Mixpanel will use a unique device id for distinct_id.
 
  @param apiToken        your project token
- @param launchOptions   your application delegate's launchOptions
+ @param useUniqueDistinctId    whether or not to use the unique device identifier as the distinct_id
+ */
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken useUniqueDistinctId:(BOOL)useUniqueDistinctId;
+
+/*!
+ Initializes a singleton instance of the API, uses it to track crashes, set whether or not to opt out tracking for
+ GDPR compliance, and then returns it.
+ 
+ With the optOutTrackingByDefault parameter, Mixpanel tracking can be opted out by default.
+
+ @param apiToken        your project token
  @param trackCrashes    whether or not to track crashes in Mixpanel. may want to disable if you're seeing
  issues with your crash reporting for either signals or exceptions
- @param automaticPushTracking    whether or not to automatically track pushes sent from Mixpanel
  @param optOutTrackingByDefault  whether or not to be opted out from tracking by default
+ @param useUniqueDistinctId whether or not to use the unique device identifier as the distinct_id
  */
-+ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions trackCrashes:(BOOL)trackCrashes automaticPushTracking:(BOOL)automaticPushTracking optOutTrackingByDefault:(BOOL)optOutTrackingByDefault;
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken trackCrashes:(BOOL)trackCrashes optOutTrackingByDefault:(BOOL)optOutTrackingByDefault useUniqueDistinctId:(BOOL)useUniqueDistinctId;
 
 /*!
  Returns a previously instantiated singleton instance of the API.
 
  The API must be initialized with <code>sharedInstanceWithToken:</code> or
- <code>initWithToken:launchOptions:andFlushInterval</code> before calling this class method.
+ <code>initWithToken:flushInterval</code> before calling this class method.
  This method will return <code>nil</code> if there are no instances created. If there is more than
  one instace, it will return the first one that was created by using <code>sharedInstanceWithToken:</code>
- or <code>initWithToken:launchOptions:andFlushInterval:</code>.
+ or <code>initWithToken:flushInterval:</code>.
  */
 + (nullable Mixpanel *)sharedInstance;
 
@@ -350,15 +300,15 @@ extern NSString *const MPNotificationTypeTakeover;
  Creates and initializes a new API object. See also <code>sharedInstanceWithToken:</code>.
 
  @param apiToken        your project token
- @param launchOptions   optional app delegate launchOptions
  @param flushInterval   interval to run background flushing
  @param trackCrashes    whether or not to track crashes in Mixpanel. may want to disable if you're seeing
                         issues with your crash reporting for either signals or exceptions
+ @param useUniqueDistinctId whether or not to use the unique device identifier as the distinct_id
  */
 - (instancetype)initWithToken:(NSString *)apiToken
-                launchOptions:(nullable NSDictionary *)launchOptions
                 flushInterval:(NSUInteger)flushInterval
-                 trackCrashes:(BOOL)trackCrashes;
+                 trackCrashes:(BOOL)trackCrashes
+          useUniqueDistinctId:(BOOL)useUniqueDistinctId;
 
 /*!
  Initializes an instance of the API with the given project token. This also sets
@@ -366,38 +316,6 @@ extern NSString *const MPNotificationTypeTakeover;
  <code>sharedInstanceWithToken:</code> to retrieve this object later.
 
  Creates and initializes a new API object. See also <code>sharedInstanceWithToken:</code>.
-
- @param apiToken        your project token
- @param launchOptions   optional app delegate launchOptions
- @param flushInterval   interval to run background flushing
- @param trackCrashes    whether or not to track crashes in Mixpanel. may want to disable if you're seeing
- issues with your crash reporting for either signals or exceptions
- @param automaticPushTracking    whether or not to automatically track pushes sent from Mixpanel
- */
-- (instancetype)initWithToken:(NSString *)apiToken
-                launchOptions:(nullable NSDictionary *)launchOptions
-                flushInterval:(NSUInteger)flushInterval
-                 trackCrashes:(BOOL)trackCrashes
-        automaticPushTracking:(BOOL)automaticPushTracking;
-
-/*!
- Initializes an instance of the API with the given project token.
-
- Creates and initializes a new API object. See also <code>sharedInstanceWithToken:</code>.
-
- @param apiToken        your project token
- @param launchOptions   optional app delegate launchOptions
- @param flushInterval   interval to run background flushing
- */
-- (instancetype)initWithToken:(NSString *)apiToken
-                launchOptions:(nullable NSDictionary *)launchOptions
-             andFlushInterval:(NSUInteger)flushInterval;
-
-/*!
- Initializes an instance of the API with the given project token.
-
- Supports for the old initWithToken method format but really just passes
- launchOptions to the above method as nil.
 
  @param apiToken        your project token
  @param flushInterval   interval to run background flushing
@@ -663,18 +581,14 @@ extern NSString *const MPNotificationTypeTakeover;
  When calling <code>flush</code> manually, it is sometimes important to verify
  that the flush has finished before further action is taken. This is
  especially important when the app is in the background and could be suspended
- at any time if protocol is not followed. Delegate methods like
- <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code>
- are called when an app is brought to the background and require a handler to
- be called when it finishes.
+ at any time if protocol is not followed. 
 
  @param handler     completion handler to be called after flush completes
  */
 - (void)flushWithCompletion:(nullable void (^)(void))handler;
 
 /*!
- Writes current project info, including distinct ID, super properties and pending event
- and People record queues to disk.
+ Writes current project info, including distinct ID, super properties to disk.
 
  This state will be recovered when the app is launched again if the Mixpanel
  library is initialized with the same project token. <b>You do not need to call
@@ -779,91 +693,6 @@ extern NSString *const MPNotificationTypeTakeover;
  Returns the Mixpanel library version number as a string, e.g. "3.2.3".
  */
 + (NSString *)libVersion;
-
-#if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
-#pragma mark - Mixpanel Push Notifications
-
-/*!
- Detects if a UNNotification is from Mixpanel
- */
-+ (BOOL)isMixpanelPushNotification:(UNNotificationContent *)notification API_AVAILABLE(ios(10.0), macos(10.14), watchos(6.0)) API_UNAVAILABLE(tvos);
-
-/*!
- Tracks and executes the appropriate action when a Mixpanel push notification is tapped
- */
-+ (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler API_AVAILABLE(ios(10.0), macos(10.14), watchos(6.0)) API_UNAVAILABLE(tvos);
-
-/*!
- Internal utility for push notification-related event tracking using the project token from the push payload
- */
-+ (void)trackPushNotificationEventFromRequest:(UNNotificationRequest *)request event:(NSString *)event properties:(NSDictionary *)additionalProperties;
-
-/*!
- Internal utility for push notification-related event tracking
- */
-- (void)trackPushNotification:(NSDictionary *)userInfo event:(NSString *)event properties:(NSDictionary *)additionalProperties;
-#endif
-
-#if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
-#pragma mark - Mixpanel Notifications
-
-/*!
- Shows the notification of the given id.
-
- You do not need to call this method on the main thread.
-
- @param ID      notification id
- */
-- (void)showNotificationWithID:(NSUInteger)ID;
-
-
-/*!
- Shows a notification with the given type if one is available.
-
- You do not need to call this method on the main thread.
-
- @param type The type of notification to show, either @"mini", or @"takeover"
- */
-- (void)showNotificationWithType:(NSString *)type;
-
-/*!
- Shows a notification if one is available.
-
- You do not need to call this method on the main thread.
- */
-- (void)showNotification;
-
-#pragma mark - Mixpanel A/B Testing
-
-/*!
- Join any experiments (A/B tests) that are available for the current user.
-
- Mixpanel will check for A/B tests automatically when your app enters
- the foreground. Call this method if you would like to to check for,
- and join, any experiments are newly available for the current user.
-
- You do not need to call this method on the main thread.
- */
-- (void)joinExperiments;
-
-/*!
- Join any experiments (A/B tests) that are available for the current user.
-
- Same as joinExperiments but will fire the given callback after all experiments
- have been loaded and applied.
-
- @param experimentsLoadedCallback       callback to be called after experiments
-                                        joined and applied
- */
-- (void)joinExperimentsWithCallback:(nullable void (^)(void))experimentsLoadedCallback;
-
-#endif // MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
-
-#pragma mark - Deprecated
-/*!
- Current user's name in Mixpanel Streams.
- */
-@property (nullable, atomic, copy) NSString *nameTag __deprecated; // Deprecated in v3.0.1
 
 @end
 

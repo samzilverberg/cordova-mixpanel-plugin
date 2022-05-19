@@ -4,7 +4,7 @@
 # set -e
 set -v
 
-VERSION="3.9.0"
+VERSION="4.1.5"
 ZIPFILE="v$VERSION.zip"
 pwd=$(pwd)
 echo $pwd
@@ -18,7 +18,8 @@ curl -Ls https://github.com/mixpanel/mixpanel-iphone/archive/$ZIPFILE -O $ZIPFIL
 unzip $ZIPFILE
 rm -f $ZIPFILE
 mv Mixpanel Mixpanel_bak
-mv mixpanel-iphone-$VERSION/Mixpanel .
+mv mixpanel-iphone-$VERSION/Sources .
+mv Sources Mixpanel
 mv Mixpanel_bak/LICENSE Mixpanel/
 rm -rf mixpanel-iphone-$VERSION
 
