@@ -79,10 +79,6 @@
 
         <!-- Mixpanel sdk via source -->
         <header-file src="src/ios/Mixpanel/AutomaticEvents.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/Include/Mixpanel.h" target-dir="Mixpanel/Include"/>
-        <header-file src="src/ios/Mixpanel/Include/MixpanelGroup.h" target-dir="Mixpanel/Include"/>
-        <header-file src="src/ios/Mixpanel/Include/MixpanelPeople.h" target-dir="Mixpanel/Include"/>
-        <header-file src="src/ios/Mixpanel/Include/MixpanelType.h" target-dir="Mixpanel/Include"/>
         <header-file src="src/ios/Mixpanel/MPDB.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPFoundation.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPJSONHander.h" target-dir="Mixpanel"/>

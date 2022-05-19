@@ -1,1 +1,0 @@
-../MixpanelPeople.h
