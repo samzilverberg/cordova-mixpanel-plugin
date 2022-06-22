@@ -15,18 +15,6 @@ Requires Cordova > 5.x.x
   cordova plugin add cordova-plugin-mixpanel
 ```
 
-*Optional Preferences*: 
-
-- `PLAY_SERVICES_VERSION`: default value `+`
-- `FIREBASE_VERSION`: default value `+`
-
-You can use the above plugin preferences to explicitly specify a google play services or firebase messages version (to avoid version conflicts with other existing plugins)
-
-example:
-```
-cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="17.0.0"
-```
-
 #### Initialization and quick start
 
 Init the plugin with your mixpanel project token with
