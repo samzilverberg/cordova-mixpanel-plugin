@@ -1,7 +1,7 @@
 
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- [Android SDK version 5.9.1](https://github.com/mixpanel/mixpanel-android/tree/v5.9.1)
+- [Android SDK version 6.2.2](https://github.com/mixpanel/mixpanel-android/tree/v6.2.2)
 - [iOS SDK version 3.9.0](https://github.com/mixpanel/mixpanel-iphone/tree/v3.9.0)
 
 *NOTE: this version currenty doesn't support apple watch due to some deprecation of watchkit in xcode 11. use the latest 4.6.x release if you need apple watch support*
@@ -149,31 +149,6 @@ and setting up the build phase correctly again, as described in last question.
 Google for NSAppTransportSecurity.<br/>
 Since iOS 9 they are more strict about what your app is allowed to connect to.<br/>
 You will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
-
-
-### Android
-
-#### My build fails, wat? why?
-
-Mixpanel lib depends on google play services 3.1 or higher.<br/>
-You can install this through the android sdk under extras category.<br/>
-FYI this plugin registers a dependency on ANY version of play services so it doesnt conflict with other plugins in any way.
-
-
-#### Firebase error: No virtual method getInstanceId() 
-
-If your'e getting some sort of error like this:
-
-```
-java.lang.NoSuchMethodError: No virtual method getInstanceId()Lcom/google/android/gms/tasks/Task; 
-in class Lcom/google/firebase/iid/FirebaseInstanceId
-```
-
-make sure your project is using fire base version > 16.2.x.
-
-see following issue for more info:
-https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/105
-
 
 ### Ionic Capacitor & Android
 
