@@ -28,25 +28,7 @@
 
         <!-- Plugin files -->
         <source-file src="src/android/MixpanelPlugin.java" target-dir="src/android"/>
-        <framework src="com.mixpanel.android:mixpanel-android:5.9.1"/>
-
-        <!--
-        This Mixpanel plugin doesn't force a specifics versions for 
-        - Google Play Services SDK
-        - Firebase Messaging
-        it simply requires it as '+' meaning the libs should be present.
-        this is done to avoid version conflicts with other plugins and/or your code.
-
-        You can specify a version number via the cordova preferences
-        
-        versions for these libs can be found on android releases page:
-        https://developers.google.com/android/guides/releases
-        -->
-        <preference name="PLAY_SERVICES_VERSION" default="+" />
-        <preference name="FIREBASE_VERSION" default="+" />
-
-        <framework src="com.google.android.gms:play-services-base:$PLAY_SERVICES_VERSION"/>
-        <framework src="com.google.firebase:firebase-messaging:$FIREBASE_VERSION"/>
+        <framework src="com.mixpanel.android:mixpanel-android:6.2.2"/>
 
         <!-- AndroidManifest.xml -->
         <!-- see https://github.com/mixpanel/mixpanel-android/blob/master/src/main/AndroidManifest.xml -->
@@ -269,6 +251,8 @@
         <framework src="Accelerate.framework"/>
         <framework src="CoreGraphics.framework"/>
         <framework src="QuartzCore.framework"/>
+        <framework src="StoreKit.framework"/>
+            
         <framework src="libicucore.dylib"/>
 
         <!-- Additional for simulator -->
