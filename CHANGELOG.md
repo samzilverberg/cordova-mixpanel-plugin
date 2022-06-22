@@ -1,6 +1,9 @@
 Changelog
 =========
 
+### 4.8.0 2022-05-20
+- update ios lib from 3.9.0 to 4.1.5
+
 ### 4.7.2 2021-10-02
 - update android lib from 5.8.6 to 5.9.1
 - update ios lib from 3.6.5 to 3.9.0
