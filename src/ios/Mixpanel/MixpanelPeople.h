@@ -2,8 +2,7 @@
 //  MixpanelPeople.h
 //  Mixpanel
 //
-//  Created by Sam Green on 6/16/16.
-//  Copyright © 2016 Mixpanel. All rights reserved.
+//  Copyright © Mixpanel. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -48,37 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
  Defaults to NO.
  */
 @property (atomic) BOOL ignoreTime;
-
-/*!
- Register the given device to receive push notifications.
-
- This will associate the device token with the current user in Mixpanel People,
- which will allow you to send push notifications to the user from the Mixpanel
- People web interface. You should call this method with the <code>NSData</code>
- token passed to
- <code>application:didRegisterForRemoteNotificationsWithDeviceToken:</code>.
-
- @param deviceToken     device token as returned <code>application:didRegisterForRemoteNotificationsWithDeviceToken:</code>
- */
-- (void)addPushDeviceToken:(NSData *)deviceToken;
-
-/*!
- Unregister the given device to receive push notifications.
-
- This will unset all of the push tokens saved to this people profile. This is useful
- in conjunction with a call to `reset`, or when a user is logging out.
- */
-- (void)removeAllPushDeviceTokens;
-
-/*!
- Unregister a specific device token from the ability to receive push notifications.
-
- This will remove the provided push token saved to this people profile. This is useful
- in conjunction with a call to `reset`, or when a user is logging out.
-
- @param deviceToken     device token to be unregistered
- */
-- (void)removePushDeviceToken:(NSData *)deviceToken;
 
 /*!
  Set properties on the current user in Mixpanel People.

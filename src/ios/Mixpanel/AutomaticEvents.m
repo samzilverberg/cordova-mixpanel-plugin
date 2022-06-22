@@ -2,12 +2,12 @@
 //  AutomaticEvents.m
 //  Mixpanel
 //
-//  Created by Yarden Eitan on 4/18/17.
-//  Copyright © 2017 Mixpanel. All rights reserved.
+//  Copyright © Mixpanel. All rights reserved.
 //
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
 
 #import "AutomaticEvents.h"
-#import "MPSwizzler.h"
 #import <objc/runtime.h>
 #import <StoreKit/StoreKit.h>
 
@@ -37,16 +37,19 @@
     return self;
 }
 
-- (void)initializeEvents:(MixpanelPeople *)peopleInstance {
+- (void)initializeEvents:(MixpanelPeople *)peopleInstance apiToken:(NSString *)apiToken {
     people = peopleInstance;
-    NSString *firstOpenKey = @"MPFirstOpen";
-    if (defaults != nil && ![defaults boolForKey:firstOpenKey]) {
-        if (![self isExistingUser]) {
+    NSString *legacyFirstOpenKey = @"MPFirstOpen";
+    NSString *firstOpenKey = [NSString stringWithFormat:@"MPFirstOpen-%@", apiToken];
+    // do not track `$ae_first_open` again if the legacy key exist,
+    // but we will start using the key with the mixpanel token in favour of multiple instances support
+    if (defaults != nil && ![defaults boolForKey:legacyFirstOpenKey]) {
+        if (![defaults boolForKey:firstOpenKey]) {
             [self.delegate track:@"$ae_first_open" properties:nil];
             [people setOnce:@{@"$ae_first_app_open_date": [NSDate date]}];
+            [defaults setBool:TRUE forKey:firstOpenKey];
+            [defaults synchronize];
         }
-        [defaults setBool:TRUE forKey:firstOpenKey];
-        [defaults synchronize];
     }
 
     NSDictionary* infoDict = [NSBundle mainBundle].infoDictionary;
@@ -138,15 +141,6 @@
     return round(num * 10.0) / 10.0;
 }
 
-- (BOOL)isExistingUser {
-    NSString *searchPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
-    NSArray<NSString *> *pathContents = [NSFileManager.defaultManager contentsOfDirectoryAtPath:searchPath error:nil];
-    for (NSString *path in pathContents) {
-        if ([path hasPrefix:@"mixpanel-"]) {
-            return true;
-        }
-    }
-    return false;
-}
-
 @end
+
+#endif
