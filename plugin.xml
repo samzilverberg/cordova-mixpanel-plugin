@@ -251,8 +251,7 @@
         <framework src="Accelerate.framework"/>
         <framework src="CoreGraphics.framework"/>
         <framework src="QuartzCore.framework"/>
-        <framework src="StoreKit.framework"/>
-            
+
         <framework src="libicucore.dylib"/>
 
         <!-- Additional for simulator -->
