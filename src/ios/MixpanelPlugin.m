@@ -113,6 +113,9 @@
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstanceWithToken:token];
     [mixpanelInstance setFlushInterval:60];
 
+    // Set EU Residency
+    mixpanelInstance.serverURL = @"https://api-eu.mixpanel.com";
+
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }

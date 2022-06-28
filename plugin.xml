@@ -31,14 +31,14 @@
         <framework src="com.mixpanel.android:mixpanel-android:5.9.1"/>
 
         <!--
-        This Mixpanel plugin doesn't force a specifics versions for 
+        This Mixpanel plugin doesn't force a specifics versions for
         - Google Play Services SDK
         - Firebase Messaging
         it simply requires it as '+' meaning the libs should be present.
         this is done to avoid version conflicts with other plugins and/or your code.
 
         You can specify a version number via the cordova preferences
-        
+
         versions for these libs can be found on android releases page:
         https://developers.google.com/android/guides/releases
         -->
@@ -56,12 +56,14 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <meta-data
-                    android:name="com.mixpanel.android.MPConfig.EnableDebugLogging"
-                    android:value="true"/>
+            <meta-data android:name="com.mixpanel.android.MPConfig.EnableDebugLogging" android:value="true"/>
+            <!-- Set EU Residency -->
+            <meta-data android:name="com.mixpanel.android.MPConfig.EventsEndpoint" android:value="https://api-eu.mixpanel.com/track?ip=1" />
+            <meta-data android:name="com.mixpanel.android.MPConfig.PeopleEndpoint" android:value="https://api-eu.mixpanel.com/engage?ip=1" />
+            <meta-data android:name="com.mixpanel.android.MPConfig.GroupsEndpoint" android:value="https://api-eu.mixpanel.com/groups" />
+            <meta-data android:name="com.mixpanel.android.MPConfig.DecideEndpoint" android:value="https://api-eu.mixpanel.com/decide" />
         </config-file>
     </platform>
-
 
     <platform name="ios">
 
