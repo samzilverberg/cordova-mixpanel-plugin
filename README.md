@@ -1,4 +1,18 @@
 
+## NOTE: unmaintained & looking for maintainers (since 07-2022)
+
+First: This plugin works! so don't be afraid to try it.
+
+I wasn't able to find any time in the last year (2022) to actively update the libs.
+It's gotten to the point that my dev env is not even setup correctly anymore (new computer) and I can't even find time to set it up properly anymore.
+
+If anyone wants to continue maintaining this contact me.
+
+Maintenance is pretty simple: just update the libs, `cordova build android/ios` to see that it works after the update, and maybe update the api a little once in a while.
+
+If your'e interested but want to totally rewrite / refactor that's also fine by me.
+as long as you release as a major version so you don't break versions that are actively used.
+
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
 - [Android SDK version 6.2.2](https://github.com/mixpanel/mixpanel-android/tree/v6.2.2)
