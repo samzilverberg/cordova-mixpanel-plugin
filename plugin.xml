@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-mixpanel"
-        version="4.7.2">
+        version="4.8.0">
 
     <name>Mixpanel</name>
 
@@ -79,185 +79,44 @@
 
         <!-- Mixpanel sdk via source -->
         <header-file src="src/ios/Mixpanel/AutomaticEvents.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/AutomaticTracksConstants.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerChangeRequestMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerChangeResponseMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerClearRequestMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerClearResponseMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerConnection.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerDeviceInfoRequestMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerDeviceInfoResponseMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerDisconnectMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerSnapshotRequestMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerSnapshotResponseMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerTweakRequestMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPABTestDesignerTweakResponseMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPAbstractABTestDesignerMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPApplicationStateSerializer.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPClassDescription.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPConnectIntegrations.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPDesignerEventBindingMessage.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPDesignerSessionCollection.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPDisplayTrigger.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPEnumDescription.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPEventBinding.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MPDB.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPFoundation.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MPJSONHander.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPLogger.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPMiniNotification.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPNetwork.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MPNetworkPrivate.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPNotification.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPNotificationButton.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPNotificationServiceExtension.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPNotificationViewController.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPObjectIdentifierProvider.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPObjectIdentityProvider.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPObjectSelector.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPObjectSerializer.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPObjectSerializerConfig.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPObjectSerializerContext.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPPropertyDescription.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPResources.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPSequenceGenerator.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPSwizzle.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPSwizzler.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPTakeoverNotification.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPTweak.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPTweakInline.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPTweakInlineInternal.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPTweakStore.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPTypeDescription.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPUIControlBinding.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPUITableViewBinding.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPValueTransformers.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPVariant.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/MPWebSocket.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/Mixpanel+AutomaticTracks.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/Mixpanel.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelExceptionHandler.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelGroup.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelGroupPrivate.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MixpanelIdentity.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPeople.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPeoplePrivate.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MixpanelPersistence.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelPrivate.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/MixpanelType.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/NSThread+MPHelpers.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/SelectorEvaluator.h" target-dir="Mixpanel"/>
+        <header-file src="src/ios/Mixpanel/MixpanelWatchProperties.h" target-dir="Mixpanel"/>
         <header-file src="src/ios/Mixpanel/SessionMetadata.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/UIApplication+AutomaticTracks.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/UIColor+MPColor.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/UIImage+MPAverageColor.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/UIImage+MPImageEffects.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/UIView+MPHelpers.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/UIViewController+AutomaticTracks.h" target-dir="Mixpanel"/>
-        <header-file src="src/ios/Mixpanel/_MPTweakBindObserver.h" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/AutomaticEvents.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerChangeRequestMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerChangeResponseMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerClearRequestMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerClearResponseMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerConnection.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerDeviceInfoRequestMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerDeviceInfoResponseMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerDisconnectMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerSnapshotRequestMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerSnapshotResponseMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerTweakRequestMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPABTestDesignerTweakResponseMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPAbstractABTestDesignerMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPApplicationStateSerializer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPBOOLToNSNumberValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPCATransform3DToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPCGAffineTransformToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPCGColorRefToNSStringValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPCGPointToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPCGRectToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPCGSizeToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPClassDescription.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPConnectIntegrations.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPDesignerEventBindingRequestMesssage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPDesignerEventBindingResponseMesssage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPDesignerTrackMessage.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPDisplayTrigger.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPEnumDescription.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPEventBinding.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPMiniNotification.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPNSAttributedStringToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPNSNumberToCGFloatValueTransformer.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MPDB.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MPJSONHandler.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MPLogger.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MPNetwork.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPNotification.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPNotificationButton.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPNotificationServiceExtension.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPNotificationViewController.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPObjectIdentityProvider.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPObjectSelector.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPObjectSerializer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPObjectSerializerConfig.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPObjectSerializerContext.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPPassThroughValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPPropertyDescription.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPResources.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPSequenceGenerator.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPSwizzle.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPSwizzler.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPTakeoverNotification.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPTweak.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPTweakInline.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPTweakStore.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPTypeDescription.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPUIColorToNSStringValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPUIControlBinding.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPUIEdgeInsetsToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPUIFontToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPUIImageToNSDictionaryValueTransformer.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPUITableViewBinding.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPVariant.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/MPWebSocket.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/Mixpanel+AutomaticTracks.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/Mixpanel.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelExceptionHandler.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelGroup.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MixpanelIdentity.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelPeople.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MixpanelPersistence.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/MixpanelType.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/NSInvocation+MPHelpers.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/NSNotificationCenter+AutomaticTracks.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/NSThread+MPHelpers.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/SelectorEvaluator.m" target-dir="Mixpanel"/>
+        <source-file src="src/ios/Mixpanel/MixpanelWatchProperties.m" target-dir="Mixpanel"/>
         <source-file src="src/ios/Mixpanel/SessionMetadata.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/UIApplication+AutomaticTracks.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/UIColor+MPColor.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/UIImage+MPAverageColor.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/UIImage+MPImageEffects.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/UIView+MPHelpers.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/UIViewController+AutomaticTracks.m" target-dir="Mixpanel"/>
-        <source-file src="src/ios/Mixpanel/_MPTweakBindObserver.m" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPArrowLeft.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPArrowLeft@2x.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPArrowRight.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPArrowRight@2x.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPCheckmark.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPCheckmark@2x.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPCloseButton.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPCloseButton@2x.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPCloseButton@3x.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPDismissKeyboard.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPDismissKeyboard@2x.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPLogo.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/MPLogo@2x.png" target-dir="Mixpanel/Images"/>
-        <resource-file src="src/ios/Mixpanel/Images/placeholder-image.png" target-dir="Mixpanel/Images"/>
         <resource-file src="src/ios/Mixpanel/LICENSE" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/MPTakeoverNotificationViewController~ipad.xib" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/MPTakeoverNotificationViewController~iphonelandscape.xib" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/MPTakeoverNotificationViewController~iphoneportrait.xib" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/app_extension_module.modulemap" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/ios.modulemap" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/macos.modulemap" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/snapshot_config.json" target-dir="Mixpanel"/>
-        <resource-file src="src/ios/Mixpanel/test_variant.json" target-dir="Mixpanel"/>
         <resource-file src="src/ios/Mixpanel/tvos.modulemap" target-dir="Mixpanel"/>
+        <resource-file src="src/ios/Mixpanel/watchos.modulemap" target-dir="Mixpanel"/>
 
 
         <!-- Mixpanel sdk requires frameworks -->
