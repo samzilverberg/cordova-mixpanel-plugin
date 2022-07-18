@@ -194,17 +194,9 @@ mixpanel.people.setOnce = function(peopleProperties, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'people_set_once', [peopleProperties]);
 };
 
-/**
- * @param pushId is the token/id you get back when registering the device with the notification service
- *        for android - this is the FCM token
- *        for ios - this is the APN token
- */
+// setPushId is no longer offered by Mixpanel. See https://mixpanel.com/blog/why-were-sunsetting-messaging-and-experiments
 mixpanel.people.setPushId = function(pushId, onSuccess, onFail) {
-  if (!pushId || typeof pushId !== 'string') {
-    return onFail(errors.invalid('pushId', pushId));
-  }
-
-  exec(onSuccess, onFail, 'Mixpanel', 'people_setPushId', [pushId]);
+  return onFail('setPushId is no longer offered by Mixpanel. See https://mixpanel.com/blog/why-were-sunsetting-messaging-and-experiments');
 };
 
 mixpanel.people.trackCharge = function(amount, chargeProperties, onSuccess, onFail) {

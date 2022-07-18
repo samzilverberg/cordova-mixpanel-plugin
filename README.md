@@ -1,11 +1,8 @@
 
 ## Cordova Plugin that wraps Mixpanel sdk for android and ios
 
-- [Android SDK version 5.9.1](https://github.com/mixpanel/mixpanel-android/tree/v5.9.1)
+- [Android SDK version 6.2.2](https://github.com/mixpanel/mixpanel-android/tree/v6.2.2)
 - [iOS SDK version 4.1.5](https://github.com/mixpanel/mixpanel-iphone/tree/v4.1.5)
-
-*NOTE: this version currenty doesn't support apple watch due to some deprecation of watchkit in xcode 11. use the latest 4.6.x release if you need apple watch support*
-
 
 #### Install
 
@@ -13,18 +10,6 @@ Requires Cordova > 5.x.x
 
 ```
   cordova plugin add cordova-plugin-mixpanel
-```
-
-*Optional Preferences*: 
-
-- `PLAY_SERVICES_VERSION`: default value `+`
-- `FIREBASE_VERSION`: default value `+`
-
-You can use the above plugin preferences to explicitly specify a google play services or firebase messages version (to avoid version conflicts with other existing plugins)
-
-example:
-```
-cordova plugin add cordova-plugin-mixpanel --variable PLAY_SERVICES_VERSION="17.0.0"
 ```
 
 #### Initialization and quick start
@@ -69,20 +54,6 @@ You can read more about mixpanel api in their reference: https://mixpanel.com/he
 - append(appendObject, onSuccess, onFail)
 - deleteUser(onSuccess, onFail)
 - increment(peopleProperties, onSuccess, onFail)
-- setPushId(pushId, onSuccess, onFail)
-  - use to manually send a push notifications token to mixpanel
-    - [android](http://mixpanel.github.io/mixpanel-android/com/mixpanel/android/mpmetrics/MixpanelAPI.People.html#setPushRegistrationId-java.lang.String)
-    - [ios](https://mixpanel.com/help/reference/ios-push-notifications)
-  - Usage example using the [PhoneGap Push Plugin](https://github.com/phonegap/phonegap-plugin-push):
-  ```
-    var push = PushNotification.init({
-        'android': {},
-        'ios': {'alert': 'true', 'badge': 'true', 'sound': 'true'}
-    });
-    push.on('registration', function(data) {
-      mixpanel.people.setPushId(data.registrationId, function onSuccess(){}, function onFail(){});
-    });
-  ```
 - set(peopleProperties, onSuccess, onFail)
 - setOnce(peopleProperties, onSuccess, onFail)
 - trackCharge(amount, chargeProperties, onSuccess, onFail)
@@ -149,31 +120,6 @@ and setting up the build phase correctly again, as described in last question.
 Google for NSAppTransportSecurity.<br/>
 Since iOS 9 they are more strict about what your app is allowed to connect to.<br/>
 You will have to manually add some entries to your app plist file to allow network connectivity to mixpanel server.
-
-
-### Android
-
-#### My build fails, wat? why?
-
-Mixpanel lib depends on google play services 3.1 or higher.<br/>
-You can install this through the android sdk under extras category.<br/>
-FYI this plugin registers a dependency on ANY version of play services so it doesnt conflict with other plugins in any way.
-
-
-#### Firebase error: No virtual method getInstanceId() 
-
-If your'e getting some sort of error like this:
-
-```
-java.lang.NoSuchMethodError: No virtual method getInstanceId()Lcom/google/android/gms/tasks/Task; 
-in class Lcom/google/firebase/iid/FirebaseInstanceId
-```
-
-make sure your project is using fire base version > 16.2.x.
-
-see following issue for more info:
-https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/105
-
 
 ### Ionic Capacitor & Android
 

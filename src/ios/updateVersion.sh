@@ -18,8 +18,7 @@ curl -Ls https://github.com/mixpanel/mixpanel-iphone/archive/$ZIPFILE -O $ZIPFIL
 unzip $ZIPFILE
 rm -f $ZIPFILE
 mv Mixpanel Mixpanel_bak
-mv mixpanel-iphone-$VERSION/Sources .
-mv Sources Mixpanel
+mv mixpanel-iphone-$VERSION/Sources ./Mixpanel
 mv Mixpanel_bak/LICENSE Mixpanel/
 rm -rf mixpanel-iphone-$VERSION
 
