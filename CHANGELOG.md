@@ -1,6 +1,16 @@
 Changelog
 =========
 
+### 5.1.0 2022-08-16
+
+fix [issue #135](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/135) Support mixpanel.group API
+- update android lib from 6.2.2 to 7.3.1
+- update browser lib from 2.39.0 to 2.47.0
+
+### 5.0.1 2022-08-08
+
+fix [issue #133](https://github.com/samzilverberg/cordova-mixpanel-plugin/issues/133) Remove references to push for android
+
 ### 5.0.0 2022-07-18
 
 Major npmjs release containing the last lib updates and marking the repo as unmaintained and looking for maintainers.
