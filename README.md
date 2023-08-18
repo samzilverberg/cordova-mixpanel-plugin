@@ -62,6 +62,10 @@ You can read more about mixpanel api in their reference: https://mixpanel.com/he
 - timeEvent(eventName, onSuccess, onFail)
 - track(eventName, eventProperties, onSuccess, onFail)
 - unregisterSuperProperty(superPropertyName, onSuccess, onFail)
+- setGroup(GroupKey, GroupId, onSuccess, onFail)
+- addGroup(GroupKey, GroupId, onSuccess, onFail)
+- removeGroup(GroupKey, GroupId, onSuccess, onFail)
+- setGroupKeyValue(GroupKey, GroupId, key, value, onSuccess, onFail)
 
 **window.mixpanel.people:**
 

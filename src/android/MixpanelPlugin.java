@@ -38,6 +38,10 @@ public class MixpanelPlugin extends CordovaPlugin {
         TIME_EVENT("timeEvent"),
         TRACK("track"),
         UNREGISTER_SUPER_PROPERTY("unregisterSuperProperty"),
+        SET_GROUP("setGroup"),
+        ADD_GROUP("addGroup"),
+        REMOVE_GROUP("removeGroup"),
+        SET_GROUP_KEY_VALUE("setGroupKeyValue"),
 
         // PEOPLE API
 
@@ -128,6 +132,14 @@ public class MixpanelPlugin extends CordovaPlugin {
                 return handlePeopleUnion(args, cbCtx);
             case PEOPLE_UNSET:
                 return handlePeopleUnset(args, cbCtx);
+            case SET_GROUP:
+                return handleSetGroup(args, cbCtx);
+            case ADD_GROUP:
+                return handleAddGroup(args, cbCtx);
+            case REMOVE_GROUP:
+                return handleRemoveGroup(args, cbCtx);
+            case SET_GROUP_KEY_VALUE:
+                return handleSetGroupKeyValue(args, cbCtx);                                               
             default:
                 this.error(cbCtx, "unknown action");
                 return false;
@@ -265,6 +277,39 @@ public class MixpanelPlugin extends CordovaPlugin {
         return true;
     }
 
+    private boolean handleSetGroup(JSONArray args, final CallbackContext cbCtx) {
+        String groupKey = args.optString(0, "");
+        String groupId = args.optString(1, "");
+        mixpanel.setGroup(groupKey, groupId);
+        cbCtx.success();
+        return true;
+    }
+    
+    private boolean handleAddGroup(JSONArray args, final CallbackContext cbCtx) {
+        String groupKey = args.optString(0, "");
+        String groupId = args.optString(1, "");
+        mixpanel.addGroup(groupKey, groupId);
+        cbCtx.success();
+        return true;
+    }
+    
+    private boolean handleRemoveGroup(JSONArray args, final CallbackContext cbCtx) {
+        String groupKey = args.optString(0, "");
+        String groupId = args.optString(1, "");
+        mixpanel.removeGroup(groupKey, groupId);
+        cbCtx.success();
+        return true;
+    }    
+
+    private boolean handleSetGroupKeyValue(JSONArray args, final CallbackContext cbCtx) {
+        String groupKey = args.optString(0, "");
+        String groupId = args.optString(1, "");
+        String key = args.optString(2, "");
+        String value = args.optString(3, "");
+        mixpanel.getGroup(groupKey, groupId).set(key, value);
+        cbCtx.success();
+        return true;
+    }    
 
     private boolean handlePeopleAppend(JSONArray args, final CallbackContext cbCtx) {
         JSONObject appendObject = args.optJSONObject(0);
@@ -353,9 +398,9 @@ public class MixpanelPlugin extends CordovaPlugin {
 
     private boolean handlePeopleUnset(JSONArray args, final CallbackContext cbCtx) {
         JSONArray propertiesToUnset = args.optJSONArray(0);
-        for(int i=0;i<propertiesToUnset.length();i++){
+        for (int i = 0; i < propertiesToUnset.length(); i++) {
             String propertyToUnset = propertiesToUnset.optString(i);
-            if (propertyToUnset != null){
+            if (propertyToUnset != null) {
                 mixpanel.getPeople().unset(propertyToUnset);
             }
         }

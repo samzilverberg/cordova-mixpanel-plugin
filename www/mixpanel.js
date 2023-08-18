@@ -132,6 +132,52 @@ mixpanel.unregisterSuperProperty = function(superPropertyName, onSuccess, onFail
   exec(onSuccess, onFail, 'Mixpanel', 'unregisterSuperProperty', [superPropertyName]);
 };
 
+mixpanel.setGroup = function (groupKey, groupId, onSuccess, onFail) {
+  if (!groupKey || typeof groupKey != 'string') {
+    return onFail(errors.invalid('groupKey', groupKey));
+  }
+  if (!groupId || typeof groupId != 'string') {
+    return onFail(errors.invalid('groupId', groupId));
+  }  
+  exec(onSuccess, onFail, 'Mixpanel', 'setGroup', [groupKey, groupId]);
+};
+
+mixpanel.addGroup = function (groupKey, groupId, onSuccess, onFail) {
+  if (!groupKey || typeof groupKey != 'string') {
+    return onFail(errors.invalid('groupKey', groupKey));
+  }
+  if (!groupId || typeof groupId != 'string') {
+    return onFail(errors.invalid('groupId', groupId));
+  }
+  exec(onSuccess, onFail, 'Mixpanel', 'addGroup', [groupKey, groupId]);
+};
+
+mixpanel.removeGroup = function (groupKey, groupId, onSuccess, onFail) {
+  if (!groupKey || typeof groupKey != 'string') {
+    return onFail(errors.invalid('groupKey', groupKey));
+  }
+  if (!groupId || typeof groupId != 'string') {
+    return onFail(errors.invalid('groupId', groupId));
+  }
+  exec(onSuccess, onFail, 'Mixpanel', 'removeGroup', [groupKey, groupId]);
+};
+
+mixpanel.setGroupKeyValue = function (groupKey, groupId, key, value, onSuccess, onFail) {
+  if (!groupKey || typeof groupKey != 'string') {
+    return onFail(errors.invalid('groupKey', groupKey));
+  }
+  if (!groupId || typeof groupId != 'string') {
+    return onFail(errors.invalid('groupId', groupId));
+  }
+  if (!key || typeof key != 'string') {
+    return onFail(errors.invalid('key', key));
+  }
+  if (!value || typeof value != 'string') {
+    return onFail(errors.invalid('value', value));
+  }  
+  exec(onSuccess, onFail, 'Mixpanel', 'setGroupKeyValue', [groupKey, groupId, key, value]);
+};
+
 
 // PEOPLE API
 
