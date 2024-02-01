@@ -32,7 +32,8 @@ Init the plugin with your mixpanel project token with
 ```
   mixpanel.init(your-token,
     function(){ /* successful init */ },
-    function(){ /* fail */})
+    function(){ /* fail */},
+    trackAutomaticEvents)
 ```
 and then followup with all your favorite mixpanel functionality.<br/>
 `mixpanel.track` to track events.<br/>
@@ -55,7 +56,9 @@ You can read more about mixpanel api in their reference: https://mixpanel.com/he
 - identify(distinctId, onSuccess, onFail)
 - identify(distinctId, usePeople, onSuccess, onFail)
   - only affects ios: will pass `usePeople` to the ios mixpanel sdk identify method
-- init(token, onSuccess, onFail)
+- init(token, onSuccess, onFail, trackAutomaticEvents)
+  - `trackAutomaticEvents` only affects android, and defaults to true if not provided.   
+    `trackAutomaticEvents` indicates whether or not to collect common mobile events include app sessions, first app opens, app updated, etc.
 - registerSuperProperties(superProperties, onSuccess, onFail)
 - registerSuperPropertiesOnce(superProperties, onSuccess, onFail)
 - reset(onSuccess, onFail)
