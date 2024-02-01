@@ -213,7 +213,7 @@ public class MixpanelPlugin extends CordovaPlugin {
     private boolean handleInit(JSONArray args, final CallbackContext cbCtx) {
         String token = args.optString(0, "");
         Context ctx = cordova.getActivity();
-        mixpanel = MixpanelAPI.getInstance(ctx, token);
+        mixpanel = MixpanelAPI.getInstance(ctx, token, true);
         cbCtx.success();
         return true;
     }
