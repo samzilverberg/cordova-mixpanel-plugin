@@ -77,7 +77,7 @@ mixpanel.identify = function(id, usePeople, onSuccess, onFail) {
   exec(onSuccess, onFail, 'Mixpanel', 'identify', [id, !!usePeople]);
 };
 
-mixpanel.init = function(token, onSuccess, onFail) {
+mixpanel.init = function(token, onSuccess, onFail, trackAutomaticEvents) {
   if (!token || typeof token != 'string') {
     return onFail(errors.invalid('token', token));
   }
@@ -87,7 +87,7 @@ mixpanel.init = function(token, onSuccess, onFail) {
     onSuccess.apply(onSuccess, arguments);
   }
 
-  exec(onSuccessWrapper, onFail, 'Mixpanel', 'init', [token]);
+  exec(onSuccessWrapper, onFail, 'Mixpanel', 'init', [token, trackAutomaticEvents]);
 };
 
 mixpanel.registerSuperProperties = function(superProperties, onSuccess, onFail) {
