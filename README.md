@@ -115,7 +115,7 @@ Open your xcode proj, goto **build phases -> link binary with libraries**:
 
 #### My build still fails, got a compile error at UIImage+MPAverageColor.m
 
-If your got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.<br/>
+If you got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.<br/>
 This is caused by compiler using a wrong C dialect (C99 for example).<br/>
 To fix:
 - open your project in xcode
