@@ -32,7 +32,8 @@ Init the plugin with your mixpanel project token with
 ```
   mixpanel.init(your-token,
     function(){ /* successful init */ },
-    function(){ /* fail */})
+    function(){ /* fail */},
+    trackAutomaticEvents)
 ```
 and then followup with all your favorite mixpanel functionality.<br/>
 `mixpanel.track` to track events.<br/>
@@ -55,7 +56,9 @@ You can read more about mixpanel api in their reference: https://mixpanel.com/he
 - identify(distinctId, onSuccess, onFail)
 - identify(distinctId, usePeople, onSuccess, onFail)
   - only affects ios: will pass `usePeople` to the ios mixpanel sdk identify method
-- init(token, onSuccess, onFail)
+- init(token, onSuccess, onFail, trackAutomaticEvents)
+  - `trackAutomaticEvents` only affects android, and defaults to true if not provided.   
+    `trackAutomaticEvents` indicates whether or not to collect common mobile events include app sessions, first app opens, app updated, etc.
 - registerSuperProperties(superProperties, onSuccess, onFail)
 - registerSuperPropertiesOnce(superProperties, onSuccess, onFail)
 - reset(onSuccess, onFail)
@@ -112,7 +115,7 @@ Open your xcode proj, goto **build phases -> link binary with libraries**:
 
 #### My build still fails, got a compile error at UIImage+MPAverageColor.m
 
-If your got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.<br/>
+If you got this error: "variable-sized object may not be initialized" from `char colorIndices[kNumberOfHexColors] = {0};`.<br/>
 This is caused by compiler using a wrong C dialect (C99 for example).<br/>
 To fix:
 - open your project in xcode
