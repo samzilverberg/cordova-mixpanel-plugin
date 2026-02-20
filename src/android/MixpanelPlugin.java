@@ -215,6 +215,13 @@ public class MixpanelPlugin extends CordovaPlugin {
         boolean trackAutomaticEvents = args.optBoolean(1, true);
         Context ctx = cordova.getActivity();
         mixpanel = MixpanelAPI.getInstance(ctx, token, trackAutomaticEvents);
+
+        // Set custom server URL if provided (e.g. https://api-eu.mixpanel.com for EU data residency)
+        String serverUrl = args.optString(2, null);
+        if (serverUrl != null && !serverUrl.isEmpty() && !"null".equals(serverUrl)) {
+            mixpanel.setServerURL(serverUrl);
+        }
+
         cbCtx.success();
         return true;
     }
