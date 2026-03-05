@@ -113,6 +113,14 @@
     Mixpanel* mixpanelInstance = [Mixpanel sharedInstanceWithToken:token];
     [mixpanelInstance setFlushInterval:60];
 
+    // Set custom server URL if provided (e.g. https://api-eu.mixpanel.com for EU data residency)
+    if (arguments.count > 2) {
+        NSString* serverUrl = [arguments objectAtIndex:2];
+        if (serverUrl != nil && ![serverUrl isEqual:[NSNull null]] && [serverUrl length] > 0) {
+            mixpanelInstance.serverURL = serverUrl;
+        }
+    }
+
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }

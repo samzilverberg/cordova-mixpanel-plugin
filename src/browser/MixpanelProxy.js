@@ -250,12 +250,19 @@ function on_mixpanel_loaded(callback) {
 // On snippet Loaded
 function on_snippet_loaded() {
   mixpanel.original_init = mixpanel.init;
-  mixpanel.init = function(token, onSuccess, onFail) {
-    var r = mixpanel.original_init(token, {
+  mixpanel.init = function(token, onSuccess, onFail, trackAutomaticEvents, serverUrl) {
+    var config = {
       'loaded': function() {
         setTimeout(function(){ on_mixpanel_loaded(onSuccess) }, 10); // Let the original_init function be executed after lib loaded
       }
-    });
+    };
+
+    // Set custom API host if provided (e.g. https://api-eu.mixpanel.com for EU data residency)
+    if (serverUrl && typeof serverUrl === 'string') {
+      config['api_host'] = serverUrl;
+    }
+
+    var r = mixpanel.original_init(token, config);
   }
 }
 
